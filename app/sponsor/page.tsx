@@ -5,53 +5,63 @@ import { motion } from "motion/react";
 
 import { AmountSelector } from "./components/ui/amount-selector";
 import { CertificateCard } from "./components/ui/certificate-card";
+import { Navbar } from "./components/ui/navbar";
 
 const Page = () => {
-  const [selectedAmount, setSelectedAmount] = useState("$5");
+  const [selectedAmount, setSelectedAmount] = useState(5);
   return (
-    <main className="flex min-h-screen flex-col items-center bg-[#181818] px-4 py-20 text-white">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        className="flex w-full max-w-3xl flex-col items-center"
-      >
-        <h1 className="mb-8 text-[40px] font-normal tracking-wide">
-          Support the project
-        </h1>
+    <div className="flex min-h-screen flex-col">
+      <Navbar />
+      <main className="flex flex-1 flex-col items-center px-4 py-10 sm:py-20">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          className="flex w-full max-w-3xl flex-col items-center"
+        >
+          <h1 className="mb-6 text-center text-[32px] font-normal tracking-wide sm:mb-8 sm:text-[40px]">
+            Support the project
+          </h1>
 
-        <p className="mb-8 max-w-[600px] text-center font-mono text-[13px] leading-[1.8] text-[#a1a1aa]">
-          this is a place for those who want to go beyond a simple thank you.
-          <br />
-          I&apos;m grateful for any kind of support, whether it&apos;s just a DM
-          with
-          <br />
-          kind words or something more. your donation is by no means required
-          <br />
-          - this page is made just for those who asked for it. I am incredibly
-          <br />
-          grateful for any support you choose to provide
-        </p>
+          <p className="mb-8 max-w-[600px] text-center font-mono text-[13px] leading-[1.8] text-[#a1a1aa]">
+            this is a place for those who want to go beyond a simple thank you.
+            <br className="hidden sm:block" />
+            I&apos;m grateful for any kind of support, whether it&apos;s just a
+            DM with
+            <br className="hidden sm:block" />
+            kind words or something more. your donation is by no means required
+            <br className="hidden sm:block" />
+            - this page is made just for those who asked for it. I am incredibly
+            <br className="hidden sm:block" />
+            grateful for any support you choose to provide
+          </p>
 
-        <p className="mb-6 font-mono text-[13px] text-[#a1a1aa]">
-          Choose amount you want to support the project with:
-        </p>
+          <p className="mb-6 text-center font-mono text-[13px] text-[#a1a1aa]">
+            Choose amount you want to support the project with:
+          </p>
 
-        <AmountSelector
-          selectedAmount={selectedAmount}
-          onAmountChange={setSelectedAmount}
-        />
+          <AmountSelector
+            selectedAmount={selectedAmount}
+            onAmountChange={setSelectedAmount}
+          />
 
-        <CertificateCard amount={selectedAmount} />
+          <div className="hidden w-full sm:block">
+            <CertificateCard amount={selectedAmount} />
+          </div>
 
-        <p className="mt-16 font-mono text-[11px] text-[#71717a]">
-          analytics by{" "}
-          <span className="cursor-pointer underline decoration-[#71717a] underline-offset-2 transition-colors hover:text-white">
-            OpenPanel
-          </span>
-        </p>
-      </motion.div>
-    </main>
+          <button className="w-full rounded-xl bg-[#F0562E] py-4 text-[17px] font-medium text-white transition-colors hover:bg-[#d94d29] sm:hidden">
+            Sponsor
+          </button>
+
+          <p className="mt-12 font-mono text-[11px] text-[#71717a] sm:mt-16">
+            analytics by{" "}
+            <span className="cursor-pointer underline decoration-[#71717a] underline-offset-2 transition-colors hover:text-white">
+              OpenPanel
+            </span>
+          </p>
+        </motion.div>
+      </main>
+    </div>
   );
 };
 

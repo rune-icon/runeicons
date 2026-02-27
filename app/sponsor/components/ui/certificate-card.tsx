@@ -3,7 +3,7 @@ import { HouseDuck } from "../illustrations/house-duck";
 import { Stamp } from "../illustrations/stamp";
 
 interface CertificateCardProps {
-  amount: string;
+  amount: number;
 }
 
 export function CertificateCard({ amount }: CertificateCardProps) {
@@ -29,14 +29,14 @@ export function CertificateCard({ amount }: CertificateCardProps) {
       {/* Bottom Section */}
       <div className="relative flex gap-10 overflow-hidden rounded-b-[32px] px-10 py-10">
         {/* Image */}
-        <div className="relative h-[200px] w-[200px] flex-shrink-0 overflow-hidden rounded-2xl border border-zinc-800/50 bg-black">
+        <div className="relative h-[200px] w-[200px] shrink-0 overflow-hidden rounded-2xl border border-zinc-800/50 bg-black">
           <HouseDuck />
         </div>
 
         {/* Content */}
         <div className="z-10 flex flex-col justify-center">
           <h3 className="text-[32px] font-normal tracking-wide">
-            {amount} Donation
+            ${amount} Donation
           </h3>
           <p className="mt-4 max-w-[280px] font-mono text-[12px] leading-relaxed text-zinc-400">
             The icons will always be free and open-source, regardless of

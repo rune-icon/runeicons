@@ -1,10 +1,10 @@
 "use client";
 
-const amounts = ["$5", "$10", "$25", "$50", "$100", "$200", "$500"];
+const amounts = [5, 10, 25, 50, 100, 200, 500];
 
 interface AmountSelectorProps {
-  selectedAmount: string;
-  onAmountChange: (amount: string) => void;
+  selectedAmount: number;
+  onAmountChange: (amount: number) => void;
 }
 
 export function AmountSelector({
@@ -12,22 +12,25 @@ export function AmountSelector({
   onAmountChange,
 }: AmountSelectorProps) {
   return (
-    <div className="mb-8 flex w-full rounded-xl bg-black">
+    <div className="mb-8 grid w-full grid-cols-2 gap-3 sm:flex sm:gap-0 sm:rounded-xl sm:bg-black">
       {amounts.map((amount, i) => {
         const isActive = amount === selectedAmount;
+        const isLast = i === amounts.length - 1;
         return (
           <div
             key={amount}
             onClick={() => onAmountChange(amount)}
-            className={`relative flex-1 cursor-pointer py-4 text-center text-xl transition-colors ${isActive ? "z-10 rounded-xl bg-[#F0562E] text-white ring-2 ring-[#F0562E] ring-offset-2 ring-offset-[#181818]" : "text-white hover:bg-zinc-900"} ${i === 0 && !isActive ? "rounded-l-xl" : ""} ${i === amounts.length - 1 && !isActive ? "rounded-r-xl" : ""} `}
+            className={`relative cursor-pointer py-4 text-center text-xl transition-colors ${isLast ? "col-span-2 sm:col-span-1" : ""} sm:flex-1 ${
+              isActive
+                ? "z-10 rounded-xl bg-[#F0562E] text-white ring-2 ring-[#F0562E] ring-offset-2 ring-offset-[#181818]"
+                : "rounded-xl bg-black text-white hover:bg-zinc-900 sm:rounded-none sm:bg-transparent"
+            } ${i === 0 && !isActive ? "sm:rounded-l-xl" : ""} ${isLast && !isActive ? "sm:rounded-r-xl" : ""} `}
           >
             {/* Right border for inactive items, except the last one, and except if the NEXT item is active */}
-            {!isActive &&
-              i !== amounts.length - 1 &&
-              amounts[i + 1] !== selectedAmount && (
-                <div className="absolute top-0 right-0 bottom-0 w-px bg-zinc-800" />
-              )}
-            {amount}
+            {!isActive && !isLast && amounts[i + 1] !== selectedAmount && (
+              <div className="absolute top-0 right-0 bottom-0 hidden w-px bg-zinc-800 sm:block" />
+            )}
+            ${amount}
           </div>
         );
       })}
