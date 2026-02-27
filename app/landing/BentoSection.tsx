@@ -8,11 +8,11 @@ import {
   PineIcon,
   SoundIcon,
 } from "@/components/icons/svg";
-import char1 from "@/public/images/char1.png";
-import char2 from "@/public/images/char2.png";
-import char3 from "@/public/images/char3.png";
-import char4 from "@/public/images/char4.png";
-import char5 from "@/public/images/char5.png";
+import char1 from "@/public/images/char1.webp";
+import char2 from "@/public/images/char2.webp";
+import char3 from "@/public/images/char3.webp";
+import char4 from "@/public/images/char4.webp";
+import char5 from "@/public/images/char5.webp";
 import longSvgImg from "@/public/images/LongSvg.png";
 import svgEditorImg from "@/public/images/svg-editer.png";
 
@@ -43,7 +43,7 @@ export default function BentoSection() {
             {/* Names Strip*/}
             <div className="mt-[7.6%] overflow-hidden">
               <div className="mx-auto flex w-[107%] -translate-x-[3.3%] items-center justify-center gap-6.25 text-[8px] leading-[108%] font-normal whitespace-nowrap text-[#A6A6A6]">
-                <span>Aman gupta</span>
+                <span>Nexvyn</span>
                 <span>Abhinav Kale</span>
                 <span className="shrink-0 rounded-full border-[0.4px] border-[#C4C4C4] px-2 py-1 text-black">
                   Vansh Nagar
