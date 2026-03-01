@@ -42,7 +42,7 @@ export function CertificateCard({ amount }: CertificateCardProps) {
             The icons will always be free and open-source, regardless of
             donations
           </p>
-          <button className="mt-8 w-fit rounded-md bg-[#F0562E] px-6 py-2 text-[15px] font-medium text-white transition-colors hover:bg-[#d94d29]">
+          <button className="mt-8 w-fit cursor-pointer rounded-md bg-[#F0562E] px-6 py-2 text-[15px] font-medium text-white transition-colors hover:bg-[#d94d29]">
             Sponsor
           </button>
         </div>

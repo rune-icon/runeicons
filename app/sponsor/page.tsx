@@ -1,7 +1,10 @@
 "use client";
 import { useState } from "react";
 
+import { CreemCheckout } from "@creem_io/nextjs";
 import { motion } from "motion/react";
+
+import { getProductIdForAmount } from "@/lib/creem";
 
 import { AmountSelector } from "./components/ui/amount-selector";
 import { CertificateCard } from "./components/ui/certificate-card";
@@ -9,6 +12,9 @@ import { Navbar } from "./components/ui/navbar";
 
 const Page = () => {
   const [selectedAmount, setSelectedAmount] = useState(5);
+
+  const productId = getProductIdForAmount(selectedAmount) || "";
+
   return (
     <div className="flex min-h-screen flex-col">
       <Navbar />
@@ -46,12 +52,29 @@ const Page = () => {
           />
 
           <div className="hidden w-full sm:block">
-            <CertificateCard amount={selectedAmount} />
+            {productId ? (
+              <CreemCheckout productId={productId} successUrl="/sponsor">
+                <CertificateCard amount={selectedAmount} />
+              </CreemCheckout>
+            ) : (
+              <CertificateCard amount={selectedAmount} />
+            )}
           </div>
 
-          <button className="w-full rounded-xl bg-[#F0562E] py-4 text-[17px] font-medium text-white transition-colors hover:bg-[#d94d29] sm:hidden">
-            Sponsor
-          </button>
+          {productId ? (
+            <CreemCheckout productId={productId} successUrl="/sponsor">
+              <button className="w-full rounded-xl bg-[#F0562E] py-4 text-[17px] font-medium text-white transition-colors hover:bg-[#d94d29] sm:hidden">
+                Sponsor
+              </button>
+            </CreemCheckout>
+          ) : (
+            <button
+              disabled
+              className="w-full cursor-not-allowed rounded-xl bg-zinc-800 py-4 text-[17px] font-medium text-zinc-500 sm:hidden"
+            >
+              Sponsor (Coming Soon)
+            </button>
+          )}
 
           <p className="mt-12 font-mono text-[11px] text-[#71717a] sm:mt-16">
             analytics by{" "}
