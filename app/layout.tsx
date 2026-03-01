@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Gemunu_Libre, Inter } from "next/font/google";
-
-import Navbar from "@/components/layout/Navbar";
-import { ThemeProvider } from "@/components/layout/theme-provider";
+import { ThemeProvider } from "@/provider/theme-provider";
 
 import "./globals.css";
 
@@ -42,7 +40,6 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${geistSans.variable} ${geistMono.variable} ${gemunuLibre.variable} antialiased`}
       >
-        <Navbar />
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
