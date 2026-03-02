@@ -153,7 +153,7 @@ const Testimonials = () => {
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 mb-16">
         <div className="flex flex-col gap-3">
-          <h2 className="text-4xl font-semibold tracking-tight text-foreground">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight text-foreground">
             Loved by the <span className="text-blue-700">community</span>
           </h2>
           <p className="text-base text-muted-foreground max-w-md">
@@ -161,7 +161,7 @@ const Testimonials = () => {
             using Rune Icons have to say.
           </p>
         </div>
-        <div className="flex items-start gap-10">
+        <div className="flex flex-col sm:flex-row items-start gap-6 sm:gap-10">
           <div className="flex flex-col items-start">
             <span className="text-4xl font-bold text-foreground tracking-tight">
               1.2k+

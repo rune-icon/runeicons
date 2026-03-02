@@ -53,7 +53,7 @@ const Footer = () => {
     <div className="flex flex-col gap-8 relative">
       {/* <IconFall /> */}
       <div
-        className="border w-full rounded-3xl min-h-80 bg-background p-10 md:p-16 border"
+        className="border w-full rounded-3xl min-h-80 bg-background p-6 sm:p-10 md:p-16"
       >
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-12 md:grid-cols-5">
@@ -61,7 +61,7 @@ const Footer = () => {
               <Link
                 href="/"
                 aria-label="go home"
-                className="flex items-center gap-2 block size-fit"
+                className="flex items-center gap-2 size-fit"
               >
                 <LightLogo />
               </Link>

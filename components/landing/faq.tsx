@@ -46,7 +46,7 @@ export default function Faq() {
     return (
         <section className="w-full py-24">
             {/* Full-width white card */}
-            <div className="relative w-full px-10 py-14 lg:px-16 lg:py-16 overflow-hidden">
+            <div className="relative w-full px-4 py-8 sm:px-10 sm:py-14 lg:px-16 lg:py-16 overflow-hidden">
 
                 {/* Content grid */}
                 <div className="relative z-10 flex flex-col gap-10 lg:flex-row lg:gap-20">

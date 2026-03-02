@@ -83,7 +83,7 @@ const Search = () => {
               {/* Icons grid - flexible wrapping */}
               <div className="flex flex-wrap gap-3 justify-center my-4 mt-6">
                 {ICONS.map(({ Icon, name }, index) => (
-                  <div key={index} className="flex flex-col items-center gap-1 w-14">
+                  <div key={index} className={`flex flex-col items-center gap-1 w-14 ${index >= 9 ? "hidden sm:flex" : ""}`}>
                     <div className="w-10 h-10 rounded-lg bg-muted/50 hover:bg-muted flex items-center justify-center transition-colors cursor-pointer">
                       <Icon className="w-5 h-5 text-foreground" />
                     </div>

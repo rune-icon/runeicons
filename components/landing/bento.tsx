@@ -36,9 +36,9 @@ const BentoCard = ({
 const Bento = () => {
   return (
     <section className="w-full my-12">
-      <div className="mx-auto grid w-full h-[90vh] grid-cols-1 gap-2 md:gap-4 lg:grid-cols-12">
+      <div className="mx-auto grid w-full min-h-[50vh] lg:h-[90vh] grid-cols-1 gap-2 md:gap-4 lg:grid-cols-12">
         {/* Left Column */}
-        <div className="grid grid-cols-2 md:grid-cols-1 gap-2 md:gap-4 lg:col-span-3 lg:grid-rows-[6fr_4fr] min-h-0">
+        <div className="grid grid-cols-1 gap-2 md:gap-4 lg:col-span-3 lg:grid-rows-[6fr_4fr] min-h-0">
           <BentoCard
             title="Met the Mind Behind the Magic"
             description="Finally met the creator whose work inspired me. From screens to real life surreal"

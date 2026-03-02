@@ -25,7 +25,7 @@ const Navbar = () => {
 
   return (
     <motion.div
-      className="fixed top-0 py-5 flex justify-between items-center bg-[#F5F5F5] dark:bg-background border-b-2 border-dashed inset-x-0 px-24 z-50"
+      className="fixed top-0 py-3 sm:py-5 flex justify-between items-center bg-[#F5F5F5] dark:bg-background border-b-2 border-dashed inset-x-0 px-4 sm:px-8 md:px-24 z-50"
       animate={hidden ? "hidden" : "visible"}
       variants={{
         visible: { y: 0 },
@@ -34,8 +34,8 @@ const Navbar = () => {
       transition={{ duration: 0.3, ease: "easeInOut" }}
     >
       <LightLogo />
-      <div className="flex items-center gap-6">
-        <ul className="flex gap-10">
+      <div className="flex items-center gap-3 sm:gap-6">
+        <ul className="hidden md:flex gap-10">
           {Links.map((link) => (
             <li
               key={link}
