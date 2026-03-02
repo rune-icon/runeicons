@@ -1,15 +1,38 @@
+"use client";
+
 import LightLogo from "@/public/logo/light";
 import { Button } from "@/components/ui/button";
 import { LightDarkMode } from "@/components/ui/light-dark-mode";
 import { StarsCount } from "@/components/landing/stars-count";
 import { GithubIcon } from "lucide-react";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { motion, useMotionValueEvent, useScroll } from "motion/react";
 
 const Navbar = () => {
   const Links = ["About Devs", "Sponsors"];
+  const [hidden, setHidden] = useState(false);
+  const { scrollY } = useScroll();
+
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    const previous = scrollY.getPrevious() ?? 0;
+    if (latest > previous && latest > 80) {
+      setHidden(true);
+    } else {
+      setHidden(false);
+    }
+  });
+
   return (
-    <div className=" fixed top-5 flex justify-between items-center  inset-x-20 z-50">
+    <motion.div
+      className="fixed top-0 py-5 flex justify-between items-center bg-[#F5F5F5] dark:bg-background border-b-2 border-dashed inset-x-0 px-24 z-50"
+      animate={hidden ? "hidden" : "visible"}
+      variants={{
+        visible: { y: 0 },
+        hidden: { y: "-100%" },
+      }}
+      transition={{ duration: 0.3, ease: "easeInOut" }}
+    >
       <LightLogo />
       <div className="flex items-center gap-6">
         <ul className="flex gap-10">
@@ -35,8 +58,9 @@ const Navbar = () => {
           <LightDarkMode />
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
 export default Navbar;
+

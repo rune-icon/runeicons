@@ -6,7 +6,7 @@ import HeroSvg from "./svg/hero-svg";
 
 const HeroSection = () => {
   return (
-    <div className="grid grid-cols-[7fr_3fr] h-[calc(100vh-64px)]">
+    <div className="grid grid-cols-[7fr_3fr]  h-[calc(100vh-64px)]">
       <div className="flex flex-col justify-center h-full font- ">
         <div
           className="border flex items-center gap-2 p-0.5 pl-2.5 rounded-md text-xs w-fit"
@@ -51,7 +51,7 @@ const HeroSection = () => {
           </Button>
         </div>
       </div>
-      <div><HeroSvg/></div>
+      <div className="flex justify-center items-center"><HeroSvg/></div>
     </div>
   );
 };
