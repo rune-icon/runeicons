@@ -1,26 +1,29 @@
 "use client";
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { Snowflake, Sun, Flame, Cloud, Wind } from "lucide-react";
+import { Layers, ArrowRight, Layout, Users } from "lucide-react";
 
 const TabBackgroundAnimation = () => {
-  const arr = [Snowflake, Sun, Flame, Cloud, Wind];
+  const arr = [Layers, ArrowRight, Layout, Users];
   const [active, setActive] = useState(0);
 
   return (
+    <div className="bg-white rounded-full">
+
+    
     <div
       style={{
         background: "rgba(0, 0, 0, 0.08)",
         boxShadow:
           "0px 1px 0px rgba(255, 255, 255, 0.25), inset 0px 1px 2px rgba(0, 0, 0, 0.15)",
       }}
-      className="flex p-1 rounded-full w-full gap-full"
+      className="flex p-1 rounded-full w-full gap-1"
     >
       {arr.map((Icon, i) => (
         <button
           key={i}
           onMouseEnter={() => setActive(i)}
-          className=" relative px-6 py-3 text-white cursor-pointer flex items-center justify-center"
+          className="relative flex-1 py-3 text-white cursor-pointer flex items-center justify-center"
         >
           {active === i && (
             <motion.div
@@ -46,6 +49,7 @@ const TabBackgroundAnimation = () => {
           </span>
         </button>
       ))}
+    </div>
     </div>
   );
 };

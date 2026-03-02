@@ -137,6 +137,39 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  /* Custom scrollbar - slim, clean, low opacity */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.3);
+  }
+
+  /* Dark mode scrollbar */
+  .dark ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.12);
+  }
+  .dark ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.25);
+  }
+
+  /* Firefox */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
+  }
+  .dark * {
+    scrollbar-color: rgba(255, 255, 255, 0.12) transparent;
+  }
 }
 
 @keyframes rainbow {

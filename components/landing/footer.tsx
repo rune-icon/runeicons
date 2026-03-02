@@ -53,11 +53,7 @@ const Footer = () => {
     <div className="flex flex-col gap-8 relative">
       {/* <IconFall /> */}
       <div
-        className="border w-full rounded-3xl min-h-80 bg-background p-10 md:p-16"
-        style={{
-          boxShadow:
-            "inset 1px 1px 1px #FFFFFF, inset -1px -1px 0px rgba(0, 0, 0, 0.1)",
-        }}
+        className="border w-full rounded-3xl min-h-80 bg-background p-10 md:p-16 border"
       >
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-12 md:grid-cols-5">

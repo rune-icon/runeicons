@@ -46,58 +46,20 @@ export default function Faq() {
     return (
         <section className="w-full py-24">
             {/* Full-width white card */}
-            <div className="relative w-full rounded-3xl bg-card border border-border px-10 py-14 lg:px-16 lg:py-16 overflow-hidden">
-                {/* FAQ watermark */}
-                {/* <span
-                    className="absolute bottom-[-20px] left-4 text-[200px] lg:text-[240px] font-bold text-muted-foreground/10 leading-none tracking-tight select-none pointer-events-none z-0"
-                    aria-hidden="true"
-                >
-                    FAQ
-                </span> */}
+            <div className="relative w-full px-10 py-14 lg:px-16 lg:py-16 overflow-hidden">
 
                 {/* Content grid */}
                 <div className="relative z-10 flex flex-col gap-10 lg:flex-row lg:gap-20">
                     {/* Left column */}
                     <div className="flex flex-col gap-8 lg:w-[340px] shrink-0">
                         <div className="flex flex-col gap-2">
-                            <h2 className="text-3xl font-bold text-foreground tracking-tight">
+                            <span className="text-sm font-mono uppercase tracking-widest text-blue-700">FAQ</span>
+                            <h2 className="text-3xl font-semibold text-foreground tracking-tight">
                                 Questions &amp; Answers
                             </h2>
                             <p className="text-sm text-muted-foreground">
                                 Have more questions? Reach out to us on any of these platforms:
                             </p>
-                        </div>
-
-                        <div className="flex flex-col gap-4">
-                            {/* GitHub */}
-                            <a href="https://github.com/runeicons" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 group">
-                                <div className="w-10 h-10 rounded-md bg-foreground flex items-center justify-center group-hover:scale-105 transition-transform">
-                                    <Github className="w-4 h-4 text-background" />
-                                </div>
-                                <span className="text-sm font-medium text-foreground group-hover:underline">
-                                    github.com/runeicons
-                                </span>
-                            </a>
-
-                            {/* X (Twitter) */}
-                            <a href="https://x.com/runeicons" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 group">
-                                <div className="w-10 h-10 rounded-md bg-foreground flex items-center justify-center group-hover:scale-105 transition-transform">
-                                    <Twitter className="w-4 h-4 text-background" />
-                                </div>
-                                <span className="text-sm font-medium text-foreground group-hover:underline">
-                                    @runeicons
-                                </span>
-                            </a>
-
-                            {/* Discord */}
-                            <a href="https://discord.gg/runeicons" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 group">
-                                <div className="w-10 h-10 rounded-md bg-foreground flex items-center justify-center group-hover:scale-105 transition-transform">
-                                    <MessageCircle className="w-4 h-4 text-background" />
-                                </div>
-                                <span className="text-sm font-medium text-foreground group-hover:underline">
-                                    Join our Discord
-                                </span>
-                            </a>
                         </div>
                     </div>
 
@@ -113,11 +75,11 @@ export default function Faq() {
                                 <AccordionItem
                                     key={item.id}
                                     value={item.id}
-                                    className="rounded-2xl border border-border bg-muted px-6 last:border-b"
+                                    className="rounded-2xl bg-white dark:bg-background border border-border px-6 last:border-b"
                                 >
                                     <AccordionTrigger className="cursor-pointer items-center py-5 hover:no-underline">
                                         <div className="flex items-center gap-4">
-                                            <span className="text-sm font-semibold text-muted-foreground tabular-nums">
+                                            <span className="text-sm font-semibold text-blue-700 tabular-nums">
                                                 {item.number}
                                             </span>
                                             <span className="text-[15px] font-medium text-foreground">

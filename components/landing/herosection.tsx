@@ -2,6 +2,7 @@ import { Check, Github } from "lucide-react";
 import React from "react";
 import { Button } from "../ui/button";
 import Mascot from "@/public/hersection.tsx/mascot";
+import HeroSvg from "./svg/hero-svg";
 
 const HeroSection = () => {
   return (
@@ -39,7 +40,7 @@ const HeroSection = () => {
         </div>
         <div className="mt-4 leading-5">
           Strong Icons delivers powerful, modern icon systems crafted for SaaS
-          and AI products. Built for <br /> clarity, scalability, and impact so
+          and AI products. Built for  clarity, scalability, and impact so
           your interface looks sharp at every size.
         </div>
 
@@ -50,7 +51,7 @@ const HeroSection = () => {
           </Button>
         </div>
       </div>
-      <div>hi</div>
+      <div><HeroSvg/></div>
     </div>
   );
 };

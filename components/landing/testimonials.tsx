@@ -97,7 +97,7 @@ const TestimonialCard = ({ testimonial }: { testimonial: Testimonial }) => {
       {/* Rainbow gradient border - visible on hover */}
       <div className="absolute inset-0 rounded-xl animate-rainbow bg-[linear-gradient(45deg,var(--color-1),var(--color-5),var(--color-3),var(--color-4),var(--color-2))] bg-[length:200%] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
       {/* Inner card */}
-      <div className="relative rounded-[10px] m-[1.5px] bg-card p-6 flex flex-col gap-4 transition-all duration-300">
+      <div className="relative rounded-[12px] m-[1.5px] bg-card p-6 flex flex-col gap-4 transition-all duration-300">
         <p className="text-sm leading-relaxed text-card-foreground whitespace-pre-line">
           {testimonial.quote}
         </p>
@@ -153,11 +153,11 @@ const Testimonials = () => {
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 mb-16">
         <div className="flex flex-col gap-3">
-          <h2 className="text-4xl font-bold tracking-tight text-foreground">
-            Loved by the community
+          <h2 className="text-4xl font-semibold tracking-tight text-foreground">
+            Loved by the <span className="text-blue-700">community</span>
           </h2>
           <p className="text-base text-muted-foreground max-w-md">
-            Don&apos;t take our word for it - listen to what developers
+            Don&apos;t take our word for it listen to what developers
             using Rune Icons have to say.
           </p>
         </div>

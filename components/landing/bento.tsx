@@ -17,15 +17,15 @@ const BentoCard = ({
   graphicClassName,
 }: BentoCardProps) => {
   return (
-    <div className={`rounded-3xl border border-border bg-card text-card-foreground flex flex-col overflow-hidden transition-all duration-300 hover:shadow-lg ${className}`}>
-      <div className={`flex-1 flex justify-center items-center p-6 ${graphicClassName}`}>
+    <div className={`rounded-2xl md:rounded-3xl border border-border bg-card text-card-foreground flex flex-col overflow-hidden transition-all duration-300 hover:shadow-lg min-h-0 ${className}`}>
+      <div className={`flex-1 min-h-0 flex justify-center items-center p-3 md:p-6 overflow-hidden ${graphicClassName}`}>
         {children}
       </div>
-      <div className="p-8 pt-0 mt-auto">
-        <h3 className="text-xl font-semibold mb-2">
+      <div className="p-4 md:p-8 pt-0 mt-auto shrink-0">
+        <h3 className="text-sm md:text-md font-semibold mb-1">
           {title}
         </h3>
-        <p className="text-md text-muted-foreground">
+        <p className="text-sm md:text-md text-muted-foreground">
           {description}
         </p>
       </div>
@@ -35,23 +35,23 @@ const BentoCard = ({
 
 const Bento = () => {
   return (
-    <section className="w-full min-h-screen py-12">
-      <div className="mx-auto grid w-full grid-cols-1 gap-4 lg:grid-cols-12 h-full">
+    <section className="w-full my-12">
+      <div className="mx-auto grid w-full h-[90vh] grid-cols-1 gap-2 md:gap-4 lg:grid-cols-12">
         {/* Left Column */}
-        <div className="grid grid-cols-1 gap-4 lg:col-span-3 lg:grid-rows-[6fr_4fr]">
+        <div className="grid grid-cols-2 md:grid-cols-1 gap-2 md:gap-4 lg:col-span-3 lg:grid-rows-[6fr_4fr] min-h-0">
           <BentoCard
             title="Met the Mind Behind the Magic"
             description="Finally met the creator whose work inspired me. From screens to real life surreal"
-            className="min-h-[300px]"
+            className="h-full"
           >
-            <div className="w-24 h-24 rounded-2xl bg-border/5" />
+            hiiiii
           </BentoCard>
           <BentoCard
             title="Interactive SVG Editing"
             description="Drag points, reshape paths, and customize vectors directly in the browser."
-            className="min-h-[220px]"
+            className="h-full"
           >
-            <div className="w-16 h-16 rounded-full border-2 border-dashed border-black/20" />
+            hiii
           </BentoCard>
         </div>
 
@@ -59,23 +59,23 @@ const Bento = () => {
         <BentoCard
           title=""
           description=""
-          className="lg:col-span-4 min-h-[460px]"
+          className="lg:col-span-4 h-full min-h-0"
         >
           hi        </BentoCard>
 
         {/* Right Column */}
-        <div className="grid grid-cols-1 gap-4 lg:col-span-5 lg:grid-rows-[4fr_6fr]">
+        <div className="grid grid-cols-1 gap-2 md:gap-4 lg:col-span-5 lg:grid-rows-[4fr_6fr] min-h-0">
           <BentoCard
             title=""
             description=""
-            className="min-h-[220px]"
+            className="h-full"
           >
-            <IconCarousel />
+            <IconCarousel /> 
           </BentoCard>
           <BentoCard
             title="Over 1000+ Icons Crafted For your website"
             description="Designed a library of 1000+ scalable, performance-optimized SVG icons with a consistent visual system for seamless use in modern web apps."
-            className="min-h-[300px] lg:h-full"
+            className="h-full"
           >
             <svg
               width="383"

@@ -25,11 +25,11 @@ const Navbar = () => {
         <div className="flex items-center gap-2">
           <Link href="https://github.com/AitijhyaModak/rune-icons" target="_blank" rel="noopener noreferrer">
             <Button
-              className="relative overflow-hidden group"
+              className="relative overflow-hidden text-xs group"
               aria-label="GitHub"
             >
               <GithubIcon className="size-4" />
-              <StarsCount />
+              {/* <StarsCount /> */}1000+
             </Button>
           </Link>
           <LightDarkMode />
