@@ -14,26 +14,26 @@ const Mascot = () => {
           data-figma-bg-blur-radius="20"
           d="M20.7496 5.40685C22.2554 5.40685 23.7836 5.60912 25.2444 5.99117C29.2447 1.49642 36.5487 -0.391379 39.6725 0.9121C42.8189 2.21558 38.7286 16.6437 38.7286 16.6437C40.0096 19.0484 40.976 21.6779 40.976 24.3747C40.976 34.398 31.9191 41.3649 20.7496 41.3649C9.58015 41.3649 0.523221 34.6228 0.523221 24.3747C0.523221 21.5655 1.64691 18.981 2.7706 16.6437C2.7706 16.6437 -1.47694 2.21558 1.64691 0.9121C4.77076 -0.391379 12.2545 1.429 16.2549 5.92375C17.7292 5.58464 19.2368 5.41127 20.7496 5.40685Z"
           stroke="white"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
         <path
           d="M11.9893 25.3379V26.4392"
           stroke="white"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
         <path
           d="M29.48 25.3369V26.4383"
           stroke="white"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
         <path
           d="M19.1001 30.2935H22.3798L20.74 31.9455L19.1001 30.2935Z"
           stroke="white"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
         <defs>
           <clipPath
