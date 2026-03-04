@@ -5,11 +5,12 @@ import HeroSection from "@/components/landing/herosection";
 import Navbar from "@/components/landing/navbar";
 import Search from "@/components/landing/search";
 import Testimonials from "@/components/landing/testimonials";
+import CTA from "@/components/landing/cta";
 import React from "react";
 
 const Page = () => {
   return (
-    <div className="relative w-full grid min-h-screen grid-cols-[1fr_auto_1fr] grid-rows-[auto_1px_auto_1px_auto_1px_auto_1px_auto_1px_auto_1px_auto] bg-[#F5F5F5] dark:bg-background font-[family-name:var(--font-inter-tight)] overflow-hidden">
+    <div className="relative w-full grid min-h-screen grid-cols-[1fr_auto_1fr] grid-rows-[auto_1px_auto_1px_auto_1px_auto_1px_auto_1px_auto_1px_auto_1px_auto] bg-[#F5F5F5] dark:bg-background font-(family-name:--font-inter-tight) overflow-hidden">
       {/* Row 1: Navbar */}
       <div className="col-start-2 row-start-1 flex w-[95vw] md:w-[90vw] px-3 sm:px-6 py-3 flex-col relative overflow-hidden">
         <Navbar />
@@ -52,8 +53,15 @@ const Page = () => {
 
       <div className="pointer-events-none col-span-full col-start-1 row-start-12 border-b-2 border-dashed" />
 
-      {/* Row 7: Footer */}
-      <div className="col-start-2 row-start-13 flex flex-col w-[95vw] md:w-[90vw] px-3 sm:px-6 py-6">
+      {/* Row 7: CTA Section */}
+      <div className="col-start-2 row-start-13 flex flex-col w-[95vw] md:w-[90vw] px-3 sm:px-6">
+        <CTA />
+      </div>
+
+      <div className="pointer-events-none col-span-full col-start-1 row-start-14 border-b-2 border-dashed" />
+
+      {/* Row 8: Footer */}
+      <div className="col-start-2 row-start-15 flex flex-col w-[95vw] md:w-[90vw] px-3 sm:px-6 py-6">
         <Footer />
       </div>
 

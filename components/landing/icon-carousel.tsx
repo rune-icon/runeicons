@@ -63,9 +63,9 @@ const IconCarousel = () => {
 
   return (
     <div className="flex flex-col justify-between h-full  w-full self-stretch">
-      <div className="flex mask-r-from-90% mask-l-from-90% items-center gap-4 px-4 py-3 bg-muted/5 min-h-[56px] overflow-x-auto no-scrollbar">
+      <div className="  flex mask-r-from-90% mask-l-from-90% items-center gap-2 px-4  bg-muted/5 overflow-x-auto no-scrollbar">
         {/* Animation Group */}
-        <div className="flex items-center h-8 bg-background border rounded-full shadow-sm shrink-0 overflow-hidden">
+        <div className="flex items-center h-8 bg-background border rounded-md shadow-sm shrink-0 overflow-hidden">
           <Select value={animation} onValueChange={setAnimation}>
             <SelectTrigger className="w-24 h-full text-[10px] sm:text-xs gap-1 border-none shadow-none focus:ring-0 rounded-none hover:bg-accent transition-colors justify-between shrink-0 px-3">
               <SelectValue placeholder="Anim" />
@@ -80,7 +80,7 @@ const IconCarousel = () => {
         </div>
 
         {/* Stroke Group */}
-        <div className="flex items-center border bg-background rounded-full shadow-sm h-8 overflow-hidden shrink-0">
+        <div className="flex items-center border bg-background rounded-md shadow-sm h-8 overflow-hidden shrink-0">
           <Button
             variant="ghost"
             size="icon"
@@ -103,7 +103,7 @@ const IconCarousel = () => {
         </div>
 
         {/* Color Group */}
-        <div className="flex items-center gap-2 px-3 h-8 bg-background border rounded-full shadow-sm shrink-0">
+        <div className="flex items-center gap-2 px-3 h-8 bg-background border rounded-md shadow-sm shrink-0">
           {COLORS.map((c) => (
             <button
               key={c.value}
@@ -119,7 +119,7 @@ const IconCarousel = () => {
         </div>
 
         {/* Size Group */}
-        <div className="flex items-center gap-3 ml-auto min-w-[110px] h-8 px-3 bg-background border rounded-full shadow-sm shrink-0">
+        <div className="flex items-center gap-3 ml-auto min-w-[110px] h-8 px-3 bg-background border rounded-md shadow-sm shrink-0">
           <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-tight whitespace-nowrap">Size</span>
           <Slider
             value={[iconSize]}
