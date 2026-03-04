@@ -163,7 +163,7 @@ const Testimonials = () => {
         </div>
         <div className="flex flex-col sm:flex-row items-start gap-6 sm:gap-10">
           <div className="flex flex-col items-start">
-            <span className="text-4xl font-bold text-foreground tracking-tight">
+            <span className="text-4xl font-semibold text-foreground tracking-tight">
               1.2k+
             </span>
             <div className="flex items-center gap-1.5 mt-1">
@@ -183,7 +183,7 @@ const Testimonials = () => {
             </div>
           </div>
           <div className="flex flex-col items-start">
-            <span className="text-4xl font-bold text-foreground tracking-tight">
+            <span className="text-4xl font-semibold text-foreground tracking-tight">
               {stars}
             </span>
             <div className="flex items-center gap-1.5 mt-1">

@@ -21,14 +21,16 @@ const BentoCard = ({
       <div className={`flex-1 min-h-0 flex justify-center items-center p-3 md:p-6 overflow-hidden ${graphicClassName}`}>
         {children}
       </div>
-      <div className="p-4 md:p-8 pt-0 mt-auto shrink-0">
-        <h3 className="text-sm md:text-md font-semibold mb-1">
-          {title}
-        </h3>
-        <p className="text-sm md:text-md text-muted-foreground">
-          {description}
-        </p>
-      </div>
+      {(title || description) && (
+        <div className="p-4 md:p-8 pt-0 mt-auto shrink-0">
+          <h3 className="text-sm md:text-md font-semibold mb-1">
+            {title}
+          </h3>
+          <p className="text-sm md:text-md text-muted-foreground">
+            {description}
+          </p>
+        </div>
+      )}
     </div>
   );
 };

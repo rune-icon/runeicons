@@ -52,7 +52,7 @@ const Search = () => {
               <br />
               <span className="text-blue-400">Discover Icons</span>
             </h2>
-            <p className="text-lg md:text-xl leading-relaxed text-white/80 max-w-md">
+            <p className=" text-sm text-muted-foreground sm:text-base leading-relaxed max-w-md">
               Quickly find the perfect icon using smart search, filters,
               and organized categories.
             </p>

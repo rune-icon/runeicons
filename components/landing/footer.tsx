@@ -55,7 +55,7 @@ const Footer = () => {
       <div
         className="border w-full rounded-3xl min-h-80 bg-background p-6 sm:p-10 md:p-16"
       >
-        <div className="mx-auto max-w-7xl">
+        <div className="mx-auto w-full">
           <div className="grid gap-12 md:grid-cols-5">
             <div className="md:col-span-2">
               <Link
