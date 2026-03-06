@@ -1,55 +1,42 @@
 "use client";
-import { motion } from "framer-motion";
 import { useState } from "react";
-import { Layers, ArrowRight, Layout, Users } from "lucide-react";
+
+import { motion } from "framer-motion";
+import { ArrowRight, Layers, Layout, Users } from "lucide-react";
 
 const TabBackgroundAnimation = () => {
   const arr = [Layers, ArrowRight, Layout, Users];
   const [active, setActive] = useState(0);
 
   return (
-    <div className="bg-white rounded-full">
+    <div className="rounded-xl bg-white dark:bg-zinc-900">
+      <div className="flex w-full gap-1 rounded-xl bg-black/10 p-1 shadow-[0px_1px_0px_rgba(255,255,255,0.25),inset_0px_1px_2px_rgba(0,0,0,0.15)] dark:bg-white/10 dark:shadow-[0px_1px_0px_rgba(0,0,0,0.25),inset_0px_1px_2px_rgba(255,255,255,0.08)]">
+        {arr.map((Icon, i) => (
+          <button
+            key={i}
+            onMouseEnter={() => setActive(i)}
+            className="relative flex flex-1 cursor-pointer items-center justify-center py-3"
+          >
+            {active === i && (
+              <motion.div
+                layoutId="highlight"
+                className="absolute inset-0 rounded-xl bg-zinc-100 shadow-[0.222px_0.222px_0.314px_-0.5px_rgba(0,0,0,0.2),0.605px_0.605px_0.856px_-1px_rgba(0,0,0,0.18),1.329px_1.329px_1.88px_-1.5px_rgba(0,0,0,0.25),2.95px_2.95px_4.172px_-2px_rgba(0,0,0,0.1),2.5px_2.5px_3px_-2.5px_rgba(0,0,0,0.15),-0.5px_-0.5px_0px_rgba(0,0,0,0.1),inset_0.5px_0.5px_1px_#FFFFFF,inset_-0.5px_-0.5px_1px_rgba(0,0,0,0.15)] dark:bg-zinc-800 dark:shadow-[0.222px_0.222px_0.314px_-0.5px_rgba(0,0,0,0.35),0.605px_0.605px_0.856px_-1px_rgba(0,0,0,0.3),1.329px_1.329px_1.88px_-1.5px_rgba(0,0,0,0.35),2.95px_2.95px_4.172px_-2px_rgba(0,0,0,0.28),2.5px_2.5px_3px_-2.5px_rgba(0,0,0,0.35),inset_0.5px_0.5px_1px_rgba(255,255,255,0.08),inset_-0.5px_-0.5px_1px_rgba(0,0,0,0.4)]"
+                initial={{ scale: 1 }}
+                animate={{ scale: 1.3 }}
+                transition={{
+                  type: "spring",
+                  stiffness: 500,
+                  damping: 40,
+                }}
+              />
+            )}
 
-    
-    <div
-      style={{
-        background: "rgba(0, 0, 0, 0.08)",
-        boxShadow:
-          "0px 1px 0px rgba(255, 255, 255, 0.25), inset 0px 1px 2px rgba(0, 0, 0, 0.15)",
-      }}
-      className="flex p-1 rounded-full w-full gap-1"
-    >
-      {arr.map((Icon, i) => (
-        <button
-          key={i}
-          onMouseEnter={() => setActive(i)}
-          className="relative flex-1 py-3 text-white cursor-pointer flex items-center justify-center"
-        >
-          {active === i && (
-            <motion.div
-              style={{
-                background: "#F4F4F4",
-                boxShadow:
-                  "0.222px 0.222px 0.314px -0.5px rgba(0, 0, 0, 0.2), 0.605px 0.605px 0.856px -1px rgba(0, 0, 0, 0.18), 1.329px 1.329px 1.88px -1.5px rgba(0, 0, 0, 0.25), 2.95px 2.95px 4.172px -2px rgba(0, 0, 0, 0.1), 2.5px 2.5px 3px -2.5px rgba(0, 0, 0, 0.15), -0.5px -0.5px 0px rgba(0, 0, 0, 0.1), inset 0.5px 0.5px 1px #FFFFFF, inset -0.5px -0.5px 1px rgba(0, 0, 0, 0.15)",
-              }}
-              layoutId="highlight"
-              className="absolute inset-0 bg-white rounded-full"
-              initial={{ scale: 1 }}
-              animate={{ scale: 1.3 }}
-              transition={{
-                type: "spring",
-                stiffness: 500,
-                damping: 40,
-              }}
-            />
-          )}
-
-          <span className="relative z-10 font-extralight mix-blend-difference">
-            <Icon className="w-5 h-5" />
-          </span>
-        </button>
-      ))}
-    </div>
+            <span className="relative z-10 font-extralight text-black dark:text-white">
+              <Icon className="h-5 w-5" />
+            </span>
+          </button>
+        ))}
+      </div>
     </div>
   );
 };

@@ -3,7 +3,7 @@ import React from "react";
 const BentoCenterSvg = () => {
   return (
     <svg
-     className="h-[70vh] w-full"
+      className="h-[70vh] w-full invert dark:invert-0"
       viewBox="0 0 176 403"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

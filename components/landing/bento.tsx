@@ -50,7 +50,7 @@ const BentoCard = ({
 
 const Bento = () => {
   return (
-    <section className="my-12 w-full">
+    <section className="w-full">
       <div className="mx-auto grid min-h-[50vh] w-full grid-cols-1 gap-2 md:gap-4 lg:h-[90vh] lg:grid-cols-12">
         <div className="grid min-h-0 grid-cols-1 gap-2 md:gap-4 lg:col-span-4 lg:grid-rows-[6fr_4fr]">
           <BentoCard

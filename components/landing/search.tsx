@@ -1,8 +1,35 @@
-"use client"
-import { Input } from "../ui/input";
-import { Search as SearchIcon, Heart, Star, Settings, Bell, User, Home, Package, Zap, Lock, Share2, Trash2, Edit, Eye, Copy, Check, X, Download, Upload, Menu, Calendar, Mail, Phone, Map, Clock } from "lucide-react";
+"use client";
+import {
+  Bell,
+  Calendar,
+  Check,
+  Clock,
+  Copy,
+  Download,
+  Edit,
+  Eye,
+  Heart,
+  Home,
+  Lock,
+  Mail,
+  Map,
+  Menu,
+  Package,
+  Phone,
+  Search as SearchIcon,
+  Settings,
+  Share2,
+  Star,
+  Trash2,
+  Upload,
+  User,
+  X,
+  Zap,
+} from "lucide-react";
+
 import TabBackgroundAnimation from "../pixel-perfect/tab-background-animation";
 import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 
 const ICONS = [
   { Icon: SearchIcon, name: "Search" },
@@ -33,68 +60,63 @@ const ICONS = [
 
 const Search = () => {
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row gap-5 py-6">
+    <div className="flex min-h-screen flex-col gap-5 py-6 lg:flex-row">
       {/* Left - Hero text card */}
-      <div className="lg:w-1/2 min-h-[400px] lg:min-h-0">
-        <div
-          className="relative w-full h-full rounded-2xl overflow-hidden bg-cover bg-center min-h-[400px]"
-          style={{
-            backgroundImage:
-              "url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1964&auto=format&fit=crop')",
-          }}
-        >
-          {/* Dark gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-          {/* Text content */}
-          <div className="relative h-full flex flex-col justify-end gap-4 p-8 md:p-10">
-            <h2 className="text-4xl md:text-5xl font-medium text-white leading-tight">
-              <span>Search & </span>
-              <br />
-              <span className="text-blue-400">Discover Icons</span>
-            </h2>
-            <p className=" text-sm text-muted-foreground sm:text-base leading-relaxed max-w-md">
-              Quickly find the perfect icon using smart search, filters,
-              and organized categories.
-            </p>
-          </div>
+      <div className="min-h-[400px] lg:min-h-0 lg:w-1/2">
+        <div className="bg-background relative h-full min-h-[400px] w-full overflow-hidden rounded-2xl bg-center">
+          <img
+            className="h-full w-full object-cover"
+            src="
+          https://i.pinimg.com/1200x/d3/49/0e/d3490eaa1637583dca52fe021fa38d19.jpg"
+            alt=""
+          />
         </div>
       </div>
 
       {/* Right - Search panel */}
       <div className="lg:w-1/2">
         <div
-          className="h-full w-full bg-cover bg-center flex items-center justify-center rounded-2xl p-6 md:p-10"
-          style={{ backgroundImage: "url('https://i.pinimg.com/1200x/6c/68/41/6c684112e642bae6412135eaf83892c9.jpg')" }}
+          className="flex h-full w-full items-center justify-center rounded-2xl bg-cover bg-center p-6 md:p-10"
+          style={{
+            backgroundImage: "url('/landing/search-gradient2.png')",
+          }}
         >
-          <div className="w-full max-w-md flex flex-col gap-3">
-            {/* Search bar */}
-            <div className="bg-background p-4 rounded-3xl shadow-lg">
-              <div className="relative flex items-center">
-                <SearchIcon className="absolute left-3 w-4 h-4 text-muted-foreground" />
+          <div className="w-full max-w-md">
+            <div className="bg-background/20 border-border/50 rounded-3xl border p-4 shadow-lg backdrop-blur-[2px]">
+              <div className="border-input bg-background/80 focus-within:ring-ring/50 flex h-11 items-center overflow-hidden rounded-xl border focus-within:ring-2">
+                <div className="text-muted-foreground flex h-full items-center px-3 dark:text-white/80">
+                  <SearchIcon className="h-4 w-4" />
+                </div>
                 <Input
                   placeholder="Search for icons..."
-                  className="pl-10 pr-24 h-11 bg-secondary/20 border-muted rounded-xl"
+                  className="text-foreground placeholder:text-muted-foreground h-full flex-1 border-0 bg-transparent pl-2 shadow-none focus-visible:ring-0 dark:text-white dark:placeholder:text-white/70"
                 />
-                <Button className="absolute right-1.5 bg-blue-600 hover:bg-blue-700 text-white">
+                <Button className="h-full rounded-none bg-white px-4 text-black hover:bg-white/90 dark:bg-zinc-900 dark:text-white dark:hover:bg-zinc-800">
                   Search
                 </Button>
               </div>
 
               {/* Icons grid - flexible wrapping */}
-              <div className="flex flex-wrap gap-3 justify-center my-4 mt-6">
+              <div className="my-4 mt-6 flex flex-wrap justify-center gap-3">
                 {ICONS.map(({ Icon, name }, index) => (
-                  <div key={index} className={`flex flex-col items-center gap-1 w-14 ${index >= 9 ? "hidden sm:flex" : ""}`}>
-                    <div className="w-10 h-10 rounded-lg bg-muted/50 hover:bg-muted flex items-center justify-center transition-colors cursor-pointer">
-                      <Icon className="w-5 h-5 text-foreground" />
+                  <div
+                    key={index}
+                    className={`flex w-14 flex-col items-center gap-1 ${index >= 9 ? "hidden sm:flex" : ""}`}
+                  >
+                    <div className="bg-muted/50 hover:bg-muted flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg transition-colors">
+                      <Icon className="text-foreground h-5 w-5" />
                     </div>
-                    <span className="text-[10px] text-muted-foreground truncate w-full text-center">{name}</span>
+                    <span className="w-full truncate text-center text-[10px] text-white/85">
+                      {name}
+                    </span>
                   </div>
                 ))}
               </div>
-            </div>
 
-            {/* Tab selector */}
-            <TabBackgroundAnimation />
+              <div className="border-border/40 mt-4 border-t pt-4">
+                <TabBackgroundAnimation />
+              </div>
+            </div>
           </div>
         </div>
       </div>

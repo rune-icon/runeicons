@@ -35,7 +35,7 @@ const ICONS = [
 
 const COLORS = [
   { value: "currentColor", label: "Default", bg: "bg-foreground" },
-  { value: "#2563eb", label: "Blue", bg: "bg-blue-600" },
+  { value: "#1346E7", label: "Blue", bg: "bg-blue-600" },
   { value: "#dc2626", label: "Red", bg: "bg-red-600" },
   { value: "#16a34a", label: "Green", bg: "bg-green-600" },
   { value: "#9333ea", label: "Purple", bg: "bg-purple-600" },

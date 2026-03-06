@@ -26,19 +26,12 @@ const CTA = () => {
 
   return (
     <section className="relative h-full w-full overflow-hidden rounded-3xl py-24">
-      {/* Background Layer */}
       <div className="pointer-events-none absolute inset-0 z-0">
         <div
           aria-hidden
           className="absolute inset-0 z-0 [background:radial-gradient(125%_125%_at_50%_0%,transparent_40%,var(--color-blue-600),var(--color-white)_100%)]"
         />
 
-        {/* Soft Mesh Gradients */}
-        <div className="absolute top-1/2 left-1/2 h-full w-full -translate-x-1/2 -translate-y-1/2 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.03)_0%,transparent_70%)]" />
-        <div className="absolute top-0 right-0 h-[500px] w-[500px] rounded-full bg-blue-500/2 blur-[120px]" />
-        <div className="absolute bottom-0 left-0 h-[500px] w-[500px] rounded-full bg-purple-500/2 blur-[120px]" />
-
-        {/* Subtle Grid */}
         <div className="absolute inset-0 mask-[radial-gradient(ellipse_at_center,white,transparent_80%)] opacity-[0.03] dark:opacity-[0.05]">
           <svg className="h-full w-full" xmlns="http://www.w3.org/2000/svg">
             <defs>

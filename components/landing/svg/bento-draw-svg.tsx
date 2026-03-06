@@ -1,8 +1,9 @@
 "use client";
+import React from "react";
+
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { MotionPathPlugin } from "gsap/MotionPathPlugin";
-import React from "react";
 
 gsap.registerPlugin(MotionPathPlugin);
 
@@ -15,7 +16,7 @@ const IconDrawSvg = () => {
         motionPath: {
           path: ".path",
           align: ".path",
-          alignOrigin: [0,0.5],
+          alignOrigin: [0, 1.5],
         },
         repeat: -1,
         yoyo: true,
@@ -42,12 +43,8 @@ const IconDrawSvg = () => {
   });
 
   return (
-    <div className="flex justify-center items-center">
-      <svg
-        viewBox="0 0 473 471"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
+    <div className="flex items-center justify-center invert dark:invert-0">
+      <svg viewBox="0 0 473 471" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path
           d="M10.3978 275L184.398 174.541C190.898 171.388 206.198 166.974 215.398 174.541C224.598 182.108 386.898 274.496 466.898 319.745C470.126 323.048 473.949 330.346 466.898 335.866C475.698 339.758 470.564 346.436 466.898 349.288C469.898 351.359 474.098 356.9 466.898 362.5C459.698 368.1 343.565 434.308 286.398 466.712C281.231 469.116 268.398 472.481 258.398 466.712C248.398 460.942 86.5647 367.505 6.89799 321.508C2.56466 318.709 -4.50205 313.004 5.89795 307C2.56063 304.792 1.52853 302.023 1.39786 301.5C-0.102051 295.5 2.42103 293.5 4.46738 292.5C0.41798 287.991 -0.833276 281.484 10.3978 275Z"
           fill="black"
