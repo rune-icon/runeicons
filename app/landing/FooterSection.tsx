@@ -1,4 +1,4 @@
-import { FooterLogo } from "@/components/icons/svg";
+import { FooterLogo } from "@/components/icon-page/simple-svg";
 
 const FOOTER_COLUMNS = [
   {

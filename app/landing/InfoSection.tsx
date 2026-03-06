@@ -18,7 +18,7 @@ import {
   SearchIcon,
   StarIcon,
   WatermelonIcon,
-} from "@/components/icons/svg";
+} from "@/components/icon-page/simple-svg";
 import infoBg from "@/public/images/info-bg.png";
 
 export default function InfoSection() {

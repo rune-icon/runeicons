@@ -1,4 +1,4 @@
-import { FeatureLeafIcon, FeatureStarIcon } from "@/components/icons/svg";
+import { FeatureLeafIcon, FeatureStarIcon } from "@/components/icon-page/simple-svg";
 
 type Feature = {
   number: string;

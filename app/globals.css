@@ -1,32 +1,268 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-@import "shadcn/tailwind.css";
 
-/* @custom-variant dark (&:is(.dark *)); */
-@variant dark (&:where(.dark, .dark *));
+@custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: #f5f5f5;
-  --foreground: #171717;
-  --borderColor: #c1c1c1;
-  --primary: #1346e7;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.145 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.145 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.985 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.396 0.141 25.723);
+  --destructive-foreground: oklch(0.637 0.237 25.331);
+  --border: oklch(0.269 0 0);
+  --input: oklch(0.269 0 0);
+  --ring: oklch(0.439 0 0);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(0.269 0 0);
+  --sidebar-ring: oklch(0.439 0 0);
 }
 
 @theme inline {
+  --font-sans: "Geist", "Geist Fallback";
+  --font-mono: "Geist Mono", "Geist Mono Fallback";
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-borderColor: var(--borderColor);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
-  --font-sans:
-    var(--font-inter), var(--font-geist-sans), ui-sans-serif, system-ui;
-  --font-mono:
-    var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco,
-    Consolas, "Liberation Mono", "Courier New", monospace;
-  --font-gemunu: var(--font-gemunu-libre), sans-serif;
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.slider::-webkit-slider-thumb {
+  @apply appearance-none bg-foreground/20 h-4 w-[3px] rounded-full;
+}
+
+.group:hover .slider::-webkit-slider-thumb {
+  @apply bg-foreground/30;
+}
+
+.slider::-moz-range-thumb {
+  @apply appearance-none bg-foreground/20 h-4 w-[3px] rounded-full border-0;
+}
+
+.group:hover .slider::-moz-range-thumb {
+  @apply bg-foreground/30;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@layer components {
+  .gradient-wrapper {
+    @apply relative w-[140px] h-[140px] aspect-square flex items-center justify-center shrink-0;
+  }
+
+  .picker-background {
+    @apply relative w-[calc(100%-5px)] h-[calc(100%-5px)] rounded-full overflow-visible z-20;
+  }
+
+  .color-dot {
+    @apply absolute top-1/2 left-1/2 w-8 h-8 rounded-full cursor-pointer;
+    translate: -50% -50%;
+  }
+
+  .color-dot-ring {
+    @apply absolute inset-0 border-2 border-white rounded-full mix-blend-overlay pointer-events-none;
+  }
+
+  .gradient-circle {
+    @apply absolute top-1/2 left-1/2 w-[150px] h-[150px] rounded-full pointer-events-none mix-blend-color-burn;
+    translate: -50% -50%;
+  }
+}
+
+/* High-Fidelity Ruler Ticks */
+.ruler-h-ticks {
+  background-image: repeating-linear-gradient(
+      to right,
+      hsl(var(--muted-foreground) / 0.6) 0 1px,
+      transparent 1px 100px
+    ),
+    repeating-linear-gradient(
+      to right,
+      hsl(var(--muted-foreground) / 0.4) 0 1px,
+      transparent 1px 50px
+    ),
+    repeating-linear-gradient(
+      to right,
+      hsl(var(--muted-foreground) / 0.25) 0 1px,
+      transparent 1px 10px
+    );
+}
+
+.ruler-top-ticks {
+  background-position: bottom left;
+  background-repeat: repeat-x;
+  background-size:
+    100% 12px,
+    100% 8px,
+    100% 4px;
+}
+
+.ruler-bottom-ticks {
+  background-position: top left;
+  background-repeat: repeat-x;
+  background-size:
+    100% 12px,
+    100% 8px,
+    100% 4px;
+}
+
+.ruler-v-ticks {
+  background-image: repeating-linear-gradient(
+      to bottom,
+      hsl(var(--muted-foreground) / 0.6) 0 1px,
+      transparent 1px 100px
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      hsl(var(--muted-foreground) / 0.4) 0 1px,
+      transparent 1px 50px
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      hsl(var(--muted-foreground) / 0.25) 0 1px,
+      transparent 1px 10px
+    );
+}
+
+.ruler-left-ticks {
+  background-position: top right;
+  background-repeat: repeat-y;
+  background-size:
+    12px 100%,
+    8px 100%,
+    4px 100%;
+}
+
+.ruler-right-ticks {
+  background-position: top left;
+  background-repeat: repeat-y;
+  background-size:
+    12px 100%,
+    8px 100%,
+    4px 100%;
+}
+
+.canvas-grid {
+  background-image: linear-gradient(
+      to right,
+      hsl(var(--muted) / 0.3) 1px,
+      transparent 1px
+    ),
+    linear-gradient(to bottom, hsl(var(--muted) / 0.3) 1px, transparent 1px);
+  background-size: 50px 50px;
 }
