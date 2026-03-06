@@ -1,13 +1,15 @@
 "use client";
 
-import LightLogo from "@/public/logo/light";
+import { useState } from "react";
+
+import Link from "next/link";
+
+import { GithubIcon, Twitter } from "lucide-react";
+import { motion, useMotionValueEvent, useScroll } from "motion/react";
+
 import { Button } from "@/components/ui/button";
 import { LightDarkMode } from "@/components/ui/light-dark-mode";
-import { StarsCount } from "@/components/landing/stars-count";
-import { GithubIcon } from "lucide-react";
-import Link from "next/link";
-import React, { useEffect, useState } from "react";
-import { motion, useMotionValueEvent, useScroll } from "motion/react";
+import LightLogo from "@/public/logo/light";
 
 const Navbar = () => {
   const Links = ["About Devs", "Sponsors"];
@@ -25,7 +27,7 @@ const Navbar = () => {
 
   return (
     <motion.div
-      className="fixed top-0 py-3 sm:py-5 flex justify-between items-center bg-[#F5F5F5] dark:bg-background border-b-2 border-dashed inset-x-0 px-4 sm:px-8 md:px-24 z-50"
+      className="dark:bg-background fixed inset-x-0 top-0 z-50 flex items-center justify-between border-b-2 border-dashed bg-[#F5F5F5] px-4 py-3 sm:px-8 sm:py-5 md:px-24"
       animate={hidden ? "hidden" : "visible"}
       variants={{
         visible: { y: 0 },
@@ -34,25 +36,39 @@ const Navbar = () => {
       transition={{ duration: 0.3, ease: "easeInOut" }}
     >
       <LightLogo />
-      <div className="flex items-center gap-3 sm:gap-6">
-        <ul className="hidden md:flex gap-10">
+      <div className="flex items-center gap-2">
+        <ul className="hidden gap-2 md:flex">
           {Links.map((link) => (
-            <li
+            <Button
+              variant={"ghost"}
               key={link}
-              className="text-sm font-medium text-muted-foreground cursor-pointer hover:text-foreground transition-colors"
+              className="text-muted-foreground hover:text-foreground cursor-pointer text-sm font-medium transition-colors"
             >
               {link}
-            </li>
+            </Button>
           ))}
         </ul>
         <div className="flex items-center gap-2">
-          <Link href="https://github.com/AitijhyaModak/rune-icons" target="_blank" rel="noopener noreferrer">
+          <Link
+            href="https://github.com/AitijhyaModak/rune-icons"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <Button
-              className="relative overflow-hidden text-xs group"
+              className="group relative overflow-hidden text-xs"
               aria-label="GitHub"
             >
               <GithubIcon className="size-4" />
               {/* <StarsCount /> */}1000+
+            </Button>
+          </Link>
+          <Link
+            href="https://x.com/RuneIcon"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Button className="text-xs" aria-label="Rune on X">
+              <Twitter />
             </Button>
           </Link>
           <LightDarkMode />
@@ -63,4 +79,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-

@@ -1,5 +1,7 @@
 import React from "react";
 
+import Link from "next/link";
+
 import { Check, Github } from "lucide-react";
 
 import Mascot from "@/public/hersection.tsx/mascot";
@@ -49,9 +51,15 @@ const HeroSection = () => {
 
         <div className="mt-8 flex flex-wrap gap-3 sm:gap-6 lg:mt-14">
           <Button className="py-5">Browse Icons</Button>
-          <Button variant="ghost" className="py-5">
-            Star On Github <Github />
-          </Button>
+          <Link
+            href="https://github.com/rune-icon/runeicons"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Button variant="ghost" className="py-5">
+              Star On Github <Github />
+            </Button>
+          </Link>
         </div>
       </div>
       <div className="hidden items-center justify-center lg:flex">

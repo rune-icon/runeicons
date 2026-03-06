@@ -1,75 +1,75 @@
+import React from "react";
+
 import Bento from "@/components/landing/bento";
+import CTA from "@/components/landing/cta";
 import Faq from "@/components/landing/faq";
 import Footer from "@/components/landing/footer";
 import HeroSection from "@/components/landing/herosection";
 import Navbar from "@/components/landing/navbar";
 import Search from "@/components/landing/search";
 import Testimonials from "@/components/landing/testimonials";
-import CTA from "@/components/landing/cta";
-import React from "react";
 
 const Page = () => {
   return (
-    <div className="relative w-full grid min-h-screen grid-cols-[1fr_auto_1fr] grid-rows-[auto_1px_auto_1px_auto_1px_auto_1px_auto_1px_auto_1px_auto_1px_auto] bg-[#F5F5F5] dark:bg-background font-(family-name:--font-inter-tight) overflow-hidden">
+    <div className="dark:bg-background relative grid min-h-screen w-full grid-cols-[1fr_auto_1fr] grid-rows-[auto_1px_auto_1px_auto_1px_auto_1px_auto_1px_auto_1px_auto_1px_auto] overflow-hidden bg-[#F5F5F5] font-(family-name:--font-inter-tight)">
       {/* Row 1: Navbar */}
-      <div className="col-start-2 row-start-1 flex w-[95vw] md:w-[90vw] px-3 sm:px-6 py-3 flex-col relative overflow-hidden">
+      <div className="relative col-start-2 row-start-1 flex w-[95vw] flex-col overflow-hidden px-3 py-3 sm:px-6 md:w-[90vw]">
         <Navbar />
       </div>
 
       <div className="pointer-events-none col-span-full col-start-1 row-start-2 border-b-2 border-dashed" />
 
       {/* Row 2: Hero Section */}
-      <div className="col-start-2 row-start-3 flex flex-col w-[95vw] md:w-[90vw] px-3 sm:px-6 pt-20 gap-2">
+      <div className="col-start-2 row-start-3 flex w-[95vw] flex-col gap-2 px-3 pt-20 sm:px-6 md:w-[90vw]">
         <HeroSection />
       </div>
 
       <div className="pointer-events-none col-span-full col-start-1 row-start-4 border-b-2 border-dashed" />
 
       {/* Row 3: Search Section */}
-      <div className="col-start-2 row-start-5 flex flex-col w-[95vw] md:w-[90vw] px-3 sm:px-6 gap-2">
+      <div className="col-start-2 row-start-5 flex w-[95vw] flex-col gap-2 px-3 sm:px-6 md:w-[90vw]">
         <Search />
       </div>
 
       <div className="pointer-events-none col-span-full col-start-1 row-start-6 border-b-2 border-dashed" />
 
       {/* Row 4: Bento Section */}
-      <div className="col-start-2 row-start-7 flex flex-col w-[95vw] md:w-[90vw] px-3 sm:px-6">
+      <div className="col-start-2 row-start-7 flex w-[95vw] flex-col px-3 sm:px-6 md:w-[90vw]">
         <Bento />
       </div>
 
       <div className="pointer-events-none col-span-full col-start-1 row-start-8 border-b-2 border-dashed" />
 
       {/* Row 5: Testimonials Section */}
-      <div className="col-start-2 row-start-9 flex flex-col w-[95vw] md:w-[90vw] px-3 sm:px-6">
+      <div className="col-start-2 row-start-9 flex w-[95vw] flex-col px-3 sm:px-6 md:w-[90vw]">
         <Testimonials />
       </div>
 
       <div className="pointer-events-none col-span-full col-start-1 row-start-10 border-b-2 border-dashed" />
 
       {/* Row 6: FAQ Section */}
-      <div className="col-start-2 row-start-11 flex flex-col w-[95vw] md:w-[90vw] px-3 sm:px-6">
+      <div className="col-start-2 row-start-11 flex w-[95vw] flex-col px-3 sm:px-6 md:w-[90vw]">
         <Faq />
       </div>
 
       <div className="pointer-events-none col-span-full col-start-1 row-start-12 border-b-2 border-dashed" />
 
       {/* Row 7: CTA Section */}
-      <div className="col-start-2 row-start-13 flex flex-col w-[95vw] md:w-[90vw] px-3 sm:px-6">
+      <div className="col-start-2 row-start-13 flex w-[95vw] flex-col overflow-hidden p-3 sm:p-6 md:w-[90vw]">
         <CTA />
       </div>
 
       <div className="pointer-events-none col-span-full col-start-1 row-start-14 border-b-2 border-dashed" />
 
       {/* Row 8: Footer */}
-      <div className="col-start-2 row-start-15 flex flex-col w-[95vw] md:w-[90vw] px-3 sm:px-6 py-6">
+      <div className="col-start-2 row-start-15 flex w-[95vw] flex-col px-3 py-6 sm:px-6 md:w-[90vw]">
         <Footer />
       </div>
 
       {/* Decorative side borders - border-x-2 */}
-      <div className="pointer-events-none col-start-2 row-span-full row-start-1 border-x-2 border-dashed z-50" />
+      <div className="pointer-events-none z-50 col-start-2 row-span-full row-start-1 border-x-2 border-dashed" />
     </div>
   );
 };
 
 export default Page;
-
