@@ -1,4 +1,8 @@
-import { HeroCatIcon, HeroGraphic, TickmarkIcon } from "@/components/icons/svg";
+import {
+  HeroCatIcon,
+  HeroGraphic,
+  TickmarkIcon,
+} from "@/components/icon-page/simple-svg";
 
 export default function HeroSection() {
   return (

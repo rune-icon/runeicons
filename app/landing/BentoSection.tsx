@@ -7,7 +7,7 @@ import {
   LeafIcon,
   PineIcon,
   SoundIcon,
-} from "@/components/icons/svg";
+} from "@/components/icon-page/simple-svg";
 import char1 from "@/public/images/char1.webp";
 import char2 from "@/public/images/char2.webp";
 import char3 from "@/public/images/char3.webp";

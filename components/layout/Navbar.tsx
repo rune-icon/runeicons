@@ -8,7 +8,7 @@ import {
   NavbarHeartIcon as HeartIcon,
   LogoSvg,
   X,
-} from "@/components/icons/svg";
+} from "@/components/icon-page/simple-svg";
 
 import ThemeToggle from "./ThemeToggle";
 

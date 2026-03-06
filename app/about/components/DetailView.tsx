@@ -75,7 +75,7 @@ const DetailView = ({
             exit={{ opacity: 0 }}
             className="group relative z-20 flex h-full w-[70%] items-center justify-center overflow-hidden bg-[#0A0A0A]/90 backdrop-blur-xl"
             onClick={onClose}
-            style={{ borderRadius: 0 }}
+            style={{ borderRadius: 0 } as any}
             transition={{
               duration: 0.4,
             }}
