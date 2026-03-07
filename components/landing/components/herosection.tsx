@@ -4,10 +4,10 @@ import Link from "next/link";
 
 import { Check, Github } from "lucide-react";
 
-import Mascot from "@/public/hersection.tsx/mascot";
+import Mascot from "@/components/landing/svg/mascot";
 
-import { Button } from "../ui/button";
-import HeroSvg from "./svg/hero-svg";
+import { Button } from "../../ui/button";
+import HeroSvg from "../svg/hero-svg";
 
 const HeroSection = () => {
   return (

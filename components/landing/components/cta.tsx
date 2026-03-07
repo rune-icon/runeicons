@@ -26,12 +26,13 @@ const CTA = () => {
 
   return (
     <section className="relative h-full w-full overflow-hidden rounded-3xl py-24">
+      {" "}
+      <img
+        src="/landing/gradient/cta-gradient.png"
+        className="absolute inset-0 w-full object-cover"
+        alt=""
+      />
       <div className="pointer-events-none absolute inset-0 z-0">
-        <div
-          aria-hidden
-          className="absolute inset-0 z-0 [background:radial-gradient(125%_125%_at_50%_0%,transparent_40%,var(--color-blue-600),var(--color-white)_100%)]"
-        />
-
         <div className="absolute inset-0 mask-[radial-gradient(ellipse_at_center,white,transparent_80%)] opacity-[0.03] dark:opacity-[0.05]">
           <svg className="h-full w-full" xmlns="http://www.w3.org/2000/svg">
             <defs>
@@ -57,6 +58,7 @@ const CTA = () => {
         {icons.map((item, i) => (
           <motion.div
             key={i}
+            className="text-white/75 drop-shadow-[0_1px_2px_rgba(0,0,0,0.35)]"
             initial={{ opacity: 0 }}
             animate={{
               opacity: [0.1, 0.4, 0.1],
@@ -80,7 +82,6 @@ const CTA = () => {
           </motion.div>
         ))}
       </div>
-
       <div className="relative z-10 mx-auto flex max-w-4xl flex-col items-center text-center">
         {/* Heading Style (Synced with HeroSection) */}
         <motion.h2
@@ -90,7 +91,7 @@ const CTA = () => {
           transition={{ duration: 0.8, delay: 0.1 }}
           className="mb-5 text-base leading-[1.1] font-medium tracking-tight sm:text-lg md:text-xl lg:text-3xl"
         >
-          <span className="from-foreground to-foreground/50 bg-linear-to-b bg-clip-text text-transparent">
+          <span className="bg-linear-to-b from-white to-white/70 bg-clip-text text-transparent">
             Ready to build something beautiful?
           </span>
         </motion.h2>
@@ -101,7 +102,7 @@ const CTA = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="text-muted-foreground mb-8 max-w-lg text-[10px] leading-5 sm:text-xs"
+          className="mb-8 max-w-lg text-[10px] leading-5 text-white/85 sm:text-xs dark:text-white/80"
         >
           Join a community of forward-thinking creators using Rune <br /> to
           define the next generation of web interfaces.
@@ -114,7 +115,18 @@ const CTA = () => {
           transition={{ duration: 0.8, delay: 0.3 }}
           className="flex flex-col items-center justify-center gap-4 sm:flex-row"
         >
-          <Button>Get Started</Button> <Button>Get Started</Button>
+          <Button
+            size={"sm"}
+            className="border border-white/80 bg-white text-xs text-black shadow-sm hover:bg-white/90"
+          >
+            Get Started
+          </Button>
+          <Button
+            size={"sm"}
+            className="border border-white/80 bg-white text-xs text-black shadow-sm hover:bg-white/90"
+          >
+            Get Started
+          </Button>
         </motion.div>
       </div>
     </section>

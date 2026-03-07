@@ -64,9 +64,9 @@ const IconCarousel = () => {
 
   return (
     <div className="flex h-full w-full flex-col justify-between self-stretch">
-      <div className="bg-muted/5 no-scrollbar flex items-center gap-2 overflow-x-auto mask-r-from-90% mask-l-from-90% px-4">
+      <div className="no-scrollbar flex h-12 items-center gap-2 overflow-x-auto mask-r-from-90% mask-l-from-90% px-4">
         {/* Animation Group */}
-        <div className="bg-background flex h-8 shrink-0 items-center rounded-md border shadow-sm">
+        <div className="flex h-8 shrink-0 items-center rounded-md border shadow-sm">
           <Select value={animation} onValueChange={setAnimation}>
             <SelectTrigger className="hover:bg-accent h-full w-24 shrink-0 justify-between gap-1 rounded-none border-none px-3 text-[10px] shadow-none transition-colors focus:ring-0 sm:text-xs">
               <SelectValue placeholder="Anim" />

@@ -1,13 +1,13 @@
 import React from "react";
 
-import Bento from "@/components/landing/bento";
-import CTA from "@/components/landing/cta";
-import Faq from "@/components/landing/faq";
-import Footer from "@/components/landing/footer";
-import HeroSection from "@/components/landing/herosection";
-import Navbar from "@/components/landing/navbar";
-import Search from "@/components/landing/search";
-import Testimonials from "@/components/landing/testimonials";
+import Bento from "@/components/landing/components/bento";
+import CTA from "@/components/landing/components/cta";
+import Faq from "@/components/landing/components/faq";
+import Footer from "@/components/landing/components/footer";
+import HeroSection from "@/components/landing/components/herosection";
+import Navbar from "@/components/landing/components/navbar";
+import Search from "@/components/landing/components/search";
+import Testimonials from "@/components/landing/components/testimonials";
 
 const Page = () => {
   return (

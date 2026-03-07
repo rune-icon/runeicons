@@ -27,9 +27,9 @@ import {
   Zap,
 } from "lucide-react";
 
-import TabBackgroundAnimation from "../pixel-perfect/tab-background-animation";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
+import TabBackgroundAnimation from "../../pixel-perfect/tab-background-animation";
+import { Button } from "../../ui/button";
+import { Input } from "../../ui/input";
 
 const ICONS = [
   { Icon: SearchIcon, name: "Search" },
