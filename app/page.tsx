@@ -22,7 +22,7 @@ const Page = () => {
       {/* Row 2: Hero Section */}
       <div
         id="home"
-        className="col-start-2 row-start-3 flex w-[95vw] scroll-mt-24 flex-col gap-2 px-3 pt-20 sm:px-6 md:w-[90vw]"
+        className="col-start-2 row-start-3 flex w-[95vw] scroll-mt-24 flex-col gap-2 px-3 pt-20 pb-10 sm:px-6 sm:pb-14 md:w-[90vw]"
       >
         <HeroSection />
       </div>
@@ -32,7 +32,7 @@ const Page = () => {
       {/* Row 3: Search Section */}
       <div
         id="search"
-        className="col-start-2 row-start-5 flex w-[95vw] scroll-mt-24 flex-col gap-2 px-3 sm:px-6 md:w-[90vw]"
+        className="col-start-2 row-start-5 flex w-[95vw] scroll-mt-24 flex-col gap-2 px-3 py-10 sm:px-6 sm:py-14 md:w-[90vw]"
       >
         <Search />
       </div>
@@ -42,7 +42,7 @@ const Page = () => {
       {/* Row 4: Bento Section */}
       <div
         id="features"
-        className="col-start-2 row-start-7 flex w-[95vw] scroll-mt-24 flex-col p-3 sm:p-6 md:w-[90vw]"
+        className="col-start-2 row-start-7 flex w-[95vw] scroll-mt-24 flex-col p-3 py-10 sm:p-6 sm:py-14 md:w-[90vw]"
       >
         <Bento />
       </div>
@@ -52,7 +52,7 @@ const Page = () => {
       {/* Row 5: Testimonials Section */}
       <div
         id="testimonials"
-        className="col-start-2 row-start-9 flex w-[95vw] scroll-mt-24 flex-col p-3 sm:p-6 md:w-[90vw]"
+        className="col-start-2 row-start-9 flex w-[95vw] scroll-mt-24 flex-col p-3 py-10 sm:p-6 sm:py-14 md:w-[90vw]"
       >
         <Testimonials />
       </div>
@@ -62,7 +62,7 @@ const Page = () => {
       {/* Row 6: FAQ Section */}
       <div
         id="faq"
-        className="col-start-2 row-start-11 flex w-[95vw] scroll-mt-24 flex-col px-3 sm:px-6 md:w-[90vw]"
+        className="col-start-2 row-start-11 flex w-[95vw] scroll-mt-24 flex-col px-3 py-10 sm:px-6 sm:py-14 md:w-[90vw]"
       >
         <Faq />
       </div>
@@ -70,14 +70,14 @@ const Page = () => {
       <div className="pointer-events-none col-span-full col-start-1 row-start-12 border-b-2 border-dashed" />
 
       {/* Row 7: CTA Section */}
-      <div className="col-start-2 row-start-13 flex w-[95vw] flex-col overflow-hidden p-3 sm:p-6 md:w-[90vw]">
+      <div className="col-start-2 row-start-13 flex w-[95vw] flex-col overflow-hidden p-3 py-10 sm:p-6 sm:py-14 md:w-[90vw]">
         <CTA />
       </div>
 
       <div className="pointer-events-none col-span-full col-start-1 row-start-14 border-b-2 border-dashed" />
 
       {/* Row 8: Footer */}
-      <div className="col-start-2 row-start-15 flex w-[95vw] flex-col px-3 py-6 sm:px-6 md:w-[90vw]">
+      <div className="col-start-2 row-start-15 flex w-[95vw] flex-col px-3 py-10 sm:px-6 sm:py-14 md:w-[90vw]">
         <Footer />
       </div>
 

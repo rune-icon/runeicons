@@ -31,8 +31,10 @@ const HeroSection = () => {
           <span className="flex items-start gap-2 sm:gap-3">
             Strong{" "}
             <span
-              className="rounded-md bg-blue-700 p-1 sm:p-1.5 md:p-2 [&_svg]:size-6 sm:[&_svg]:size-8 md:[&_svg]:size-10"
+              className="rounded-md bg-cover bg-center bg-no-repeat p-1 sm:p-1.5 md:p-2 [&_svg]:size-6 sm:[&_svg]:size-8 md:[&_svg]:size-10"
               style={{
+                backgroundImage:
+                  "url('/landing/gradient/search-gradient2.png')",
                 boxShadow: "0px 7px 12.8px rgba(19, 70, 231, 0.6)",
                 transform: "rotate(-14.5deg)",
               }}
