@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { SunIcon } from "@/components/icons/svg";
+import { SunIcon } from "@/components/icon-page/simple-svg";
 
 export default function ThemeToggle() {
   const [isDark, setIsDark] = useState(false);

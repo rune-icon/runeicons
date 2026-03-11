@@ -1,0 +1,161 @@
+import { useState, useCallback } from "react";
+import DOMPurify from "dompurify";
+import { toast } from "sonner";
+import { CustomizationState } from "@/lib/types";
+
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const MAX_CUSTOM_ICONS = 10;
+
+export function useCustomIconUpload(
+  state: CustomizationState,
+  onChange: (updates: Partial<CustomizationState>) => void
+) {
+  const [isDragging, setIsDragging] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+
+  const validateFile = (file: File): string | null => {
+    if (file.size > MAX_FILE_SIZE) {
+      return `File "${file.name}" exceeds 5MB limit`;
+    }
+
+    const validTypes = [
+      "image/svg+xml",
+      "image/png",
+      "image/jpeg",
+      "image/jpg",
+    ];
+    if (!validTypes.includes(file.type)) {
+      return `File "${file.name}" must be SVG, PNG, or JPG`;
+    }
+
+    if (state.customIcons.length >= MAX_CUSTOM_ICONS) {
+      return `Maximum ${MAX_CUSTOM_ICONS} icons allowed`;
+    }
+
+    return null;
+  };
+
+  const sanitizeSVG = (svgContent: string): string => {
+    return DOMPurify.sanitize(svgContent, {
+      USE_PROFILES: { svg: true, svgFilters: true },
+    });
+  };
+
+  const processUploadedFile = useCallback(
+    async (file: File): Promise<boolean> => {
+      const error = validateFile(file);
+      if (error) {
+        setUploadError(error);
+        return false;
+      }
+
+      try {
+        let url: string;
+        if (file.type === "image/svg+xml") {
+          const text = await file.text();
+          const sanitized = sanitizeSVG(text);
+          const blob = new Blob([sanitized], { type: "image/svg+xml" });
+          url = URL.createObjectURL(blob);
+        } else {
+          url = URL.createObjectURL(file);
+        }
+
+        const newIcon = {
+          id: `${Date.now()}-${Math.random().toString(36)}`,
+          name: file.name,
+          url,
+        };
+        onChange({
+          customIcons: [...state.customIcons, newIcon],
+        });
+        return true;
+      } catch (error) {
+        console.error("Icon upload failed:", error);
+        setUploadError(`Failed to upload "${file.name}"`);
+        return false;
+      }
+    },
+    [state.customIcons, onChange],
+  );
+
+  const handleFileUpload = useCallback(
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const files = e.target.files;
+      if (!files) return;
+
+      setUploadError(null);
+      setIsUploading(true);
+
+      for (const file of Array.from(files)) {
+        const success = await processUploadedFile(file);
+        if (!success) {
+          setIsUploading(false);
+          return;
+        }
+      }
+
+      setIsUploading(false);
+      e.target.value = "";
+      toast.success("Icon uploaded successfully");
+    },
+    [processUploadedFile],
+  );
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  }, []);
+
+  const handleDragLeave = useCallback(() => {
+    setIsDragging(false);
+  }, []);
+
+  const handleDrop = useCallback(
+    async (e: React.DragEvent) => {
+      e.preventDefault();
+      setIsDragging(false);
+      setUploadError(null);
+      setIsUploading(true);
+
+      for (const file of Array.from(e.dataTransfer.files)) {
+        const success = await processUploadedFile(file);
+        if (!success) {
+          setIsUploading(false);
+          return;
+        }
+      }
+
+      setIsUploading(false);
+      toast.success("Icon uploaded successfully");
+    },
+    [processUploadedFile],
+  );
+
+  const deleteIcon = useCallback(
+    (id: string) => {
+      const icon = state.customIcons.find((i) => i.id === id);
+      if (icon && icon.url.startsWith("blob:")) {
+        URL.revokeObjectURL(icon.url);
+      }
+
+      onChange({
+        customIcons: state.customIcons.filter((icon) => icon.id !== id),
+      });
+    },
+    [state.customIcons, onChange],
+  );
+
+  return {
+    isDragging,
+    uploadError,
+    setUploadError,
+    isUploading,
+    handleFileUpload,
+    handleDragOver,
+    handleDragLeave,
+    handleDrop,
+    deleteIcon,
+    MAX_CUSTOM_ICONS,
+  };
+}
