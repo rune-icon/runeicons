@@ -67,8 +67,7 @@ const Search = () => {
         <div className="bg-background relative h-full min-h-[400px] w-full overflow-hidden rounded-2xl bg-center">
           <img
             className="h-full w-full object-cover"
-            src="
-          https://i.pinimg.com/1200x/d3/49/0e/d3490eaa1637583dca52fe021fa38d19.jpg"
+            src="https://i.pinimg.com/1200x/d3/49/0e/d3490eaa1637583dca52fe021fa38d19.jpg"
             alt=""
           />
         </div>

@@ -1,22 +1,43 @@
-import React from "react";
+"use client"
+import React, { useEffect, useRef } from "react";
+import gsap from "gsap";
 
 const BentoCenterSvg = () => {
+  const svgRef = useRef<SVGSVGElement>(null);
+  useEffect(() => {
+    const svg = svgRef.current;
+    if (!svg) return;
+    const bottomBox = svg.querySelector('.bottom-box');
+    const topBox = svg.querySelector('.top-box');
+    const lines = svg.querySelectorAll('.lines');
+    // Set initial state
+    gsap.set(bottomBox, { y: -141 });
+    gsap.set(topBox, { y: 141 });
+    gsap.set(lines, { opacity: 0 });
+    // Timeline for sequencing
+    const tl = gsap.timeline();
+    tl.to(bottomBox, { y: 0, duration: 1.4, ease: 'power4.out' })
+      .to(topBox, { y: 0, duration: 1.4, ease: 'power4.out' }, '<')
+      .to(lines, { opacity: 1, duration: 0.7, ease: 'power2.out' }, '+=0.1');
+  }, []);
   return (
     <svg
-      className="h-[70vh] w-full invert dark:invert-0"
+      ref={svgRef}
+      className="w-full invert dark:invert-0"
       viewBox="0 0 176 403"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <path
+    <g style={{ transform: "translateY(-141px)"  }} className="bottom-box ">
+        <path
         d="M14.1738 340L72.6309 373.75L73.4961 374.25V399.75L13.7412 365.25V339.75L14.1738 340Z"
         fill="black"
-        fillOpacity="0.2"
+        fillOpacity={0.2}
       />
       <path
         d="M14.1738 340L72.6309 373.75L73.4961 374.25V399.75L13.7412 365.25V339.75L14.1738 340Z"
         fill="black"
-        fillOpacity="0.2"
+        fillOpacity={0.2}
       />
       <path
         d="M47.3115 369.5V381.5L46.4453 381V369L47.3115 369.5ZM45.5791 368.5V380.5L44.7129 380V368L45.5791 368.5ZM43.8467 367.5V379.5L42.9805 379V367L43.8467 367.5ZM42.1152 366.5V378.5L41.249 378V366L42.1152 366.5ZM40.3828 365.5V377.5L39.5166 377V365L40.3828 365.5ZM38.6504 364.5V376.5L37.7842 376V364L38.6504 364.5ZM36.9189 363.5V375.5L36.0527 375V363L36.9189 363.5ZM35.1865 362.5V374.5L34.3203 374V362L35.1865 362.5ZM33.4551 361.5V373.5L32.5889 373V361L33.4551 361.5ZM31.7227 360.5V372.5L30.8564 372V360L31.7227 360.5ZM29.9902 359.5V371.5L29.124 371V359L29.9902 359.5ZM28.2588 358.5V370.5L27.3926 370V358L28.2588 358.5ZM26.5264 357.5V369.5L25.6602 369V357L26.5264 357.5ZM24.7939 356.5V368.5L23.9277 368V356L24.7939 356.5ZM23.0625 355.5V367.5L22.1963 367V355L23.0625 355.5ZM21.3301 354.5V366.5L20.4639 366V354L21.3301 354.5ZM19.5986 353.5V365.5L18.7324 365V353L19.5986 353.5ZM17.8662 352.5V364.5L17 364V352L17.8662 352.5Z"
@@ -29,7 +50,7 @@ const BentoCenterSvg = () => {
       <path
         d="M100.776 374L160 339.807V365L100.776 399.193V374Z"
         fill="black"
-        fillOpacity="0.2"
+        fillOpacity={0.2}
       />
       <path
         d="M100.776 399.193L100.56 399.318V399.568L100.776 399.443V399.193ZM160 365V364.75L100.776 398.943V399.193V399.443L160 365.25V365ZM100.776 399.193L100.993 399.068V373.875L100.776 374L100.56 374.125V399.318L100.776 399.193Z"
@@ -38,14 +59,14 @@ const BentoCenterSvg = () => {
       <path
         d="M73 374C80.732 378.369 93.268 378.369 101 374V398.723C93.268 403.092 80.732 403.092 73 398.723V374Z"
         fill="black"
-        fillOpacity="0.2"
+        fillOpacity={0.2}
         stroke="#838383"
-        strokeWidth="0.5"
+        strokeWidth={0.5}
       />
       <path
         d="M72.7461 298C80.3988 293.582 92.8063 293.582 100.459 298L159.349 332C167.001 336.418 167.001 343.582 159.349 348L100.459 382C92.8063 386.418 80.3988 386.418 72.7461 382L13.8564 348C6.20373 343.582 6.20372 336.418 13.8564 332L72.7461 298Z"
         stroke="#838383"
-        strokeWidth="0.5"
+        strokeWidth={0.5}
       />
       <path
         d="M73.0636 398.758V399.008L73.2801 399.133V398.883L73.0636 398.758ZM14.1738 364.758L13.9573 364.633V364.883L14.1738 365.008V364.758ZM73.0636 374L72.847 373.875V398.633L73.0636 398.758L73.2801 398.883V374.125L73.0636 374ZM73.0636 398.758V398.508L14.1738 364.508V364.758V365.008L73.0636 399.008V398.758ZM14.1738 364.758L14.3903 364.883V340.125L14.1738 340L13.9573 339.875V364.633L14.1738 364.758Z"
@@ -54,23 +75,23 @@ const BentoCenterSvg = () => {
       <path
         d="M8.25 334.54C9.12019 336.719 11.0808 338.645 13.75 340.146V364.57C10.3012 362.564 8.25 359.889 8.25 357V334.54Z"
         fill="black"
-        fillOpacity="0.2"
+        fillOpacity={0.2}
         stroke="#838383"
-        strokeWidth="0.5"
+        strokeWidth={0.5}
       />
       <path
         d="M165 332C165 335.124 163.089 337.953 160 340V365C163.089 362.953 165 360.124 165 357V332Z"
         fill="black"
-        fillOpacity="0.2"
+        fillOpacity={0.2}
         stroke="#838383"
-        strokeWidth="0.5"
+        strokeWidth={0.5}
       />
       <path
         d="M73.0635 290C80.7162 285.582 93.1236 285.582 100.776 290L159.666 324C167.319 328.418 167.319 335.582 159.666 340L100.776 374C93.1236 378.418 80.7162 378.418 73.0635 374L14.1738 340C6.52111 335.582 6.52111 328.418 14.1738 324L73.0635 290Z"
         fill="black"
-        fillOpacity="0.2"
+        fillOpacity={0.2}
         stroke="#838383"
-        strokeWidth="0.5"
+        strokeWidth={0.5}
       />
       <rect
         width="91.3139"
@@ -546,7 +567,9 @@ const BentoCenterSvg = () => {
           strokeLinejoin="round"
         />
       </g>
+    </g>
       <line
+      className="lines"
         x1="86.5"
         y1="370"
         x2="86.5"
@@ -555,11 +578,13 @@ const BentoCenterSvg = () => {
         strokeDasharray="2 2"
       />
       <path
+      className="lines"
         d="M19.5 332.5L19.5 196"
         stroke="url(#paint1_linear_221_840)"
         strokeDasharray="2 2"
       />
       <line
+      className="lines"
         x1="153.5"
         y1="332"
         x2="153.5"
@@ -567,7 +592,10 @@ const BentoCenterSvg = () => {
         stroke="url(#paint2_linear_221_840)"
         strokeDasharray="2 2"
       />
-      <path
+    <g className="middle-box ">
+
+      
+        <path
         d="M16.1738 199L74.6309 232.75L75.4961 233.25V258.75L15.7412 224.25V198.75L16.1738 199Z"
         fill="black"
       />
@@ -906,31 +934,8 @@ const BentoCenterSvg = () => {
         transform="matrix(0.866025 0.5 -0.866025 0.5 155.567 190)"
         fill="white"
       />
-      <line
-        x1="88.5"
-        y1="229"
-        x2="88.5"
-        y2="87"
-        stroke="url(#paint3_linear_221_840)"
-        strokeDasharray="2 2"
-      />
-      <line
-        x1="21.5"
-        y1="192"
-        x2="21.5"
-        y2="50"
-        stroke="url(#paint4_linear_221_840)"
-        strokeDasharray="2 2"
-      />
-      <line
-        x1="155.5"
-        y1="191"
-        x2="155.5"
-        y2="49"
-        stroke="url(#paint5_linear_221_840)"
-        strokeDasharray="2 2"
-      />
-      <path
+
+     <path
         d="M49.3115 228.5V240.5L48.4453 240V228L49.3115 228.5ZM47.5791 227.5V239.5L46.7129 239V227L47.5791 227.5ZM45.8467 226.5V238.5L44.9805 238V226L45.8467 226.5ZM44.1152 225.5V237.5L43.249 237V225L44.1152 225.5ZM42.3828 224.5V236.5L41.5166 236V224L42.3828 224.5ZM40.6504 223.5V235.5L39.7842 235V223L40.6504 223.5ZM38.9189 222.5V234.5L38.0527 234V222L38.9189 222.5ZM37.1865 221.5V233.5L36.3203 233V221L37.1865 221.5ZM35.4551 220.5V232.5L34.5889 232V220L35.4551 220.5ZM33.7227 219.5V231.5L32.8564 231V219L33.7227 219.5ZM31.9902 218.5V230.5L31.124 230V218L31.9902 218.5ZM30.2588 217.5V229.5L29.3926 229V217L30.2588 217.5ZM28.5264 216.5V228.5L27.6602 228V216L28.5264 216.5ZM26.7939 215.5V227.5L25.9277 227V215L26.7939 215.5ZM25.0625 214.5V226.5L24.1963 226V214L25.0625 214.5ZM23.3301 213.5V225.5L22.4639 225V213L23.3301 213.5ZM21.5986 212.5V224.5L20.7324 224V212L21.5986 212.5ZM19.8662 211.5V223.5L19 223V211L19.8662 211.5Z"
         fill="#FFFCFC"
       />
@@ -938,7 +943,28 @@ const BentoCenterSvg = () => {
         d="M49.3115 228.5V240.5L48.4453 240V228L49.3115 228.5ZM47.5791 227.5V239.5L46.7129 239V227L47.5791 227.5ZM45.8467 226.5V238.5L44.9805 238V226L45.8467 226.5ZM44.1152 225.5V237.5L43.249 237V225L44.1152 225.5ZM42.3828 224.5V236.5L41.5166 236V224L42.3828 224.5ZM40.6504 223.5V235.5L39.7842 235V223L40.6504 223.5ZM38.9189 222.5V234.5L38.0527 234V222L38.9189 222.5ZM37.1865 221.5V233.5L36.3203 233V221L37.1865 221.5ZM35.4551 220.5V232.5L34.5889 232V220L35.4551 220.5ZM33.7227 219.5V231.5L32.8564 231V219L33.7227 219.5ZM31.9902 218.5V230.5L31.124 230V218L31.9902 218.5ZM30.2588 217.5V229.5L29.3926 229V217L30.2588 217.5ZM28.5264 216.5V228.5L27.6602 228V216L28.5264 216.5ZM26.7939 215.5V227.5L25.9277 227V215L26.7939 215.5ZM25.0625 214.5V226.5L24.1963 226V214L25.0625 214.5ZM23.3301 213.5V225.5L22.4639 225V213L23.3301 213.5ZM21.5986 212.5V224.5L20.7324 224V212L21.5986 212.5ZM19.8662 211.5V223.5L19 223V211L19.8662 211.5Z"
         fill="#FFFCFC"
       />
-      <g clipPath="url(#clip1_221_840)">
+          <circle
+        cx="1.48217"
+        cy="1.48217"
+        r="1.48217"
+        transform="matrix(0.866025 0.5 -0.866025 0.5 21.5674 190)"
+        fill="white"
+      />
+      <circle
+        cx="1.48223"
+        cy="1.48223"
+        r="1.48223"
+        transform="matrix(0.866025 0.5 -0.866025 0.5 88.5674 228)"
+        fill="white"
+      />
+      <circle
+        cx="1.48217"
+        cy="1.48217"
+        r="1.48217"
+        transform="matrix(0.866025 0.5 -0.866025 0.5 88.5674 152)"
+        fill="white"
+      />
+        <g clipPath="url(#clip1_221_840)">
         <path
           d="M104.901 188.733L98.2853 192.552C97.6763 192.904 97.6763 193.474 98.2853 193.826L101.593 195.735C102.202 196.087 103.19 196.087 103.799 195.735L110.415 191.916C111.024 191.564 111.024 190.994 110.415 190.642L107.107 188.733C106.498 188.381 105.51 188.381 104.901 188.733Z"
           stroke="white"
@@ -984,27 +1010,41 @@ const BentoCenterSvg = () => {
           strokeLinejoin="round"
         />
       </g>
-      <circle
-        cx="1.48217"
-        cy="1.48217"
-        r="1.48217"
-        transform="matrix(0.866025 0.5 -0.866025 0.5 21.5674 190)"
-        fill="white"
+    </g>
+      <line
+        className="lines"
+        x1="88.5"
+        y1="229"
+        x2="88.5"
+        y2="87"
+        stroke="url(#paint3_linear_221_840)"
+        strokeDasharray="2 2"
       />
-      <circle
-        cx="1.48223"
-        cy="1.48223"
-        r="1.48223"
-        transform="matrix(0.866025 0.5 -0.866025 0.5 88.5674 228)"
-        fill="white"
+      <line
+              className="lines"
+
+        x1="21.5"
+        y1="192"
+        x2="21.5"
+        y2="50"
+        stroke="url(#paint4_linear_221_840)"
+        strokeDasharray="2 2"
       />
-      <circle
-        cx="1.48217"
-        cy="1.48217"
-        r="1.48217"
-        transform="matrix(0.866025 0.5 -0.866025 0.5 88.5674 152)"
-        fill="white"
+      <line
+              className="lines"
+
+        x1="155.5"
+        y1="191"
+        x2="155.5"
+        y2="49"
+        stroke="url(#paint5_linear_221_840)"
+        strokeDasharray="2 2"
       />
+<g  style={{ transform: "translateY(141px)" }} className=" top-box
+">
+      
+    
+  
       <path
         d="M16.1738 58L74.6309 91.75L75.4961 92.25V117.75L15.7412 83.25V57.75L16.1738 58Z"
         fill="black"
@@ -1550,6 +1590,7 @@ const BentoCenterSvg = () => {
           strokeLinejoin="round"
         />
       </g>
+</g>
       <defs>
         <linearGradient
           id="paint0_linear_221_840"

@@ -1,7 +1,4 @@
 "use client";
-
-import React from "react";
-
 import { motion } from "framer-motion";
 import {
   Diamond,
@@ -13,6 +10,7 @@ import {
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import Mascot from "../svg/mascot";
 
 const CTA = () => {
   const icons = [
@@ -29,7 +27,7 @@ const CTA = () => {
       {" "}
       <img
         src="/landing/gradient/cta-gradient.png"
-        className="absolute inset-0 w-full object-cover"
+        className="absolute inset-0 w-full h-full object-cover"
         alt=""
       />
       <div className="pointer-events-none absolute inset-0 z-0">
@@ -82,31 +80,25 @@ const CTA = () => {
           </motion.div>
         ))}
       </div>
+       
       <div className="relative z-10 mx-auto flex max-w-4xl flex-col items-center text-center">
+        
+        <div className="h-16 w-16 mb-3">
+            <Mascot/>
+          </div>
         {/* Heading Style (Synced with HeroSection) */}
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.1 }}
-          className="mb-5 text-base leading-[1.1] font-medium tracking-tight sm:text-lg md:text-xl lg:text-3xl"
+          className="mb-8 leading-[1.1] font-medium tracking-tight text-3xl sm:text-xl md:text-xl lg:text-5xl"
         >
           <span className="bg-linear-to-b from-white to-white/70 bg-clip-text text-transparent">
-            Ready to build something beautiful?
+            Ready to build <br /> something beautiful?
           </span>
         </motion.h2>
 
-        {/* Paragraph Style (Synced with HeroSection) */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="mb-8 max-w-lg text-[10px] leading-5 text-white/85 sm:text-xs dark:text-white/80"
-        >
-          Join a community of forward-thinking creators using Rune <br /> to
-          define the next generation of web interfaces.
-        </motion.p>
 
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
@@ -116,16 +108,17 @@ const CTA = () => {
           className="flex flex-col items-center justify-center gap-4 sm:flex-row"
         >
           <Button
-            size={"sm"}
-            className="border border-white/80 bg-white text-xs text-black shadow-sm hover:bg-white/90"
+          size={"lg"}
+          variant={"default"}
+
           >
-            Get Started
+            Browse Icons
           </Button>
-          <Button
-            size={"sm"}
-            className="border border-white/80 bg-white text-xs text-black shadow-sm hover:bg-white/90"
+          <Button          size={"lg"}
+
+          variant={"secondary"}
           >
-            Get Started
+            Star On GitHub
           </Button>
         </motion.div>
       </div>

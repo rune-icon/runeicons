@@ -61,14 +61,13 @@ const ICONS = [
 
 const Search = () => {
   return (
-    <div className="flex min-h-screen flex-col gap-5 py-6 lg:flex-row">
+    <div className="flex max-h-screen h-full flex-col gap-5 py-6 lg:flex-row">
       {/* Left - Hero text card */}
       <div className="min-h-[400px] lg:min-h-0 lg:w-1/2">
         <div className="bg-background relative h-full min-h-[400px] w-full overflow-hidden rounded-2xl bg-center">
           <img
             className="h-full w-full object-cover"
-            src="
-          https://i.pinimg.com/1200x/d3/49/0e/d3490eaa1637583dca52fe021fa38d19.jpg"
+            src="https://i.pinimg.com/1200x/d3/49/0e/d3490eaa1637583dca52fe021fa38d19.jpg"
             alt=""
           />
         </div>
@@ -77,10 +76,10 @@ const Search = () => {
       {/* Right - Search panel */}
       <div className="lg:w-1/2">
         <div
-          className="flex h-full w-full items-center justify-center rounded-2xl bg-center bg-no-repeat p-6 md:p-10"
+          className="flex h-full w-full items-center justify-center rounded-2xl bg-center bg-no-repeat p-6 max-sm:p-2 md:p-10"
           style={{
             backgroundImage: "url('/landing/gradient/search-gradient2.png')",
-            backgroundSize: "100% auto",
+            backgroundSize: "cover",
           }}
         >
           <div className="w-full max-w-md">
@@ -98,12 +97,12 @@ const Search = () => {
                 </Button>
               </div>
 
-              {/* Icons grid - fixed 5 icons per row */}
-              <div className="my-4 mt-6 grid grid-cols-5 justify-items-center gap-3">
+              {/* Icons grid - responsive columns and always show all icons on mobile */}
+              <div className="my-3 mt-4 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 justify-items-center gap-2 px-1 sm:my-4 sm:mt-6 sm:gap-3 sm:px-0">
                 {ICONS.map(({ Icon, name }, index) => (
                   <div
                     key={index}
-                    className={`flex w-14 flex-col items-center gap-1 ${index >= 9 ? "hidden sm:flex" : ""}`}
+                    className={`flex w-14 flex-col items-center gap-1 ${index >= 9 ? 'hidden sm:flex' : ''}`}
                   >
                     <div className="bg-muted/50 hover:bg-muted flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg transition-colors">
                       <Icon className="text-foreground h-5 w-5" />
