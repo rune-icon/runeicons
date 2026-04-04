@@ -4,8 +4,6 @@ const Mascot = () => {
   return (
     <>
       <svg
-        width="235"
-        height="181"
         viewBox="0 0 235 181"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"

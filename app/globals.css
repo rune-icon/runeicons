@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import "./no-scrollbar.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -200,4 +201,14 @@
 
 .animate-rainbow {
   animation: rainbow 6s linear infinite;
+}
+
+
+/* Hide scrollbars globally for all elements */
+* {
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE and Edge */
+}
+*::-webkit-scrollbar {
+  display: none !important; /* Chrome, Safari, Opera */
 }
