@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import * as SliderPrimitive from "@radix-ui/react-slider";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 import { BlossomColorPicker } from "@/components/icon-page/blossom-picker/blossom-picker";
 import { cn } from "@/lib/utils";
 import { hslToHex, hexToHsl } from "@/lib/color-utils";

@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useMotionValue } from "framer-motion";
+import { useMotionValue } from "motion/react";
 
 export function calculateAngle(index: number, totalInRing: number): number {
   return (index / totalInRing) * Math.PI * 2;
