@@ -27,7 +27,7 @@ import {
   Zap,
 } from "lucide-react";
 
-import TabBackgroundAnimation from "../../pixel-perfect/tab-background-animation";
+import TabBackgroundAnimation from "../../ui/tab-background-animation";
 import { Button } from "../../ui/button";
 import { Input } from "../../ui/input";
 

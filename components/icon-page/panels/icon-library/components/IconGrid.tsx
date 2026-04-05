@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 import { IconData } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
