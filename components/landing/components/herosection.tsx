@@ -11,7 +11,7 @@ import HeroSvg from "../svg/hero-svg";
 
 const HeroSection = () => {
   return (
-    <div className="grid min-h-[60vh] grid-cols-1 lg:h-[calc(100vh-64px)] lg:grid-cols-[7fr_3fr]">
+    <div className="grid min-h-[60vh] grid-cols-1 lg:h-[calc(100vh-64px)] lg:grid-cols-2">
       <div className="flex h-full flex-col justify-center py-8 lg:py-0">
         <div
           className="flex w-fit items-center gap-2 rounded-md border p-0.5 pl-2.5 text-xs"
@@ -27,7 +27,7 @@ const HeroSection = () => {
             <Check size={15} />
           </div>
         </div>
-        <div className="mt-4 text-3xl font-medium sm:text-4xl md:text-5xl lg:text-6xl">
+        <div className="mt-4 text-2xl leading-tight sm:leading-[1] xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium">
           <span className="flex items-start gap-2 sm:gap-3">
             Strong{" "}
             <span
@@ -45,7 +45,7 @@ const HeroSection = () => {
           </span>
           Icons for SaaS & AI teams
         </div>
-        <div className="text-muted-foreground mt-4 max-w-lg text-sm leading-5 sm:text-base">
+        <div className="text-muted-foreground mt-4 max-w-lg text-xs leading-tight sm:text-sm sm:leading-5 md:text-base">
           Strong Icons delivers powerful, modern icon systems crafted for SaaS
           and AI products. Built for clarity, scalability, and impact so your
           interface looks sharp at every size.
@@ -64,7 +64,7 @@ const HeroSection = () => {
           </Link>
         </div>
       </div>
-      <div className="hidden items-center justify-center lg:flex">
+      <div className=" flex items-center justify-center">
         <HeroSvg />
       </div>
     </div>

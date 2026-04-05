@@ -51,14 +51,15 @@ const BentoCard = ({
 const Bento = () => {
   return (
     <section className="w-full">
-      <div className="mx-auto grid min-h-[50vh] w-full grid-cols-1 gap-2 md:gap-4 lg:h-[90vh] lg:grid-cols-12">
+      <div className="mx-auto grid min-h-[50vh] max-sm:h-full w-full grid-cols-1 gap-2 md:gap-4 lg:h-[90vh] lg:grid-cols-12">
         <div className="grid min-h-0 grid-cols-1 gap-2 md:gap-4 lg:col-span-4 lg:grid-rows-[6fr_4fr]">
           <BentoCard
             title="Met the Mind Behind the Magic"
             description="Finally met the creator whose work inspired me. From screens to real life surreal"
             className="flex h-full items-center justify-center"
           >
-            <IconDrawSvg />
+            Some cool svg here
+            {/* <IconDrawSvg /> */}
           </BentoCard>
           <BentoCard
             title="Interactive SVG Editing"
@@ -72,7 +73,7 @@ const Bento = () => {
         <BentoCard
           title=""
           description=""
-          className="h-full min-h-0 lg:col-span-3"
+          className="h-full min-h-0 lg:col-span-3 max-sm:p-5"
         >
           <BentoCenterSvg />
         </BentoCard>
@@ -82,11 +83,9 @@ const Bento = () => {
             <IconCarousel />
           </BentoCard>
           <BentoCard
-            // title="Over 1000+ Icons Crafted For your website"
-            // description="Designed a library of 1000+ scalable, performance-optimized SVG icons with a consistent visual system for seamless use in modern web apps."
             title=""
             description=""
-            className="h-full"
+            className="h-full max-lg:aspect-square"
             fullBackgroundGraphic
           >
             <BentoSvg />

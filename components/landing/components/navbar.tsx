@@ -26,7 +26,7 @@ const Navbar = () => {
   });
 
   return (
-    <div className="bg-background fixed inset-x-0 top-0 z-50">
+    <div className="bg-background fixed inset-x-0 z-50 ">
       <motion.div
         className="overflow-hidden"
         initial={false}
@@ -57,15 +57,17 @@ const Navbar = () => {
               className="absolute inset-0 h-full w-full object-cover"
               alt=""
             />
-            <span className="relative z-10">
-              Rune Icons now includes 1000+ modern icons for SaaS and AI
-              products.
+            <span className="relative z-10 text-[10px] leading-tight sm:text-xs sm:leading-snug">
+              Rune Icons now includes 1000+ modern icons for your products.
             </span>
           </Link>
         </motion.div>
       </motion.div>
 
-      <div className="dark:bg-background flex items-center justify-between border-b-2 border-dashed bg-[#F5F5F5] px-4 py-3 sm:px-8 sm:py-3.5 md:px-24">
+<div className=" w-full bg-[#F5F5F5]  dark:bg-background   border-b-2 border-dashed flex justify-center">
+
+
+      <div className=" bg-[#F5F5F5] dark:bg-background  w-[90vw] 2xl:w-[85vw] flex items-center justify-between   px-4 py-3 ">
         <LightLogo />
         <div className="flex items-center gap-2">
           <ul className="hidden gap-2 md:flex">
@@ -111,6 +113,7 @@ const Navbar = () => {
             <LightDarkMode />
           </div>
         </div>
+      </div>
       </div>
     </div>
   );

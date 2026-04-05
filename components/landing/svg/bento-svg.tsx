@@ -1,9 +1,50 @@
 "use client";
-import React from "react";
+import React, { useRef, useEffect } from "react";
+import gsap from "gsap";
 
 const BentoSvg = ({ className }: { className?: string }) => {
+  const svgRef = useRef<SVGSVGElement>(null);
+
+  useEffect(() => {
+    const svg = svgRef.current;
+    if (!svg) return;
+
+    // Animate all paths: reveal with strokeDashoffset
+    const paths = svg.querySelectorAll("path");
+    paths.forEach((path, i) => {
+      const length = (path as SVGPathElement).getTotalLength?.() ?? 0;
+      if (length > 0) {
+        gsap.set(path, {
+          strokeDasharray: length,
+          strokeDashoffset: length,
+          opacity: 1,
+        });
+        gsap.to(path, {
+          strokeDashoffset: 0,
+          duration: 1.2,
+          delay: i * 0.15,
+          ease: "power2.out",
+        });
+      } else {
+        gsap.fromTo(path, { opacity: 0 }, { opacity: 1, duration: 1, delay: i * 0.15 });
+      }
+    });
+
+    // Animate circles, rects, lines: fade in
+    const shapes = svg.querySelectorAll("circle, rect, line");
+    shapes.forEach((shape, i) => {
+      gsap.fromTo(
+        shape,
+        { opacity: 0 },
+        { opacity: 1, duration: 1, delay: 0.2 + i * 0.12, ease: "power1.out" }
+      );
+    });
+  }, []);
+
   return (
+
     <svg
+      ref={svgRef}
       viewBox="0 0 489 488"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -15,14 +56,14 @@ const BentoSvg = ({ className }: { className?: string }) => {
         cy="238.286"
         r="80.337"
         stroke="#E0E0E0"
-        strokeWidth="1.5"
+        strokeWidth={1.5}
       />
       <circle
         cx="240.63"
         cy="238.285"
         r="176.815"
         stroke="#E0E0E0"
-        strokeWidth="1.5"
+        strokeWidth={1.5}
         strokeDasharray="10 10"
       />
       <rect
@@ -31,7 +72,7 @@ const BentoSvg = ({ className }: { className?: string }) => {
         width="111.661"
         height="111.661"
         stroke="#E0E0E0"
-        strokeWidth="1.5"
+        strokeWidth={1.5}
       />
       <rect
         x="87.9766"
@@ -40,7 +81,7 @@ const BentoSvg = ({ className }: { className?: string }) => {
         height="305.306"
         rx="22.25"
         stroke="#E0E0E0"
-        strokeWidth="1.5"
+        strokeWidth={1.5}
       />
       <rect
         x="110.053"
@@ -49,7 +90,7 @@ const BentoSvg = ({ className }: { className?: string }) => {
         height="353.63"
         rx="22.25"
         stroke="#E0E0E0"
-        strokeWidth="1.5"
+        strokeWidth={1.5}
       />
       <rect
         x="63.8154"
@@ -58,7 +99,7 @@ const BentoSvg = ({ className }: { className?: string }) => {
         height="256.842"
         rx="22.25"
         stroke="#E0E0E0"
-        strokeWidth="1.5"
+        strokeWidth={1.5}
       />
       <line
         x1="239.974"
@@ -66,7 +107,7 @@ const BentoSvg = ({ className }: { className?: string }) => {
         x2="239.974"
         y2="487.231"
         stroke="#E0E0E0"
-        strokeWidth="1.5"
+        strokeWidth={1.5}
       />
       <line
         x1="183.392"
@@ -74,7 +115,7 @@ const BentoSvg = ({ className }: { className?: string }) => {
         x2="183.392"
         y2="487.238"
         stroke="#E0E0E0"
-        strokeWidth="1.5"
+        strokeWidth={1.5}
         strokeDasharray="10 10"
       />
       <line
@@ -83,7 +124,7 @@ const BentoSvg = ({ className }: { className?: string }) => {
         x2="487.238"
         y2="294.117"
         stroke="#E0E0E0"
-        strokeWidth="1.5"
+        strokeWidth={1.5}
         strokeDasharray="10 10"
       />
       <line
@@ -92,7 +133,7 @@ const BentoSvg = ({ className }: { className?: string }) => {
         x2="295.071"
         y2="486.114"
         stroke="#E0E0E0"
-        strokeWidth="1.5"
+        strokeWidth={1.5}
         strokeDasharray="10 10"
       />
       <line
@@ -101,7 +142,7 @@ const BentoSvg = ({ className }: { className?: string }) => {
         x2="485.034"
         y2="182.527"
         stroke="#E0E0E0"
-        strokeWidth="1.5"
+        strokeWidth={1.5}
         strokeDasharray="10 10"
       />
       <line
@@ -110,7 +151,7 @@ const BentoSvg = ({ className }: { className?: string }) => {
         x2="2.17899"
         y2="239.042"
         stroke="#E0E0E0"
-        strokeWidth="1.5"
+        strokeWidth={1.5}
       />
       <line
         x1="1.59771"
@@ -118,7 +159,7 @@ const BentoSvg = ({ className }: { className?: string }) => {
         x2="487.775"
         y2="486.707"
         stroke="#E0E0E0"
-        strokeWidth="1.5"
+        strokeWidth={1.5}
       />
       <line
         x1="0.530217"
@@ -126,7 +167,7 @@ const BentoSvg = ({ className }: { className?: string }) => {
         x2="486.707"
         y2="0.530702"
         stroke="#E0E0E0"
-        strokeWidth="1.5"
+        strokeWidth={1.5}
       />
       <path
         d="M360.644 276.633H303.347C296.652 276.633 290.232 279.292 285.498 284.026C280.765 288.759 278.105 295.18 278.105 301.874V359.172"
@@ -200,21 +241,23 @@ const BentoSvg = ({ className }: { className?: string }) => {
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-      <line
-        x1="111.458"
-        y1="375.185"
-        x2="369.238"
-        y2="375.185"
-        stroke="black"
-        strokeWidth="1.5"
-      />
-      <path
-        d="M364.088 369.34L370.088 375.34L364.088 381.34"
-        stroke="black"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+      <g id="right-arrow">
+        <line
+          x1="111.458"
+          y1="375.185"
+          x2="369.238"
+          y2="375.185"
+          stroke="black"
+          strokeWidth="1.5"
+        />
+        <path
+          d="M364.088 369.34L370.088 375.34L364.088 381.34"
+          stroke="black"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </g>
       <path
         d="M117.458 369.34L111.458 375.34L117.458 381.34"
         stroke="black"
@@ -271,7 +314,8 @@ const BentoSvg = ({ className }: { className?: string }) => {
         d="M430.226 400.849V400.269L432.782 396.224H433.203V397.122H432.919L430.987 400.178V400.224H434.43V400.849H430.226ZM432.964 402.042V400.673V400.403V396.224H433.635V402.042H432.964ZM437.313 402.122C436.98 402.122 436.68 402.055 436.412 401.923C436.145 401.79 435.931 401.608 435.77 401.377C435.609 401.146 435.521 400.883 435.506 400.587H436.188C436.215 400.851 436.334 401.069 436.546 401.241C436.76 401.411 437.016 401.497 437.313 401.497C437.552 401.497 437.764 401.441 437.949 401.329C438.137 401.217 438.284 401.064 438.39 400.869C438.498 400.672 438.552 400.449 438.552 400.201C438.552 399.947 438.496 399.721 438.384 399.522C438.274 399.321 438.123 399.163 437.93 399.048C437.736 398.932 437.516 398.873 437.268 398.872C437.09 398.87 436.907 398.897 436.719 398.954C436.532 399.009 436.377 399.08 436.256 399.167L435.597 399.087L435.949 396.224H438.972V396.849H436.54L436.336 398.565H436.37C436.489 398.47 436.639 398.391 436.819 398.329C436.999 398.266 437.186 398.235 437.381 398.235C437.737 398.235 438.055 398.32 438.333 398.491C438.613 398.659 438.833 398.89 438.992 399.184C439.153 399.478 439.233 399.813 439.233 400.19C439.233 400.561 439.15 400.892 438.983 401.184C438.819 401.474 438.591 401.703 438.302 401.872C438.012 402.038 437.682 402.122 437.313 402.122ZM441.578 398.792C441.337 398.792 441.118 398.733 440.919 398.616C440.722 398.498 440.565 398.341 440.447 398.144C440.33 397.945 440.271 397.726 440.271 397.485C440.271 397.245 440.33 397.026 440.447 396.829C440.565 396.63 440.722 396.472 440.919 396.354C441.118 396.237 441.337 396.178 441.578 396.178C441.818 396.178 442.037 396.237 442.234 396.354C442.433 396.472 442.591 396.63 442.709 396.829C442.826 397.026 442.885 397.245 442.885 397.485C442.885 397.726 442.826 397.945 442.709 398.144C442.591 398.341 442.433 398.498 442.234 398.616C442.037 398.733 441.818 398.792 441.578 398.792ZM441.578 398.224C441.714 398.224 441.838 398.191 441.95 398.124C442.062 398.058 442.151 397.969 442.217 397.857C442.283 397.746 442.317 397.622 442.317 397.485C442.317 397.349 442.283 397.225 442.217 397.113C442.151 397.001 442.062 396.912 441.95 396.846C441.838 396.78 441.714 396.747 441.578 396.747C441.442 396.747 441.318 396.78 441.206 396.846C441.094 396.912 441.005 397.001 440.939 397.113C440.872 397.225 440.839 397.349 440.839 397.485C440.839 397.622 440.872 397.746 440.939 397.857C441.005 397.969 441.094 398.058 441.206 398.124C441.318 398.191 441.442 398.224 441.578 398.224Z"
         fill="black"
       />
-    </svg>
+    </svg>   
+
   );
 };
 

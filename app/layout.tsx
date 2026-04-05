@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Gemunu_Libre, Inter, Inter_Tight } from "next/font/google";
 import { ThemeProvider } from "@/provider/theme-provider";
 import { ShapeProvider } from "@/lib/shape-context";
+import { Toaster } from "@/components/ui/sonner";
 
 import "./globals.css";
 
@@ -48,12 +49,13 @@ export default function RootLayout({
       >
         <ShapeProvider>
           <ThemeProvider
-            attribute="class" 
+            attribute="class"
             defaultTheme="system"
             enableSystem
             disableTransitionOnChange
           >
             {children}
+            <Toaster />
           </ThemeProvider>
         </ShapeProvider>
       </body>

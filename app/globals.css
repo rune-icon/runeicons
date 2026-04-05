@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+
+
 @custom-variant dark (&:is(.dark *));
 
 /* @custom-variant dark (&:is(.dark *)); */
@@ -209,4 +211,13 @@
 
 .dark .bg-workspace-pattern {
   background-image: url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 12 12' xmlns='http://www.w3.org/2000/svg'%3E%3Cline x1='0' y1='0' x2='12' y2='12' stroke='rgba(255, 255, 255, 0.05)' stroke-width='1' stroke-dasharray='2,2'/%3E%3C/svg%3E");
+}
+
+/* Hide scrollbars globally for all elements */
+* {
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE and Edge */
+}
+*::-webkit-scrollbar {
+  display: none !important; /* Chrome, Safari, Opera */
 }

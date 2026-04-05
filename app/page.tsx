@@ -12,8 +12,9 @@ import Testimonials from "@/components/landing/components/testimonials";
 const Page = () => {
   return (
     <div className="dark:bg-background relative grid min-h-screen w-full grid-cols-[1fr_auto_1fr] grid-rows-[auto_1px_auto_1px_auto_1px_auto_1px_auto_1px_auto_1px_auto_1px_auto] overflow-hidden bg-[#F5F5F5] font-(family-name:--font-inter-tight)">
+    
       {/* Row 1: Navbar */}
-      <div className="relative col-start-2 row-start-1 flex w-[95vw] flex-col overflow-hidden px-3 py-3 sm:px-6 md:w-[90vw]">
+      <div className="relative col-start-2 row-start-1 flex w-[95vw] flex-col overflow-hidden  md:w-[90vw] 2xl:w-[85vw]">
         <Navbar />
       </div>
 
@@ -22,7 +23,7 @@ const Page = () => {
       {/* Row 2: Hero Section */}
       <div
         id="home"
-        className="col-start-2 row-start-3 flex w-[95vw] scroll-mt-24 flex-col gap-2 px-3 pt-20 pb-10 sm:px-6 sm:pb-14 md:w-[90vw]"
+        className="col-start-2 row-start-3 flex w-[95vw] scroll-mt-24 flex-col gap-2 px-3 pt-20 pb-10 sm:px-6 sm:pb-14  md:w-[90vw] 2xl:w-[85vw]"
       >
         <HeroSection />
       </div>
@@ -32,7 +33,7 @@ const Page = () => {
       {/* Row 3: Search Section */}
       <div
         id="search"
-        className="col-start-2 row-start-5 flex w-[95vw] scroll-mt-24 flex-col gap-2 px-3 py-10 sm:px-6 sm:py-14 md:w-[90vw]"
+        className="col-start-2 row-start-5 flex w-[95vw] scroll-mt-24 flex-col gap-2 px-3 py-10 sm:px-6 sm:py-14 md:w-[90vw] 2xl:w-[85vw]"
       >
         <Search />
       </div>
@@ -42,7 +43,7 @@ const Page = () => {
       {/* Row 4: Bento Section */}
       <div
         id="features"
-        className="col-start-2 row-start-7 flex w-[95vw] scroll-mt-24 flex-col p-3 py-10 sm:p-6 sm:py-14 md:w-[90vw]"
+        className="col-start-2 row-start-7 flex w-[95vw] scroll-mt-24 flex-col p-3 py-10 sm:p-6 sm:py-14 md:w-[90vw] 2xl:w-[85vw]"
       >
         <Bento />
       </div>
@@ -52,7 +53,7 @@ const Page = () => {
       {/* Row 5: Testimonials Section */}
       <div
         id="testimonials"
-        className="col-start-2 row-start-9 flex w-[95vw] scroll-mt-24 flex-col p-3 py-10 sm:p-6 sm:py-14 md:w-[90vw]"
+        className="col-start-2 row-start-9 flex w-[95vw] scroll-mt-24 flex-col p-3 py-10 sm:p-6 sm:py-14 md:w-[90vw] 2xl:w-[85vw]"
       >
         <Testimonials />
       </div>
@@ -62,7 +63,7 @@ const Page = () => {
       {/* Row 6: FAQ Section */}
       <div
         id="faq"
-        className="col-start-2 row-start-11 flex w-[95vw] scroll-mt-24 flex-col px-3 py-10 sm:px-6 sm:py-14 md:w-[90vw]"
+        className="col-start-2 row-start-11 flex w-[95vw] scroll-mt-24 flex-col px-3 py-10 sm:px-6 sm:py-14 md:w-[90vw] 2xl:w-[85vw]"
       >
         <Faq />
       </div>
@@ -70,14 +71,14 @@ const Page = () => {
       <div className="pointer-events-none col-span-full col-start-1 row-start-12 border-b-2 border-dashed" />
 
       {/* Row 7: CTA Section */}
-      <div className="col-start-2 row-start-13 flex w-[95vw] flex-col overflow-hidden p-3 py-10 sm:p-6 sm:py-14 md:w-[90vw]">
+      <div className="col-start-2 row-start-13 flex w-[95vw] flex-col overflow-hidden p-3 py-10 sm:p-6 sm:py-14 md:w-[90vw] 2xl:w-[85vw]">
         <CTA />
       </div>
 
       <div className="pointer-events-none col-span-full col-start-1 row-start-14 border-b-2 border-dashed" />
 
       {/* Row 8: Footer */}
-      <div className="col-start-2 row-start-15 flex w-[95vw] flex-col px-3 py-10 sm:px-6 sm:py-14 md:w-[90vw]">
+      <div className="col-start-2 row-start-15 flex w-[95vw] flex-col px-3 py-10 sm:px-6 sm:py-14 md:w-[90vw] 2xl:w-[85vw]">
         <Footer />
       </div>
 
