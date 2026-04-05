@@ -21,8 +21,8 @@ export function useCanvasStyles(state: CustomizationState) {
 
   const boxShadow = useMemo(
     () =>
-      state.shadow.opacity > 0
-        ? `${state.shadow.offsetX}px ${state.shadow.offsetY}px ${state.shadow.blur}px rgba(0, 0, 0, ${state.shadow.opacity / 100})`
+      state.shadow.enabled && state.shadow.opacity > 0
+        ? `${state.shadow.inner ? "inset " : ""}${state.shadow.offsetX}px ${state.shadow.offsetY}px ${state.shadow.blur}px rgba(0, 0, 0, ${state.shadow.opacity / 100})`
         : "none",
     [state.shadow],
   );
@@ -33,6 +33,14 @@ export function useCanvasStyles(state: CustomizationState) {
       CSS.supports &&
       CSS.supports("filter", "blur(1px)"),
     [],
+  );
+
+  const blurFilter = useMemo(
+    () =>
+      state.blurEnabled && state.blur > 0 && supportsFilter
+        ? `blur(${state.blur}px)`
+        : "",
+    [state.blurEnabled, state.blur, supportsFilter],
   );
 
   const noiseFilter = useMemo(
@@ -49,5 +57,6 @@ export function useCanvasStyles(state: CustomizationState) {
     boxShadow,
     supportsFilter,
     noiseFilter,
+    blurFilter,
   };
 }

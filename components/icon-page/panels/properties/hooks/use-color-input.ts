@@ -9,7 +9,7 @@ export function useColorInput(
     index: number;
     value: string;
   } | null>(null);
-  const [inputFormat, setInputFormat] = useState<"hex" | "rgb">("hex");
+  const [inputFormat, setInputFormat] = useState<"hex" | "rgb" | "hsl">("hex");
 
   const hexToRgb = (hex: string): string => {
     const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);

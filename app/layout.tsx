@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Gemunu_Libre, Inter, Inter_Tight } from "next/font/google";
 import { ThemeProvider } from "@/provider/theme-provider";
+import { ShapeProvider } from "@/lib/shape-context";
 import { Toaster } from "@/components/ui/sonner";
 
 import "./globals.css";
@@ -46,15 +47,17 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${geistSans.variable} ${geistMono.variable} ${gemunuLibre.variable} ${interTight.variable} antialiased`}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-          <Toaster />
-        </ThemeProvider>
+        <ShapeProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+            <Toaster />
+          </ThemeProvider>
+        </ShapeProvider>
       </body>
     </html>
   );

@@ -128,7 +128,7 @@ const IconCarousel = () => {
           </span>
           <Slider
             value={[iconSize]}
-            onValueChange={([v]) => setIconSize(v)}
+            onValueChange={([v]: any) => setIconSize(v)}
             min={10}
             max={24}
             step={1}

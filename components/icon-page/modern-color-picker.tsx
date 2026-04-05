@@ -3,8 +3,9 @@
 import * as React from "react";
 import * as SliderPrimitive from "@radix-ui/react-slider";
 import { motion, AnimatePresence } from "framer-motion";
-import { BlossomColorPicker } from "./blossom-color-picker";
+import { BlossomColorPicker } from "@/components/icon-page/blossom-picker/blossom-picker";
 import { cn } from "@/lib/utils";
+import { hslToHex, hexToHsl } from "@/lib/color-utils";
 
 interface ModernColorPickerProps {
   color?: string;
@@ -12,9 +13,6 @@ interface ModernColorPickerProps {
   className?: string;
 }
 
-/**
- * Parses HSL string to object
- */
 const parseHsl = (hsl: string) => {
   const match = hsl.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
   if (match)
@@ -26,10 +24,6 @@ const parseHsl = (hsl: string) => {
   return { h: 36, s: 70, l: 50 };
 };
 
-/**
- * ModernColorPicker Component
- * A premium Apple-style color picker with a gradient slider and a rainbow hue trigger.
- */
 export function ModernColorPicker({
   color = "hsl(36, 70%, 50%)",
   onChange,
@@ -37,7 +31,6 @@ export function ModernColorPicker({
 }: ModernColorPickerProps) {
   const [hsl, setHsl] = React.useState(parseHsl(color));
 
-  // Sync internal state with prop
   React.useEffect(() => {
     setHsl(parseHsl(color));
   }, [color]);
@@ -50,10 +43,10 @@ export function ModernColorPicker({
     onChange?.(`hsl(${newHsl.h}, ${newHsl.s}%, ${newHsl.l}%)`);
   };
 
-  const handleHueChange = (newColor: string) => {
-    const newHsl = parseHsl(newColor);
+  const handleHueChange = (newHex: string) => {
+    const newHsl = hexToHsl(newHex);
     setHsl(newHsl);
-    onChange?.(newColor);
+    onChange?.(`hsl(${newHsl.h}, ${newHsl.s}%, ${newHsl.l}%)`);
   };
 
   return (
@@ -63,7 +56,6 @@ export function ModernColorPicker({
         className,
       )}
     >
-      {/* Horizontal Gradient Slider */}
       <div className="relative flex items-center px-1">
         <SliderPrimitive.Root
           className="relative flex items-center select-none touch-none w-52 h-10 group cursor-pointer"
@@ -73,7 +65,6 @@ export function ModernColorPicker({
           step={1}
         >
           <SliderPrimitive.Track className="relative h-full grow rounded-lg overflow-hidden bg-white/5">
-            {/* Gradient Background: From Hue-White to Full Hue */}
             <div
               className="absolute inset-0 w-full h-full"
               style={{
@@ -88,18 +79,16 @@ export function ModernColorPicker({
         </SliderPrimitive.Root>
       </div>
 
-      {/* Rainbow Hue Trigger */}
       <div className="relative mr-1">
         <BlossomColorPicker
-          color={currentColor}
-          onColorSelect={handleHueChange}
-          triggerClassName={cn(
+          value={hslToHex(hsl.h, hsl.s, hsl.l)}
+          onChange={handleHueChange}
+          className={cn(
             "w-9 h-9 !opacity-100 !ring-0 border-[2px] border-white/20 shadow-lg cursor-pointer transition-all hover:scale-110 active:scale-95 rounded-md",
             "bg-[conic-gradient(from_0deg,#ff0000,#ffff00,#00ff00,#00ffff,#0000ff,#ff00ff,#ff0000)]",
           )}
         />
-        {/* Subtle Glow behind the rainbow button */}
-        <div className="absolute inset-0 rounded-md blur-[4px] opacity-30 bg-[conic-gradient(from_0deg,#ff0000,#ffff00,#00ff00,#00ffff,#0000ff,#ff00ff,#ff0000)] -z-10" />
+        <div className="absolute inset-0 rounded-md blur-[4px] opacity-30 bg-[conic-gradient(from_180deg,#ff0000,#ffff00,#00ff00,#00ffff,#0000ff,#ff00ff,#ff0000)] -z-10" />
       </div>
     </div>
   );

@@ -13,6 +13,9 @@
 # testing
 /coverage
 
+# Ai files
+.agents/
+
 # next.js
 /.next/
 /out/
@@ -42,4 +45,7 @@ yarn-error.log*
 next-env.d.ts
 dev-tools.tsx
 
+
+#files/
+compact-geometric-background.tsx
 .agents

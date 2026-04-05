@@ -23,28 +23,30 @@ export function IconLibraryPanel({
   } = useIconLibrary(selectedCategory, onIconSelect);
 
   return (
-    <div className="h-full flex flex-col bg-card border-r border-border transition-colors duration-300">
-      <IconLibraryHeader
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        clearSearch={clearSearch}
-        searchInputRef={searchInputRef}
-        selectedCategory={selectedCategory}
-        onCategoryChange={onCategoryChange}
-      />
-
-      {/* Scrollable Content */}
-      <div
-        className="flex-1 overflow-y-auto scrollbar-hide"
-        role="tabpanel"
-        aria-label="Assets"
-      >
-        <IconGrid
-          icons={filteredIcons}
-          selectedIconId={selectedIconId ?? null}
-          onIconClick={handleIconClick}
+    <div className="h-full flex flex-col bg-workspace-pattern border-r border-border relative">
+      <div className="absolute inset-0 bg-background/80 pointer-events-none" />
+      <div className="relative z-10 flex flex-col h-full">
+        <IconLibraryHeader
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          clearSearch={clearSearch}
+          searchInputRef={searchInputRef}
+          selectedCategory={selectedCategory}
+          onCategoryChange={onCategoryChange}
         />
-        <EmptyState isVisible={filteredIcons.length === 0} onClearSearch={clearSearch} />
+
+        <div
+          className="flex-1 overflow-y-auto scrollbar-hide"
+          role="tabpanel"
+          aria-label="Assets"
+        >
+          <IconGrid
+            icons={filteredIcons}
+            selectedIconId={selectedIconId ?? null}
+            onIconClick={handleIconClick}
+          />
+          <EmptyState isVisible={filteredIcons.length === 0} onClearSearch={clearSearch} />
+        </div>
       </div>
     </div>
   );

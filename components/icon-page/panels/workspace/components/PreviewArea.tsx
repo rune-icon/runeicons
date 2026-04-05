@@ -21,7 +21,8 @@ export function PreviewArea({
   onRemoveFromTray,
 }: PreviewAreaProps) {
   const canvasRef = useRef<HTMLDivElement>(null);
-  const { boxShadow, supportsFilter, noiseFilter } = useCanvasStyles(state);
+  const { boxShadow, supportsFilter, noiseFilter, blurFilter } =
+    useCanvasStyles(state);
 
   return (
     <CanvasFrame
@@ -41,6 +42,7 @@ export function PreviewArea({
         boxShadow={boxShadow}
         supportsFilter={supportsFilter}
         noiseFilter={noiseFilter}
+        blurFilter={blurFilter}
       />
     </CanvasFrame>
   );
