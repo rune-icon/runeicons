@@ -51,7 +51,7 @@ export function PropertiesPanel({
 
   return (
     <div
-      className="h-full overflow-y-auto space-y-4 p-4"
+      className="h-full overflow-y-auto space-y-3 p-4"
       role="region"
       aria-label="Customization controls panel"
     >

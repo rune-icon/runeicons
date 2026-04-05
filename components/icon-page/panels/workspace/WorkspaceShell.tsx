@@ -60,14 +60,17 @@ export function WorkspaceShell() {
       />
 
       <aside
-        className="w-[380px] shrink-0 border-l border-border bg-card overflow-y-auto"
+        className="w-[380px] shrink-0 border-l border-border bg-workspace-pattern overflow-y-auto relative"
         aria-label="Customization controls"
       >
-        <PropertiesPanel
-          state={state}
-          onChange={handleChange}
-          onReset={handleReset}
-        />
+        <div className="absolute inset-0 bg-background/80 pointer-events-none" />
+        <div className="relative z-10">
+          <PropertiesPanel
+            state={state}
+            onChange={handleChange}
+            onReset={handleReset}
+          />
+        </div>
       </aside>
     </div>
   );

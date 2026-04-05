@@ -1,8 +1,8 @@
 import { Card } from "@/components/ui/card";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Eye, EyeOff } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { DualRangeSlider } from "@/components/ui/slider";
+import { Scrubber } from "@/components/ui/scrubber";
 import { CustomizationState } from "@/lib/types";
 
 interface ShadowSectionProps {
@@ -19,25 +19,45 @@ export function ShadowSection({
   onToggle,
 }: ShadowSectionProps) {
   return (
-    <Card className="bg-card border-border py-0">
-      <button
-        onClick={onToggle}
-        className="w-full p-3 flex items-center justify-between rounded-xl hover:bg-muted/50 transition-colors"
-        aria-expanded={!isCollapsed}
-        aria-controls="section-shadow-content"
-      >
-        <h3 className="text-sm font-medium text-foreground">Shadow</h3>
-        <ChevronDown
-          className={cn(
-            "h-4 w-4 text-muted-foreground transition-transform",
-            isCollapsed && "rotate-180",
+    <Card className="bg-card border-border py-0 gap-0">
+      <div className="w-full flex items-center justify-between p-1 pr-3">
+        <button
+          onClick={onToggle}
+          className="flex-1 p-2 flex items-center gap-2 hover:bg-muted/50 transition-colors rounded-xl text-left"
+          aria-expanded={!isCollapsed}
+          aria-controls="section-shadow-content"
+        >
+          <ChevronDown
+            className={cn(
+              "h-4 w-4 text-muted-foreground transition-transform",
+              isCollapsed && "rotate-180",
+            )}
+          />
+          <h3 className="text-sm font-medium text-foreground">Shadow</h3>
+        </button>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={(e) => {
+            e.stopPropagation();
+            onChange({
+              shadow: { ...state.shadow, enabled: !state.shadow.enabled },
+            });
+          }}
+          className="h-8 w-8 text-muted-foreground hover:text-foreground"
+          title={state.shadow.enabled ? "Disable Shadow" : "Enable Shadow"}
+        >
+          {state.shadow.enabled ? (
+            <Eye className="h-4 w-4" />
+          ) : (
+            <EyeOff className="h-4 w-4" />
           )}
-        />
-      </button>
-      {!isCollapsed && (
-        <div id="section-shadow-content" className="px-4 pb-3 space-y-3">
+        </Button>
+      </div>
+      {!isCollapsed && state.shadow.enabled && (
+        <div id="section-shadow-content" className="px-4 pb-3 space-y-2">
           <div className="flex items-center justify-between mb-2">
-            <p className="text-xs text-muted-foreground pt-2">
+            <p className="text-xs text-muted-foreground pt-1">
               Adjustable shadow settings
             </p>
             <div className="flex p-0.5 rounded-lg border border-border bg-muted/30">
@@ -77,98 +97,54 @@ export function ShadowSection({
               </Button>
             </div>
           </div>
-          <div className="space-y-3">
-            <div className="space-y-3">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-foreground">
-                  Opacity
-                </span>
-              </div>
-              <DualRangeSlider
-                label="%"
-                labelPosition="static"
-                labelContentPos="right"
-                value={[state.shadow.opacity]}
-                onValueChange={([val]) =>
-                  val != null &&
-                  onChange({
-                    shadow: { ...state.shadow, opacity: val },
-                  })
-                }
-                min={0}
-                max={100}
-                step={1}
-              />
-            </div>
+          <div className="space-y-4 pt-1">
+            <Scrubber
+              label="Opacity"
+              value={state.shadow.opacity}
+              onChange={(val: number) =>
+                onChange({
+                  shadow: { ...state.shadow, opacity: val },
+                })
+              }
+              min={0}
+              max={100}
+            />
 
-            <div className="space-y-3">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-foreground">
-                  Blur
-                </span>
-              </div>
-              <DualRangeSlider
-                label="px"
-                labelPosition="static"
-                labelContentPos="right"
-                value={[state.shadow.blur]}
-                onValueChange={([val]: number[]) =>
-                  val != null &&
-                  onChange({
-                    shadow: { ...state.shadow, blur: val },
-                  })
-                }
-                min={0}
-                max={50}
-                step={1}
-              />
-            </div>
+            <Scrubber
+              label="Blur"
+              value={state.shadow.blur}
+              onChange={(val: number) =>
+                onChange({
+                  shadow: { ...state.shadow, blur: val },
+                })
+              }
+              min={0}
+              max={50}
+            />
 
-            <div className="space-y-3">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-foreground">
-                  Offset X
-                </span>
-              </div>
-              <DualRangeSlider
-                label="px"
-                labelPosition="static"
-                labelContentPos="right"
-                value={[state.shadow.offsetX]}
-                onValueChange={([val]: number[]) =>
-                  val != null &&
-                  onChange({
-                    shadow: { ...state.shadow, offsetX: val },
-                  })
-                }
-                min={-50}
-                max={50}
-                step={1}
-              />
-            </div>
+            <Scrubber
+              label="Offset X"
+              value={state.shadow.offsetX}
+              onChange={(val: number) =>
+                onChange({
+                  shadow: { ...state.shadow, offsetX: val },
+                })
+              }
+              min={-50}
+              max={50}
+            />
 
-            <div className="space-y-3">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-foreground">
-                  Offset Y
-                </span>
-              </div>
-              <DualRangeSlider
-                label="px"
-                labelPosition="static"
-                labelContentPos="right"
-                value={[state.shadow.offsetY]}
-                onValueChange={([val]: number[]) =>
-                  val != null &&
-                  onChange({
-                    shadow: { ...state.shadow, offsetY: val },
-                  })
-                }
-                min={-50}
-                max={50}
-                step={1}
-              />
-            </div>
+            <Scrubber
+              label="Offset Y"
+              value={state.shadow.offsetY}
+              onChange={(val: number) =>
+                onChange({
+                  shadow: { ...state.shadow, offsetY: val },
+                })
+              }
+              min={-50}
+              max={50}
+            />
           </div>
         </div>
       )}

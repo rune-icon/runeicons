@@ -1,0 +1,98 @@
+import { HexColor, RGBColor } from "@/lib/color-utils";
+import { BlossomLayoutConfig, BlossomStyleConfig } from "@/lib/blossom-utils";
+
+export const BLOSSOM_DEFAULT_COLOR: HexColor = '#007aff';
+
+export const BLOSSOM_LAYOUT_DEFAULTS: BlossomLayoutConfig = {
+    innerPetalCount: 6,
+    outerPetalCount: 12,
+    innerRadius: 20,
+    outerRadius: 36,
+};
+
+export const BLOSSOM_STYLE_DEFAULTS: BlossomStyleConfig = {
+    petalSize: 30,
+    innerPetalSize: 30,
+    outerRingBorderWidth: 6,
+    centerCircleSize: 30,
+    sliderWidth: 12,
+    sliderHeight: 140,
+    spacing: 12,
+};
+
+export const BLOSSOM_NUMBERS = {
+    borderWidth: 1,
+    outerRingInset: 12,
+    arcStartAngle: -30,
+    arcEndAngle: 30,
+    arcThumbSizeOffset: 8,
+    arcThumbDragScale: 1.1,
+    arcGradientSteps: 11,
+    petalHoverScale: 1.1,
+    collapsedSwatchSize: 32,
+    collapsedSwatchBorderOpacity: 0.3,
+    centerBorderOpacity: 0.1,
+    outerRingFillOpacity: 0.15,
+    viewPadding: 20,
+    bloomDelayMs: 15,
+    animationEase: 'cubic-bezier(0.2, 0.92, 0.2, 1)',
+    borderSaturationMultiplier: 1.25,
+    borderBrightnessMultiplier: 0.9,
+    viewportPadding: 18,
+} as const;
+
+export const DEFAULT_BLOSSOM_PALETTE: {
+    center: RGBColor[];
+    ring_1: RGBColor[];
+    ring_2: RGBColor[];
+} = {
+    center: [{ r: 252, g: 246, b: 238 }],
+    ring_1: [
+        { r: 251, g: 243, b: 219 },
+        { r: 231, g: 241, b: 216 },
+        { r: 218, g: 238, b: 230 },
+        { r: 214, g: 234, b: 248 },
+        { r: 221, g: 223, b: 250 },
+        { r: 234, g: 218, b: 246 },
+        { r: 247, g: 215, b: 236 },
+        { r: 254, g: 220, b: 223 },
+    ],
+    ring_2: [
+        { r: 252, g: 226, b: 162 },
+        { r: 206, g: 230, b: 163 },
+        { r: 150, g: 223, b: 189 },
+        { r: 130, g: 211, b: 223 },
+        { r: 130, g: 192, b: 238 },
+        { r: 159, g: 174, b: 242 },
+        { r: 196, g: 163, b: 232 },
+        { r: 229, g: 162, b: 206 },
+        { r: 252, g: 169, b: 175 },
+        { r: 255, g: 196, b: 139 },
+        { r: 183, g: 219, b: 131 },
+        { r: 117, g: 210, b: 166 },
+        { r: 92, g: 196, b: 211 },
+        { r: 88, g: 173, b: 230 },
+        { r: 121, g: 151, b: 235 },
+        { r: 166, g: 137, b: 226 },
+        { r: 211, g: 132, b: 201 },
+        { r: 247, g: 140, b: 147 },
+        { r: 255, g: 176, b: 103 },
+        { r: 164, g: 209, b: 100 },
+        { r: 75, g: 198, b: 143 },
+        { r: 44, g: 181, b: 199 },
+        { r: 43, g: 154, b: 222 },
+        { r: 85, g: 129, b: 230 },
+        { r: 140, g: 111, b: 222 },
+        { r: 195, g: 102, b: 210 },
+        { r: 242, g: 111, b: 120 },
+        { r: 255, g: 159, b: 77 },
+        { r: 140, g: 202, b: 80 },
+        { r: 48, g: 188, b: 126 },
+        { r: 0, g: 171, b: 193 },
+        { r: 8, g: 142, b: 216 },
+        { r: 54, g: 113, b: 229 },
+        { r: 118, g: 93, b: 217 },
+        { r: 182, g: 81, b: 202 },
+        { r: 235, g: 91, b: 99 },
+    ],
+};

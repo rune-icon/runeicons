@@ -41,11 +41,11 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
-  --color-1: #0A2E9E;
-  --color-2: #1447E6;
-  --color-3: #3366F0;
-  --color-4: #5A8AF5;
   --color-5: #82AAFC;
+  --font-weight-normal: "wght" 400;
+  --font-weight-medium: "wght" 450;
+  --font-weight-semibold: "wght" 550;
+  --font-weight-bold: "wght" 700;
 }
 
 @theme inline {
@@ -200,4 +200,13 @@
 
 .animate-rainbow {
   animation: rainbow 6s linear infinite;
+}
+
+.bg-workspace-pattern {
+  background-color: var(--background);
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 12 12' xmlns='http://www.w3.org/2000/svg'%3E%3Cline x1='0' y1='0' x2='12' y2='12' stroke='%23e5e7eb' stroke-width='1' stroke-dasharray='2,2'/%3E%3C/svg%3E");
+}
+
+.dark .bg-workspace-pattern {
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 12 12' xmlns='http://www.w3.org/2000/svg'%3E%3Cline x1='0' y1='0' x2='12' y2='12' stroke='rgba(255, 255, 255, 0.05)' stroke-width='1' stroke-dasharray='2,2'/%3E%3C/svg%3E");
 }
