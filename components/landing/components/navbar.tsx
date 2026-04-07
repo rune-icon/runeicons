@@ -10,6 +10,7 @@ import { motion, useMotionValueEvent, useScroll } from "motion/react";
 import LightLogo from "@/components/landing/svg/light";
 import { Button } from "@/components/ui/button";
 import { LightDarkMode } from "@/components/ui/light-dark-mode";
+import { StarsCount } from "./stars-count";
 
 const Navbar = () => {
   const Links = ["About Devs", "Sponsors"];
@@ -93,7 +94,7 @@ const Navbar = () => {
                 aria-label="GitHub"
               >
                 <GithubIcon className="size-4" />
-                {/* <StarsCount /> */}1000+
+                <StarsCount />
               </Button>
             </Link>
             <Link
