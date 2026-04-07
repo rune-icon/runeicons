@@ -4,22 +4,51 @@ import gsap from "gsap";
 
 const BentoCenterSvg = () => {
   const svgRef = useRef<SVGSVGElement>(null);
+
   useEffect(() => {
     const svg = svgRef.current;
     if (!svg) return;
-    const bottomBox = svg.querySelector('.bottom-box');
-    const topBox = svg.querySelector('.top-box');
-    const lines = svg.querySelectorAll('.lines');
+
+    const bottomBox = svg.querySelector(".bottom-box");
+    const topBox = svg.querySelector(".top-box");
+    const lines = svg.querySelectorAll(".lines");
+
     // Set initial state
     gsap.set(bottomBox, { y: -141 });
     gsap.set(topBox, { y: 141 });
     gsap.set(lines, { opacity: 0 });
-    // Timeline for sequencing
-    const tl = gsap.timeline();
-    tl.to(bottomBox, { y: 0, duration: 1.4, ease: 'power4.out' })
-      .to(topBox, { y: 0, duration: 1.4, ease: 'power4.out' }, '<')
-      .to(lines, { opacity: 1, duration: 0.7, ease: 'power2.out' }, '+=0.1');
+
+    let hasAnimated = false;
+    let tl: gsap.core.Timeline | null = null;
+
+    const playAnimation = () => {
+      if (hasAnimated) return;
+      hasAnimated = true;
+
+      // Timeline for sequencing
+      tl = gsap.timeline();
+      tl.to(bottomBox, { y: 0, duration: 1.4, ease: "power4.out" })
+        .to(topBox, { y: 0, duration: 1.4, ease: "power4.out" }, "<")
+        .to(lines, { opacity: 1, duration: 0.7, ease: "power2.out" }, "+=0.1");
+    };
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        playAnimation();
+        observer.disconnect();
+      },
+      { threshold: 0.35 }
+    );
+
+    observer.observe(svg);
+
+    return () => {
+      observer.disconnect();
+      tl?.kill();
+    };
   }, []);
+
   return (
     <svg
       ref={svgRef}
@@ -28,7 +57,7 @@ const BentoCenterSvg = () => {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-    <g style={{ transform: "translateY(-141px)"  }} className="bottom-box ">
+    <g style={{ transform: "translateY(-141px)" }} className="bottom-box">
         <path
         d="M14.1738 340L72.6309 373.75L73.4961 374.25V399.75L13.7412 365.25V339.75L14.1738 340Z"
         fill="black"
@@ -592,7 +621,7 @@ const BentoCenterSvg = () => {
         stroke="url(#paint2_linear_221_840)"
         strokeDasharray="2 2"
       />
-    <g className="middle-box ">
+    <g className="middle-box">
 
       
         <path
@@ -1040,8 +1069,7 @@ const BentoCenterSvg = () => {
         stroke="url(#paint5_linear_221_840)"
         strokeDasharray="2 2"
       />
-<g  style={{ transform: "translateY(141px)" }} className=" top-box
-">
+<g style={{ transform: "translateY(141px)" }} className="top-box">
       
     
   

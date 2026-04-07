@@ -6,6 +6,7 @@ import {
     AccordionItem,
     AccordionTrigger,
 } from '@/components/ui/accordion'
+import { Button } from '@/components/ui/button'
 import { Github, MessageCircle, Twitter } from 'lucide-react'
 
 type FAQItem = {
@@ -49,13 +50,17 @@ export default function Faq() {
                 <div className="relative z-10 flex flex-col gap-10 lg:flex-row lg:gap-20">
                     <div className="flex flex-col gap-8 lg:w-[340px] shrink-0">
                         <div className="flex flex-col gap-2">
-                            <span className="text-sm font-mono uppercase tracking-widest text-blue-700">FAQ</span>
-                            <h2 className="text-3xl font-semibold text-foreground tracking-tight">
-                                Questions &amp; Answers
-                            </h2>
+                            <span className="text-4xl font-medium ">Frequently asked <br />
+                          <span className='text-blue-700'>
+                            
+                            questions
+                            </span>  
+                            </span>
                             <p className="text-sm text-muted-foreground">
-                                Have more questions? Reach out to us on any of these platforms:
+                                Can’t find the answer you’re looking for? <br /> I’m
+                                here to help.
                             </p>
+                            <Button className='mt-6 w-fit'>Contact us <MessageCircle/></Button>
                         </div>
                     </div>
 

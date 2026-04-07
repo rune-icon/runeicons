@@ -107,14 +107,15 @@ const Footer = () => {
                 aria-label="X/Twitter"
                 className="text-muted-foreground hover:text-foreground transition-colors"
               >
-                <Twitter className="size-4" />
-              </Link>
+   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" color="currentColor" fill="none" stroke="#FFFFFF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M3 21L10.5484 13.4516M21 3L13.4516 10.5484M13.4516 10.5484L8 3H3L10.5484 13.4516M13.4516 10.5484L21 21H16L10.5484 13.4516" />
+</svg>               </Link>
               <Link
                 href="https://github.com/rune-icon/runeicons"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="GitHub"
-                className="text-muted-foreground hover:text-foreground transition-colors"
+                className=" hover:text-foreground transition-colors"
               >
                 <Github className="size-4" />
               </Link>

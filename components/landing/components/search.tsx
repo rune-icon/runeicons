@@ -61,7 +61,7 @@ const ICONS = [
 
 const Search = () => {
   return (
-    <div className="flex max-h-screen h-full flex-col gap-5 py-6 lg:flex-row">
+    <div className="flex h-full flex-col gap-5 py-6 lg:flex-row">
       {/* Left - Hero text card */}
       <div className="min-h-[400px] lg:min-h-0 lg:w-1/2">
         <div className="bg-background relative h-full min-h-[400px] w-full overflow-hidden rounded-2xl bg-center">

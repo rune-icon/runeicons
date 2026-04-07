@@ -70,7 +70,7 @@ const Navbar = () => {
       <div className=" bg-[#F5F5F5] dark:bg-background  w-[90vw] 2xl:w-[85vw] flex items-center justify-between   px-4 py-3 ">
         <LightLogo />
         <div className="flex items-center gap-2">
-          <ul className="hidden gap-2 md:flex">
+          {/* <ul className="hidden gap-2 md:flex">
             {Links.map((link) => (
               <Button
                 variant={"ghost"}
@@ -80,7 +80,7 @@ const Navbar = () => {
                 {link}
               </Button>
             ))}
-          </ul>
+          </ul> */}
           <div className="flex items-center gap-2">
             <Link
               href="https://github.com/AitijhyaModak/rune-icons"
@@ -93,8 +93,7 @@ const Navbar = () => {
                 aria-label="GitHub"
               >
                 <GithubIcon className="size-4" />
-                {/* <StarsCount /> */}1000+
-              </Button>
+100              </Button>
             </Link>
             <Link
               href="https://x.com/RuneIcon"
@@ -107,8 +106,9 @@ const Navbar = () => {
                 className="text-xs"
                 aria-label="Rune on X"
               >
-                <Twitter />
-              </Button>
+   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" color="currentColor" fill="none" stroke="#FFFFFF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M3 21L10.5484 13.4516M21 3L13.4516 10.5484M13.4516 10.5484L8 3H3L10.5484 13.4516M13.4516 10.5484L21 21H16L10.5484 13.4516" />
+</svg>               </Button>
             </Link>
             <LightDarkMode />
           </div>

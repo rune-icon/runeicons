@@ -9,8 +9,10 @@ const BentoSvg = ({ className }: { className?: string }) => {
     const svg = svgRef.current;
     if (!svg) return;
 
-    // Animate all paths: reveal with strokeDashoffset
     const paths = svg.querySelectorAll("path");
+    const shapes = svg.querySelectorAll("circle, rect, line");
+
+    // Keep artwork still until it is in view.
     paths.forEach((path, i) => {
       const length = (path as SVGPathElement).getTotalLength?.() ?? 0;
       if (length > 0) {
@@ -19,26 +21,61 @@ const BentoSvg = ({ className }: { className?: string }) => {
           strokeDashoffset: length,
           opacity: 1,
         });
-        gsap.to(path, {
-          strokeDashoffset: 0,
-          duration: 1.2,
-          delay: i * 0.15,
-          ease: "power2.out",
-        });
       } else {
-        gsap.fromTo(path, { opacity: 0 }, { opacity: 1, duration: 1, delay: i * 0.15 });
+        gsap.set(path, { opacity: 0 });
       }
     });
 
-    // Animate circles, rects, lines: fade in
-    const shapes = svg.querySelectorAll("circle, rect, line");
-    shapes.forEach((shape, i) => {
-      gsap.fromTo(
-        shape,
-        { opacity: 0 },
-        { opacity: 1, duration: 1, delay: 0.2 + i * 0.12, ease: "power1.out" }
-      );
+    shapes.forEach((shape) => {
+      gsap.set(shape, { opacity: 0 });
     });
+
+    let hasAnimated = false;
+
+    const playAnimation = () => {
+      if (hasAnimated) return;
+      hasAnimated = true;
+
+      // Animate all paths: reveal with strokeDashoffset
+      paths.forEach((path, i) => {
+        const length = (path as SVGPathElement).getTotalLength?.() ?? 0;
+        if (length > 0) {
+          gsap.to(path, {
+            strokeDashoffset: 0,
+            duration: 1.2,
+            delay: i * 0.15,
+            ease: "power2.out",
+          });
+        } else {
+          gsap.to(path, { opacity: 1, duration: 1, delay: i * 0.15 });
+        }
+      });
+
+      // Animate circles, rects, lines: fade in
+      shapes.forEach((shape, i) => {
+        gsap.to(shape, {
+          opacity: 1,
+          duration: 1,
+          delay: 0.2 + i * 0.12,
+          ease: "power1.out",
+        });
+      });
+    };
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        playAnimation();
+        observer.disconnect();
+      },
+      { threshold: 0.3 }
+    );
+
+    observer.observe(svg);
+
+    return () => {
+      observer.disconnect();
+    };
   }, []);
 
   return (
