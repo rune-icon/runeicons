@@ -43,7 +43,7 @@ export function UploadSection({
   maxIcons,
 }: UploadSectionProps) {
   return (
-    <Card className="bg-card border-border py-0">
+    <Card className="bg-card border-border py-0 gap-0">
       <div className="flex items-center justify-between p-3">
         <button onClick={onToggle} className="flex items-center gap-2 flex-1" aria-expanded={!isCollapsed} aria-controls="section-upload-content">
           <h3 className="text-sm font-medium text-foreground">
@@ -81,7 +81,6 @@ export function UploadSection({
             </div>
           )}
 
-          {/* Upload Area */}
           <div
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
@@ -144,7 +143,6 @@ export function UploadSection({
             </p>
           )}
 
-          {/* Custom Icons List */}
           {state.customIcons.length > 0 && (
             <div className="mt-2">
               <label className="text-xs font-medium text-muted-foreground mb-2 block">

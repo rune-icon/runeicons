@@ -1,5 +1,5 @@
 import { forwardRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@/lib/utils";
 import { IconData, CustomizationState } from "@/lib/types";
 
@@ -9,10 +9,21 @@ interface PreviewContentProps {
   boxShadow: string;
   supportsFilter: boolean;
   noiseFilter: string;
+  blurFilter: string;
 }
 
 export const PreviewContent = forwardRef<HTMLDivElement, PreviewContentProps>(
-  ({ state, selectedIcon, boxShadow, supportsFilter, noiseFilter }, ref) => {
+  (
+    {
+      state,
+      selectedIcon,
+      boxShadow,
+      supportsFilter,
+      noiseFilter,
+      blurFilter,
+    },
+    ref,
+  ) => {
     const SelectedIconComponent = selectedIcon?.icon;
 
     return (
@@ -38,10 +49,9 @@ export const PreviewContent = forwardRef<HTMLDivElement, PreviewContentProps>(
             rotateZ: state.rotation,
             scaleX: state.flipH ? -1 : 1,
             scaleY: state.flipV ? -1 : 1,
-            boxShadow: state.shadow.inner ? "none" : boxShadow,
-            filter: [`blur(${state.blur}px)`, noiseFilter]
-              .filter(Boolean)
-              .join(" "),
+            boxShadow:
+              state.shadow.enabled && state.shadow.inner ? "none" : boxShadow,
+            filter: [blurFilter, noiseFilter].filter(Boolean).join(" "),
           }}
           style={{
             background: "transparent",
@@ -58,9 +68,8 @@ export const PreviewContent = forwardRef<HTMLDivElement, PreviewContentProps>(
               : "Customizable preview element"
           }
         >
-          {/* Texture overlay */}
           <AnimatePresence>
-            {state.texture.selected !== "none" && (
+            {state.texture.enabled && state.texture.selected !== "none" && (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: state.texture.opacity / 100 }}

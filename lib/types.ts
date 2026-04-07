@@ -5,18 +5,22 @@ export interface CustomizationState {
   numColors: number;
   scale: number;
   blur: number;
+  blurEnabled: boolean;
   translateX: number;
   translateY: number;
   padding: number;
   cornerRadius: number;
+  cornerRadiusEnabled: boolean;
   flipH: boolean;
   flipV: boolean;
   rotation: number;
+  flipRotateEnabled: boolean;
   width: number;
   height: number;
   lockAspect: boolean;
   iconGradient: boolean;
   shadow: {
+    enabled: boolean;
     opacity: number;
     blur: number;
     offsetX: number;
@@ -28,6 +32,7 @@ export interface CustomizationState {
     intensity: number;
   };
   texture: {
+    enabled: boolean;
     selected: string;
     opacity: number;
   };

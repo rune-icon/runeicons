@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import {
   Atom,
   AudioLines,
@@ -128,7 +128,7 @@ const IconCarousel = () => {
           </span>
           <Slider
             value={[iconSize]}
-            onValueChange={([v]) => setIconSize(v)}
+            onValueChange={([v]: any) => setIconSize(v)}
             min={10}
             max={24}
             step={1}

@@ -1,6 +1,6 @@
 "use client";
 import { useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import gsap from "gsap";
 import { MotionPathPlugin } from "gsap/MotionPathPlugin";
 import { useGSAP } from "@gsap/react";

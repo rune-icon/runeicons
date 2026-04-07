@@ -25,6 +25,8 @@ import {
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { IconData, CustomizationState } from "@/lib/types";
+import { generateStandaloneSvg } from "@/lib/svg-export-utils";
+import { Slider } from "@/components/ui/slider";
 
 export interface WorkspaceActionBarProps {
   onDownload?: () => void;
@@ -65,18 +67,16 @@ export function WorkspaceActionBar({
 
   const getSvgContent = () => {
     if (!selectedIcon || !state) return "";
-
-    // Lucide icons usually render as <svg>...</svg>
-    // Since we are applying styles in the main page, we should try to replicate that
-    // However, for code copy, users usually want the base Lucide icon or the customized SVG
-
-    // For a quick implementation that matches the "Customized SVG" feel:
-    return `<svg xmlns="http://www.w3.org/2000/svg" width="${state.width}" height="${state.height}" viewBox="0 0 24 24" fill="none" stroke="${state.colors[0]}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-  <!-- Lucide Icon: ${selectedIcon.name} -->
+    try {
+      return generateStandaloneSvg(selectedIcon, state);
+    } catch (error) {
+      console.error("Failed to generate SVG:", error);
+      toast.error("Enhanced export failed. Falling back to basic copy.");
+      return `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="${state.width}" height="${state.height}" viewBox="0 0 24 24" fill="none" stroke="${state.colors[0]}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
   <use href="#${selectedIcon.id}" />
 </svg>`;
-    // Note: This is a placeholder for more complex SVG generation if needed.
-    // In a real app, you'd render the icon component and extract its path.
+    }
   };
 
   const downloadSvg = () => {
@@ -86,7 +86,7 @@ export function WorkspaceActionBar({
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `${selectedIcon?.name || "icon"}.svg`;
+    link.download = `${selectedIcon?.name.toLowerCase().replace(/\s+/g, "-") || "icon"}.svg`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -101,7 +101,6 @@ export function WorkspaceActionBar({
         className,
       )}
     >
-      {/* Dimension Dropdown */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
@@ -133,10 +132,8 @@ export function WorkspaceActionBar({
         </DropdownMenuContent>
       </DropdownMenu>
 
-      {/* Divider */}
       <div className="h-6 w-px bg-border" />
 
-      {/* Advanced Download Menu */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
@@ -150,7 +147,7 @@ export function WorkspaceActionBar({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent
-          align="start"
+          align="end"
           className="w-56 p-1 bg-card border-border text-foreground"
         >
           <DropdownMenuItem
@@ -224,10 +221,7 @@ export function WorkspaceActionBar({
         </DropdownMenuContent>
       </DropdownMenu>
 
-      {/* Divider */}
-      <div className="h-6 w-px bg-border" />
 
-      {/* Secondary Actions */}
       <Button
         variant="ghost"
         size="icon"
@@ -293,10 +287,8 @@ export function WorkspaceActionBar({
         </DropdownMenuContent>
       </DropdownMenu>
 
-      {/* Divider */}
       <div className="h-6 w-px bg-border hidden" />
 
-      {/* History Actions */}
       <Button
         variant="ghost"
         size="icon"

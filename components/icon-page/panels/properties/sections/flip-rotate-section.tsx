@@ -1,8 +1,8 @@
 import { Card } from "@/components/ui/card";
-import { ChevronDown, FlipHorizontal, FlipVertical } from "lucide-react";
+import { ChevronDown, FlipHorizontal, FlipVertical, Eye, EyeOff } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { DualRangeSlider } from "@/components/ui/slider";
+import { Scrubber } from "@/components/ui/scrubber";
 import { CustomizationState } from "@/lib/types";
 
 interface FlipRotateSectionProps {
@@ -19,24 +19,42 @@ export function FlipRotateSection({
   onToggle,
 }: FlipRotateSectionProps) {
   return (
-    <Card className="bg-card border-border py-0">
-      <button
-        onClick={onToggle}
-        className="w-full p-3 flex items-center justify-between hover:bg-muted/50 transition-colors rounded-t-xl"
-        aria-expanded={!isCollapsed}
-        aria-controls="section-flip-rotate-content"
-      >
-        <h3 className="text-sm font-medium text-foreground">Flip & Rotate</h3>
-        <ChevronDown
-          className={cn(
-            "h-4 w-4 text-muted-foreground transition-transform",
-            isCollapsed && "rotate-180",
+    <Card className="bg-card border-border py-0 gap-0">
+      <div className="w-full flex items-center justify-between p-1 pr-3">
+        <button
+          onClick={onToggle}
+          className="flex-1 p-2 flex items-center gap-2 hover:bg-muted/50 transition-colors rounded-xl text-left"
+          aria-expanded={!isCollapsed}
+          aria-controls="section-flip-rotate-content"
+        >
+          <ChevronDown
+            className={cn(
+              "h-4 w-4 text-muted-foreground transition-transform",
+              isCollapsed && "rotate-180",
+            )}
+          />
+          <h3 className="text-sm font-medium text-foreground">Flip & Rotate</h3>
+        </button>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={(e) => {
+            e.stopPropagation();
+            onChange({ flipRotateEnabled: !state.flipRotateEnabled });
+          }}
+          className="h-8 w-8 text-muted-foreground hover:text-foreground"
+          title={state.flipRotateEnabled ? "Disable Flip & Rotate" : "Enable Flip & Rotate"}
+        >
+          {state.flipRotateEnabled ? (
+            <Eye className="h-4 w-4" />
+          ) : (
+            <EyeOff className="h-4 w-4" />
           )}
-        />
-      </button>
-      {!isCollapsed && (
+        </Button>
+      </div>
+      {!isCollapsed && state.flipRotateEnabled && (
         <div id="section-flip-rotate-content" className="px-4 pb-3">
-          <div className="space-y-3">
+          <div className="space-y-2">
             <div>
               <label className="text-xs font-medium text-muted-foreground mb-2 block">
                 Flip
@@ -81,23 +99,13 @@ export function FlipRotateSection({
               </div>
             </div>
 
-            <div className="space-y-3">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-foreground">
-                  Rotation
-                </span>
-              </div>
-              <DualRangeSlider
-                label="°"
-                labelPosition="static"
-                labelContentPos="right"
-                value={[state.rotation]}
-                onValueChange={([val]) =>
-                  val != null && onChange({ rotation: val })
-                }
+            <div className="pt-1">
+              <Scrubber
+                label="Rotation"
+                value={state.rotation}
+                onChange={(val: number) => onChange({ rotation: val })}
                 min={0}
                 max={360}
-                step={1}
               />
             </div>
           </div>

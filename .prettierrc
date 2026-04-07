@@ -1,26 +1,32 @@
 {
-  "semi": true,
-  "trailingComma": "es5",
-  "singleQuote": false,
-  "printWidth": 80,
-  "tabWidth": 2,
-  "useTabs": false,
+  "$schema": "https://json.schemastore.org/prettierrc",
+  "printWidth": 100,
+  "trailingComma": "all",
   "arrowParens": "always",
   "endOfLine": "lf",
   "plugins": [
     "@trivago/prettier-plugin-sort-imports",
     "prettier-plugin-tailwindcss"
   ],
+  "tailwindFunctions": ["cn", "clsx", "cva"],
+  "tailwindStylesheet": "./app/globals.css",
   "importOrder": [
-    "^react",
+    "^react$",
+    "^react/",
     "^next",
     "<THIRD_PARTY_MODULES>",
-    "^@repo/(.*)$",
     "^@/(.*)$",
     "^[./]"
   ],
   "importOrderSeparation": true,
   "importOrderSortSpecifiers": true,
-  "importOrderGroupNamespaceSpecifiers": true,
-  "importOrderCaseInsensitive": true
+  "importOrderCaseInsensitive": true,
+  "overrides": [
+    {
+      "files": "*.md",
+      "options": {
+        "proseWrap": "preserve"
+      }
+    }
+  ]
 }
