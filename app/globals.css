@@ -41,6 +41,10 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  --color-1: #0A2E9E;
+  --color-2: #1447E6;
+  --color-3: #3366F0;
+  --color-4: #5A8AF5;
   --color-5: #82AAFC;
   --font-weight-normal: "wght" 400;
   --font-weight-medium: "wght" 450;
