@@ -4,7 +4,7 @@ import { useState } from "react";
 
 import Link from "next/link";
 
-import { GithubIcon, Twitter } from "lucide-react";
+import { GithubIcon } from "lucide-react";
 import { motion, useMotionValueEvent, useScroll } from "motion/react";
 
 import LightLogo from "@/components/landing/svg/light";
@@ -105,7 +105,7 @@ const Navbar = () => {
                 className="text-xs"
                 aria-label="Rune on X"
               >
-                <Twitter />
+                hi
               </Button>
             </Link>
             <LightDarkMode />

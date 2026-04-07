@@ -32,7 +32,7 @@ const CTA = () => {
       />
       <div className="pointer-events-none absolute inset-0 z-0">
         <div className="absolute inset-0 mask-[radial-gradient(ellipse_at_center,white,transparent_80%)] opacity-[0.03] dark:opacity-[0.05]">
-          <svg className="h-full w-full" xmlns="http://www.w3.org/2000/svg">
+          <svg preserveAspectRatio="none" className="h-full w-full" xmlns="http://www.w3.org/2000/svg">
             <defs>
               <pattern
                 id="cta-grid"
@@ -83,7 +83,7 @@ const CTA = () => {
        
       <div className="relative z-10 mx-auto flex max-w-4xl flex-col items-center text-center">
         
-        <div className="h-16 w-16 mb-3">
+        <div className="h-20 w-20 mb-3">
             <Mascot/>
           </div>
         {/* Heading Style (Synced with HeroSection) */}

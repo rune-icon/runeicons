@@ -158,7 +158,7 @@ const Testimonials = () => {
       {/* Header */}
       <div className="mb-16 flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
         <div className="flex flex-col gap-3">
-          <h2 className="text-foreground text-2xl font-semibold tracking-tight sm:text-3xl md:text-4xl">
+          <h2 className="text-foreground text-2xl font-medium tracking-tight sm:text-3xl md:text-4xl">
             Loved by the <span className="text-blue-700">community</span>
           </h2>
           <p className="text-muted-foreground max-w-md text-base">
@@ -168,7 +168,7 @@ const Testimonials = () => {
         </div>
         <div className="flex flex-col items-start gap-6 sm:flex-row sm:gap-10">
           <div className="flex flex-col items-start">
-            <span className="text-foreground text-4xl font-semibold tracking-tight">
+            <span className="text-foreground text-4xl tracking-tight">
               1.2k+
             </span>
             <div className="mt-1 flex items-center gap-1.5">
@@ -188,7 +188,7 @@ const Testimonials = () => {
             </div>
           </div>
           <div className="flex flex-col items-start">
-            <span className="text-foreground text-4xl font-semibold tracking-tight">
+            <span className="text-foreground text-4xl tracking-tight">
               {stars}
             </span>
             <div className="mt-1 flex items-center gap-1.5">

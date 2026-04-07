@@ -13,11 +13,13 @@ gsap.registerPlugin(useGSAP, MotionPathPlugin);
 const HeroSvg = () => {
   const svgRef = useRef<SVGSVGElement>(null);
   const [showReset, setShowReset] = useState(false);
+  const [isResetting, setIsResetting] = useState(false);
   const [animationRun, setAnimationRun] = useState(0);
 
   useGSAP(
     () => {
       setShowReset(false);
+      setIsResetting(false);
 
       // --- Beam setup: hidden until button is clicked ---
       const beams = gsap.utils.toArray<SVGPathElement>(".Beam");
@@ -251,6 +253,7 @@ const HeroSvg = () => {
       const introCompleteAt = path2StartDelay + path2Duration;
 
       let launchUnlocked = false;
+      let launchTriggered = false;
       let lastBlockedToastAt = -Infinity;
       gsap.delayedCall(introCompleteAt, () => {
         launchUnlocked = true;
@@ -336,18 +339,25 @@ const HeroSvg = () => {
       btn.style.cursor = "pointer";
 
       btn.addEventListener("mouseenter", () => {
+        if (launchTriggered) return;
         gsap.to(btn, { y: 4, duration: 0.18, ease: "power2.out" });
       });
 
       btn.addEventListener("mouseleave", () => {
+        if (launchTriggered) return;
         gsap.to(btn, { y: 0, duration: 0.22, ease: "power2.out" });
       });
 
       btn.addEventListener("mousedown", () => {
+        if (launchTriggered) return;
         gsap.to(btn, { y: 8, duration: 0.1, ease: "power2.in" });
       });
 
       btn.addEventListener("mouseup", () => {
+        if (launchTriggered) {
+          return;
+        }
+
         gsap.to(btn, { y: 4, duration: 0.18, ease: "power2.out" });
 
         if (!launchUnlocked) {
@@ -360,6 +370,10 @@ const HeroSvg = () => {
           }
           return;
         }
+
+        launchTriggered = true;
+        btn.style.cursor = "not-allowed";
+        btn.style.pointerEvents = "none";
 
         fireBeams();
       });
@@ -676,12 +690,52 @@ const HeroSvg = () => {
   <Button
   size={"icon"}
   variant={"outline"}
+    disabled={isResetting}
     type="button"
     onClick={() => {
-      setShowReset(false);
-      setAnimationRun((v) => v + 1);
+      if (isResetting) return;
+
+      const rocketEl = svgRef.current?.querySelector<SVGGElement>(".rocket");
+      if (!rocketEl) {
+        setShowReset(false);
+        setAnimationRun((v) => v + 1);
+        return;
+      }
+
+      setIsResetting(true);
+      gsap.killTweensOf(rocketEl);
+
+      gsap
+        .timeline({
+          onComplete: () => {
+            setIsResetting(false);
+            setShowReset(false);
+            setAnimationRun((v) => v + 1);
+          },
+        })
+        .set(rocketEl, {
+          transformOrigin: "50% 100%",
+          x: 0,
+          rotation: 0,
+          opacity: 1,
+        })
+        .to(rocketEl, {
+          y: 0,
+          duration: 2.1,
+          ease: "power3.out",
+        })
+        .to(rocketEl, {
+          y: 8,
+          duration: 0.2,
+          ease: "power1.inOut",
+        })
+        .to(rocketEl, {
+          y: 0,
+          duration: 0.26,
+          ease: "power2.out",
+        });
     }}
-    className="fixed bottom-4 right-4 z-50 text-xs transition hover:-translate-y-px"
+    className="fixed bottom-4 right-4 z-50 text-xs transition hover:-translate-y-px disabled:opacity-70"
   >
     <RefreshCcw/>
   </Button>
