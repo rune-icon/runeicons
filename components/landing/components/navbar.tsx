@@ -2,12 +2,12 @@
 
 import { useState } from "react";
 
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
 
 import { GithubIcon } from "lucide-react";
-import * as m from "motion/react-m";
 import { useMotionValueEvent, useScroll } from "motion/react";
+import * as m from "motion/react-m";
 
 import LightLogo from "@/components/landing/svg/light";
 import { Button } from "@/components/ui/button";
@@ -27,7 +27,7 @@ const Navbar = () => {
   });
 
   return (
-    <div className="bg-background fixed inset-x-0 z-50 ">
+    <div className="fixed inset-x-0 z-50 bg-background">
       <m.div
         className="overflow-hidden"
         initial={false}
@@ -68,13 +68,23 @@ const Navbar = () => {
         </m.div>
       </m.div>
 
-<div className=" w-full bg-[#F5F5F5]  dark:bg-background   border-b-2 border-dashed flex justify-center">
-
-
-      <div className=" bg-[#F5F5F5] dark:bg-background  w-[90vw] 2xl:w-[85vw] flex items-center justify-between   px-4 py-3 ">
-        <LightLogo />
-        <div className="flex items-center gap-2">
-          {/* <ul className="hidden gap-2 md:flex">
+      <div className="flex w-full justify-center border-b-2 border-dashed bg-[#F5F5F5] dark:bg-background">
+        <div className="flex w-[90vw] items-center justify-between bg-[#F5F5F5] px-4 py-3 max-sm:px-1.5 2xl:w-[85vw] dark:bg-background">
+          <div className="flex items-end justify-center gap-5">
+            <span>
+              <LightLogo />
+            </span>
+            <div className="mb-0.5 flex gap-4 text-sm max-sm:hidden">
+              <span className="cursor-pointer text-muted-foreground transition-all duration-150 hover:text-accent-foreground">
+                About dev
+              </span>
+              <span className="cursor-pointer text-muted-foreground transition-all duration-150 hover:text-accent-foreground">
+                Sponsor
+              </span>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            {/* <ul className="hidden gap-2 md:flex">
             {Links.map((link) => (
               <Button
                 variant={"ghost"}
@@ -85,39 +95,43 @@ const Navbar = () => {
               </Button>
             ))}
           </ul> */}
-          <div className="flex items-center gap-2">
-            <Link
-              href="https://github.com/AitijhyaModak/rune-icons"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Button
-                variant="outline"
-                className="group relative overflow-hidden text-xs"
-                aria-label="GitHub"
+            <div className="flex items-center gap-2">
+              <Link
+                href="https://github.com/AitijhyaModak/rune-icons"
+                target="_blank"
+                rel="noopener noreferrer"
               >
-                <GithubIcon className="size-4" />
-100              </Button>
-            </Link>
-            <Link
-              href="https://x.com/RuneIcon"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Button
-                variant="outline"
-                size={"icon"}
-                className="text-xs"
-                aria-label="Rune on X"
-              >
-   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" color="currentColor" fill="none" stroke="#FFFFFF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M3 21L10.5484 13.4516M21 3L13.4516 10.5484M13.4516 10.5484L8 3H3L10.5484 13.4516M13.4516 10.5484L21 21H16L10.5484 13.4516" />
-</svg>               </Button>
-            </Link>
-            <LightDarkMode />
+                <Button
+                  variant="outline"
+                  className="group relative gap-1 overflow-hidden text-xs"
+                  aria-label="GitHub"
+                >
+                  <GithubIcon className="size-4" /> 1.1K
+                </Button>
+              </Link>
+              <Link href="https://x.com/RuneIcon" target="_blank" rel="noopener noreferrer">
+                <Button variant="outline" size={"icon"} className="text-xs" aria-label="Rune on X">
+                  <svg
+                    className="invert dark:invert-0"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    width="24"
+                    height="24"
+                    color="currentColor"
+                    fill="none"
+                    stroke="#FFFFFF"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M3 21L10.5484 13.4516M21 3L13.4516 10.5484M13.4516 10.5484L8 3H3L10.5484 13.4516M13.4516 10.5484L21 21H16L10.5484 13.4516" />
+                  </svg>{" "}
+                </Button>
+              </Link>
+              <LightDarkMode />
+            </div>
           </div>
         </div>
-      </div>
       </div>
     </div>
   );

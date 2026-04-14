@@ -4,8 +4,8 @@ const LightLogo = () => {
   return (
     <>
       <svg
-        width="38"
-        height="38"
+        width="35"
+        height="35"
         viewBox="0 0 42 43"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
