@@ -31,5 +31,5 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": ["node_modules", "components/icon-page/unused-components/"]
+  "exclude": ["node_modules"]
 }

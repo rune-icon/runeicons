@@ -72,13 +72,18 @@ export function useHistory<T>(
   // Keyboard shortcuts: Ctrl+Z / Ctrl+Y -- stable, never re-attaches
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === "z" && !e.shiftKey) {
+      const isZ = e.key.toLowerCase() === "z";
+      const isY = e.key.toLowerCase() === "y";
+      const hasMod = e.metaKey || e.ctrlKey;
+
+      if (hasMod && isZ) {
         e.preventDefault();
-        handleUndo();
-      } else if (
-        (e.metaKey || e.ctrlKey) &&
-        (e.key === "y" || (e.key === "z" && e.shiftKey))
-      ) {
+        if (e.shiftKey) {
+          handleRedo();
+        } else {
+          handleUndo();
+        }
+      } else if (hasMod && isY) {
         e.preventDefault();
         handleRedo();
       }

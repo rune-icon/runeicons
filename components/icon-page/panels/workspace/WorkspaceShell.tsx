@@ -10,6 +10,7 @@ import { useWorkspaceSelection } from "./hooks/use-workspace-selection";
 import { KeyboardShortcutsModal } from "@/components/icon-page/keyboard-shortcuts-modal";
 import { generateStandaloneSvg } from "@/lib/svg-export-utils";
 import { toast } from "sonner";
+import { useState } from "react";
 
 export function WorkspaceShell() {
   const {
@@ -30,6 +31,8 @@ export function WorkspaceShell() {
     handleIconSelect,
     handleRemoveFromTray,
   } = useWorkspaceSelection();
+
+  const [showGrid, setShowGrid] = useState(true);
 
   // Export handler
   const handleExport = () => {
@@ -104,6 +107,8 @@ export function WorkspaceShell() {
         canUndo={canUndo}
         canRedo={canRedo}
         onChange={handleChange}
+        showGrid={showGrid}
+        onGridToggle={() => setShowGrid(!showGrid)}
       />
 
       <aside

@@ -48,6 +48,4 @@ dev-tools.tsx
 
 #files/
 .agents
-# Unused components
-components/icon-page/unused-components/
 

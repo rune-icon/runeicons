@@ -17,6 +17,8 @@ export interface WorkspacePanelProps {
   canUndo: boolean;
   canRedo: boolean;
   onChange: (updates: Partial<CustomizationState>) => void;
+  showGrid: boolean;
+  onGridToggle: () => void;
 }
 
 export function WorkspacePanel({
@@ -31,6 +33,8 @@ export function WorkspacePanel({
   canUndo,
   canRedo,
   onChange,
+  showGrid,
+  onGridToggle,
 }: WorkspacePanelProps) {
   return (
     <>
@@ -45,6 +49,7 @@ export function WorkspacePanel({
           selectedIcon={selectedIcon}
           onSelectIcon={onSelectIcon}
           onRemoveFromTray={onRemoveFromTray}
+          showGrid={showGrid}
         />
 
         <div className="absolute bottom-9.5 left-1/2 -translate-x-1/2 z-10">
@@ -59,6 +64,8 @@ export function WorkspacePanel({
             selectedIcon={selectedIcon}
             state={state}
             onChange={onChange}
+            showGrid={showGrid}
+            onGridToggle={onGridToggle}
           />
         </div>
       </main>
