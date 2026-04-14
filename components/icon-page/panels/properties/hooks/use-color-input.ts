@@ -38,7 +38,7 @@ export function useColorInput(
       const rgbPattern =
         /^rgb\s*\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)$/;
 
-      let validColor = value;
+      let validColor: string;
       if (hexPattern.test(value)) {
         validColor = value;
       } else if (rgbPattern.test(value)) {
