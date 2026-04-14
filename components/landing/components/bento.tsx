@@ -5,8 +5,6 @@ import BentoSvg from "../svg/bento-svg";
 import RocketInteractive from "../svg/rocket-interactive";
 import { DevCarousal } from "./dev-carousal";
 import IconCarousel from "./icon-carousel";
-import ImageCarousel from "./image-carousel";
-import BnDevCarousal from "./image-carousel";
 
 interface BentoCardProps {
   title: string;

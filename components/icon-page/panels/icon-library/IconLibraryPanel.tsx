@@ -1,6 +1,5 @@
 "use client";
 
-import type React from "react";
 import { IconLibraryPanelProps } from "./types";
 import { useIconLibrary } from "./hooks/use-icon-library";
 import { IconLibraryHeader } from "./components/IconLibraryHeader";

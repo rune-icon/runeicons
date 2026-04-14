@@ -1,15 +1,13 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import Autoplay from "embla-carousel-autoplay";
 import {
-  ArrowBigDownIcon,
   ChevronLeft,
   ChevronRight,
   Github,
   Instagram,
-  Twitter,
 } from "lucide-react";
 import { AnimatePresence, m } from "motion/react";
 

@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 
 import gsap from "gsap";
 
@@ -14,7 +14,7 @@ const BentoSvg = ({ className }: { className?: string }) => {
     const shapes = svg.querySelectorAll("circle, rect, line");
 
     // Keep artwork still until it is in view.
-    paths.forEach((path, i) => {
+    paths.forEach((path) => {
       const length = (path as SVGPathElement).getTotalLength?.() ?? 0;
       if (length > 0) {
         gsap.set(path, {

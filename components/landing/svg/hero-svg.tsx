@@ -5,7 +5,6 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { MotionPathPlugin } from "gsap/MotionPathPlugin";
 import { RefreshCcw } from "lucide-react";
-import { motion } from "motion/react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 
 const images = [
   "https://i.pinimg.com/474x/4b/a6/38/4ba638209ce7f96151d138879dbf03f6.jpg",

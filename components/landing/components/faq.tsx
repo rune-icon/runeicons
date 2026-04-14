@@ -1,6 +1,6 @@
 "use client";
 
-import { Github, MessageCircle, Twitter } from "lucide-react";
+import { MessageCircle } from "lucide-react";
 
 import {
   Accordion,
