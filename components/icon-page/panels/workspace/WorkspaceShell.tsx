@@ -1,11 +1,15 @@
 "use client";
 
 import { useWorkspaceState } from "@/hooks/use-workspace-state";
+import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import { IconLibraryPanel } from "@/components/icon-page/panels/icon-library";
 import { ToolRail } from "@/components/icon-page/panels/outline";
 import { PropertiesPanel } from "@/components/icon-page/panels/properties";
 import { WorkspacePanel } from "./WorkspacePanel";
 import { useWorkspaceSelection } from "./hooks/use-workspace-selection";
+import { KeyboardShortcutsModal } from "@/components/icon-page/keyboard-shortcuts-modal";
+import { generateStandaloneSvg } from "@/lib/svg-export-utils";
+import { toast } from "sonner";
 
 export function WorkspaceShell() {
   const {
@@ -26,6 +30,49 @@ export function WorkspaceShell() {
     handleIconSelect,
     handleRemoveFromTray,
   } = useWorkspaceSelection();
+
+  // Export handler
+  const handleExport = () => {
+    const configJSON = JSON.stringify(state, null, 2);
+    const blob = new Blob([configJSON], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `customization-${Date.now()}.json`;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    toast.success("Configuration exported");
+  };
+
+  // Copy SVG handler
+  const handleCopySvg = async () => {
+    if (!selectedIcon) {
+      toast.error("Select an icon first");
+      return;
+    }
+    try {
+      const svg = generateStandaloneSvg(selectedIcon, state);
+      await navigator.clipboard.writeText(svg);
+      toast.success("SVG copied to clipboard");
+    } catch {
+      toast.error("Failed to copy SVG");
+    }
+  };
+
+  // Keyboard shortcuts
+  const { showHelp, setShowHelp } = useKeyboardShortcuts({
+    onCopySvg: handleCopySvg,
+    onExport: handleExport,
+    onReset: handleReset,
+    onSelectTraySlot: (index) => {
+      if (trayIcons[index]) {
+        handleIconSelect(trayIcons[index]);
+        toast.success(`Selected ${trayIcons[index].name}`);
+      }
+    },
+    trayIcons,
+    canCopy: !!selectedIcon,
+  });
 
   return (
     <div className="flex flex-1 overflow-hidden">
@@ -72,6 +119,11 @@ export function WorkspaceShell() {
           />
         </div>
       </aside>
+
+      <KeyboardShortcutsModal
+        isOpen={showHelp}
+        onClose={() => setShowHelp(false)}
+      />
     </div>
   );
 }

@@ -19,7 +19,7 @@ export function ShadowSection({
   onToggle,
 }: ShadowSectionProps) {
   return (
-    <Card className="bg-card border-border py-0 gap-0">
+    <div className="border-t border-border mt-2 pt-2">
       <div className="w-full flex items-center justify-between p-1 pr-3">
         <button
           onClick={onToggle}
@@ -29,7 +29,7 @@ export function ShadowSection({
         >
           <ChevronDown
             className={cn(
-              "h-4 w-4 text-muted-foreground transition-transform",
+              "h-4 w-4 text-muted-foreground transition-transform duration-200 ease-out",
               isCollapsed && "rotate-180",
             )}
           />
@@ -44,7 +44,7 @@ export function ShadowSection({
               shadow: { ...state.shadow, enabled: !state.shadow.enabled },
             });
           }}
-          className="h-8 w-8 text-muted-foreground hover:text-foreground"
+          className="h-8 w-8 text-muted-foreground hover:text-foreground transition-colors duration-150 ease-out active:scale-[0.97]"
           title={state.shadow.enabled ? "Disable Shadow" : "Enable Shadow"}
         >
           {state.shadow.enabled ? (
@@ -55,7 +55,7 @@ export function ShadowSection({
         </Button>
       </div>
       {!isCollapsed && state.shadow.enabled && (
-        <div id="section-shadow-content" className="px-4 pb-3 space-y-2">
+        <div id="section-shadow-content" className="px-4 pb-4 space-y-2">
           <div className="flex items-center justify-between mb-2">
             <p className="text-xs text-muted-foreground pt-1">
               Adjustable shadow settings
@@ -70,7 +70,7 @@ export function ShadowSection({
                   })
                 }
                 className={cn(
-                  "h-6 px-2 text-[10px] font-medium rounded-md transition-all",
+                  "h-6 px-2 text-[10px] font-medium rounded-md transition-colors duration-150 ease-out active:scale-[0.97]",
                   !state.shadow.inner
                     ? "bg-background text-foreground shadow-sm"
                     : "text-muted-foreground hover:text-foreground",
@@ -87,7 +87,7 @@ export function ShadowSection({
                   })
                 }
                 className={cn(
-                  "h-6 px-2 text-[10px] font-medium rounded-md transition-all",
+                  "h-6 px-2 text-[10px] font-medium rounded-md transition-colors duration-150 ease-out active:scale-[0.97]",
                   state.shadow.inner
                     ? "bg-background text-foreground shadow-sm"
                     : "text-muted-foreground hover:text-foreground",
@@ -148,6 +148,6 @@ export function ShadowSection({
           </div>
         </div>
       )}
-    </Card>
+    </div>
   );
 }

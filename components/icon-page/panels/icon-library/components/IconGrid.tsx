@@ -1,6 +1,9 @@
+"use client";
+
 import { motion, AnimatePresence } from "motion/react";
 import { IconData } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { useTuning } from "@/components/icon-page/tuning";
 
 interface IconGridProps {
   icons: IconData[];
@@ -13,6 +16,8 @@ export function IconGrid({
   selectedIconId,
   onIconClick,
 }: IconGridProps) {
+  const { values, getFastTransition } = useTuning();
+
   return (
     <motion.div layout className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 border-b border-border">
       <AnimatePresence mode="popLayout">
@@ -28,15 +33,16 @@ export function IconGrid({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{
-                opacity: { duration: 0.2 },
-                delay: index * 0.005,
+                opacity: getFastTransition(),
+                layout: { duration: values.mediumDuration, ease: [values.easeOutX1, values.easeOutY1, values.easeOutX2, values.easeOutY2] },
+                delay: Math.min(index * values.iconGridStaggerDelay, values.staggerMaxDelay),
               }}
               className="w-full"
             >
               <button
                 onClick={() => onIconClick(icon)}
                 className={cn(
-                  "group relative aspect-square cursor-pointer overflow-hidden transition-all duration-200 w-full border-r border-b border-border flex items-center justify-center",
+                  "group relative aspect-square cursor-pointer overflow-hidden transition-colors duration-150 ease-out w-full border-r border-b border-border flex items-center justify-center",
                   isSelected ? "bg-accent" : "bg-transparent hover:bg-muted",
                 )}
                 type="button"
@@ -44,11 +50,21 @@ export function IconGrid({
               >
                 <Icon
                   className={cn(
-                    "w-5 h-5 transition-transform duration-200 group-hover:scale-110",
+                    "w-5 h-5 transition-transform duration-150 ease-out",
                     isSelected
                       ? "text-primary"
                       : "text-muted-foreground group-hover:text-foreground",
                   )}
+                  style={{
+                    transform: `scale(1)`,
+                    transition: `transform ${values.fastDuration * 1000}ms ease-out`,
+                  }}
+                  onMouseEnter={(e) => {
+                    (e.target as SVGElement).style.transform = `scale(${values.iconGridHoverScale})`;
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.target as SVGElement).style.transform = `scale(1)`;
+                  }}
                   strokeWidth={1.5}
                   aria-hidden="true"
                 />

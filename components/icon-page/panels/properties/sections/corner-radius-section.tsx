@@ -19,7 +19,7 @@ export function CornerRadiusSection({
   onToggle,
 }: CornerRadiusSectionProps) {
   return (
-    <Card className="bg-card border-border py-0 gap-0">
+    <div className="border-t border-border mt-2 pt-2">
       <div className="w-full flex items-center justify-between p-1 pr-3">
         <button
           onClick={onToggle}
@@ -29,7 +29,7 @@ export function CornerRadiusSection({
         >
           <ChevronDown
             className={cn(
-              "h-4 w-4 text-muted-foreground transition-transform",
+              "h-4 w-4 text-muted-foreground transition-transform duration-200 ease-out",
               isCollapsed && "rotate-180",
             )}
           />
@@ -42,7 +42,7 @@ export function CornerRadiusSection({
             e.stopPropagation();
             onChange({ cornerRadiusEnabled: !state.cornerRadiusEnabled });
           }}
-          className="h-8 w-8 text-muted-foreground hover:text-foreground"
+          className="h-8 w-8 text-muted-foreground hover:text-foreground transition-colors duration-150 ease-out active:scale-[0.97]"
           title={state.cornerRadiusEnabled ? "Disable Corner Radius" : "Enable Corner Radius"}
         >
           {state.cornerRadiusEnabled ? (
@@ -53,7 +53,7 @@ export function CornerRadiusSection({
         </Button>
       </div>
       {!isCollapsed && state.cornerRadiusEnabled && (
-        <div id="section-corner-radius-content" className="px-4 pb-8 space-y-2">
+        <div id="section-corner-radius-content" className="px-4 pb-4 space-y-2">
           <div>
             <Scrubber
               label="Radius"
@@ -65,6 +65,6 @@ export function CornerRadiusSection({
           </div>
         </div>
       )}
-    </Card>
+    </div>
   );
 }

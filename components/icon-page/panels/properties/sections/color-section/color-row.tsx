@@ -15,11 +15,11 @@ interface ColorRowProps {
 export function ColorRow({ label, value, onChange, disabled }: ColorRowProps) {
   return (
     <div className="flex items-center justify-between group h-9 px-1">
-      <span className="text-sm font-medium text-muted-foreground/80 group-hover:text-foreground transition-colors duration-200">
+      <span className="text-sm font-medium text-muted-foreground/80 group-hover:text-foreground transition-colors duration-150 ease-out">
         {label}
       </span>
       <div className="flex items-center gap-3">
-        <span className="text-[13px] tabular-nums text-muted-foreground/50 font-mono tracking-tight uppercase">
+        <span className="text-[13px] tabular-nums text-muted-foreground/50 font-mono tracking-tight uppercase transition-colors duration-150 ease-out group-hover:text-muted-foreground/70">
           {value}
         </span>
         <BlossomColorPicker

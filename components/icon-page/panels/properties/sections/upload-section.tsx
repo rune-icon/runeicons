@@ -1,3 +1,6 @@
+"use client";
+
+import { useState, useCallback, useRef } from "react";
 import { Card } from "@/components/ui/card";
 import {
   ChevronDown,
@@ -6,10 +9,13 @@ import {
   Upload,
   X,
   Trash2,
+  AlertTriangle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { CustomizationState } from "@/lib/types";
+import { motion, AnimatePresence } from "motion/react";
+import { useTuning } from "@/components/icon-page/tuning";
 
 interface UploadSectionProps {
   state: CustomizationState;
@@ -42,8 +48,36 @@ export function UploadSection({
   deleteIcon,
   maxIcons,
 }: UploadSectionProps) {
+  const { getSpring } = useTuning();
+  const [armedDeleteId, setArmedDeleteId] = useState<string | null>(null);
+  const deleteTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const disarmDelete = useCallback(() => {
+    setArmedDeleteId(null);
+    if (deleteTimeoutRef.current) {
+      clearTimeout(deleteTimeoutRef.current);
+      deleteTimeoutRef.current = null;
+    }
+  }, []);
+
+  const armDelete = useCallback((id: string) => {
+    setArmedDeleteId(id);
+    deleteTimeoutRef.current = setTimeout(() => {
+      setArmedDeleteId(null);
+    }, 2000);
+  }, []);
+
+  const handleDeleteClick = useCallback((id: string, name: string) => {
+    if (armedDeleteId === id) {
+      disarmDelete();
+      deleteIcon(id);
+    } else {
+      armDelete(id);
+    }
+  }, [armedDeleteId, disarmDelete, armDelete, deleteIcon]);
+
   return (
-    <Card className="bg-card border-border py-0 gap-0">
+    <div className="border-t border-border mt-2 pt-2">
       <div className="flex items-center justify-between p-3">
         <button onClick={onToggle} className="flex items-center gap-2 flex-1" aria-expanded={!isCollapsed} aria-controls="section-upload-content">
           <h3 className="text-sm font-medium text-foreground">
@@ -51,7 +85,7 @@ export function UploadSection({
           </h3>
           <ChevronDown
             className={cn(
-              "h-4 w-4 text-muted-foreground transition-transform",
+              "h-4 w-4 text-muted-foreground transition-transform duration-200 ease-out",
               isCollapsed && "rotate-180",
             )}
           />
@@ -62,7 +96,7 @@ export function UploadSection({
       </div>
 
       {!isCollapsed && (
-        <div id="section-upload-content" className="px-4 pb-3">
+        <div id="section-upload-content" className="px-4 pb-4">
           {uploadError && (
             <div
               className="mb-2 p-3 bg-destructive/10 border border-destructive/30 rounded-lg flex items-start gap-2"
@@ -156,7 +190,7 @@ export function UploadSection({
                 {state.customIcons.map((icon) => (
                   <div
                     key={icon.id}
-                    className="flex items-center gap-3 p-2 rounded-md border border-border bg-background hover:bg-muted transition-colors"
+                    className="flex items-center gap-3 p-2 rounded-md border border-border bg-background hover:bg-muted transition-colors duration-150 ease-out"
                     role="listitem"
                   >
                     <img
@@ -170,19 +204,49 @@ export function UploadSection({
                     >
                       {icon.name}
                     </span>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => {
-                        if (window.confirm(`Delete "${icon.name}"? This cannot be undone.`)) {
-                          deleteIcon(icon.id);
-                        }
-                      }}
-                      className="h-7 w-7 flex-shrink-0 hover:bg-muted text-muted-foreground hover:text-foreground"
-                      aria-label={`Delete ${icon.name}`}
+                    <motion.div
+                      animate={armedDeleteId === icon.id ? { scale: [1, 1.1, 1] } : { scale: 1 }}
+                      transition={armedDeleteId === icon.id ? { repeat: Infinity, duration: 0.6, ease: "easeInOut" } : { duration: 0.15 }}
+                      className="flex-shrink-0"
                     >
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleDeleteClick(icon.id, icon.name)}
+                        className={cn(
+                          "h-7 w-7 transition-all duration-150 ease-out active:scale-[0.97]",
+                          armedDeleteId === icon.id
+                            ? "bg-destructive/10 text-destructive hover:bg-destructive/20 hover:text-destructive"
+                            : "hover:bg-muted text-muted-foreground hover:text-foreground"
+                        )}
+                        aria-label={armedDeleteId === icon.id ? `Click again to delete ${icon.name}` : `Delete ${icon.name}`}
+                        title={armedDeleteId === icon.id ? "Click again to confirm" : `Delete ${icon.name}`}
+                      >
+                        <AnimatePresence mode="wait">
+                          {armedDeleteId === icon.id ? (
+                            <motion.div
+                              key="alert"
+                              initial={{ scale: 0.8, opacity: 0 }}
+                              animate={{ scale: 1, opacity: 1 }}
+                              exit={{ scale: 0.8, opacity: 0 }}
+                              transition={getSpring({ stiffness: 500, damping: 25 })}
+                            >
+                              <AlertTriangle className="h-3.5 w-3.5" />
+                            </motion.div>
+                          ) : (
+                            <motion.div
+                              key="trash"
+                              initial={{ scale: 0.8, opacity: 0 }}
+                              animate={{ scale: 1, opacity: 1 }}
+                              exit={{ scale: 0.8, opacity: 0 }}
+                              transition={getSpring({ stiffness: 400, damping: 25 })}
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </Button>
+                    </motion.div>
                   </div>
                 ))}
               </div>
@@ -190,6 +254,6 @@ export function UploadSection({
           )}
         </div>
       )}
-    </Card>
+    </div>
   );
 }

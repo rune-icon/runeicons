@@ -51,11 +51,13 @@ export function PropertiesPanel({
 
   return (
     <div
-      className="h-full overflow-y-auto space-y-3 p-4"
+      className="h-full overflow-y-auto"
       role="region"
       aria-label="Customization controls panel"
     >
-      <PanelHeader onExport={handleExport} onReset={onReset} />
+      <div className="p-4 space-y-4">
+        <PanelHeader onExport={handleExport} onReset={onReset} />
+      </div>
 
       <ColorSection
         state={state}
@@ -75,8 +77,6 @@ export function PropertiesPanel({
       <SizeTransformSection
         state={state}
         onChange={onChange}
-        isCollapsed={collapsedSections.has("size")}
-        onToggle={() => toggleSection("size")}
       />
 
       <CornerRadiusSection

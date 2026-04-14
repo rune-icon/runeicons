@@ -4,8 +4,10 @@ import React, { useCallback } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { CustomizationState } from "@/lib/types";
 import { HexColor } from "@/lib/color-utils";
-import { BlossomColorPicker } from "../../../blossom-picker/blossom-picker";
 import { ColorRow } from './color-section/color-row';
+import { cn } from "@/lib/utils";
+import { useTuning } from "@/components/icon-page/tuning";
+
 
 interface ColorSectionProps {
     state: CustomizationState;
@@ -26,16 +28,9 @@ export function ColorSection({
     state, 
     onChange, 
     isCollapsed, 
-    onToggle, 
-    inputFormat, 
-    setInputFormat,
-    addGradientStop,
-    updateGradientStop,
-    removeGradientStop,
-    getColorInputValue,
-    handleColorInputChange,
-    handleColorInputBlur
 }: ColorSectionProps) {
+    const { getSpring, getFastTransition, values } = useTuning();
+
     const handleSolidChange = useCallback((hex: HexColor) => {
         const newColors = [...state.colors];
         newColors[0] = hex;
@@ -50,43 +45,26 @@ export function ColorSection({
 
     const mode = state.iconGradient ? 'gradient' : 'solid';
 
+    if (isCollapsed) return null;
+
     return (
-        <div className="px-1.5 pb-2 pt-0.5">
-            <motion.div 
-                className="color-card"
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                style={{ 
-                    background: '#fff', 
-                    borderRadius: 12, 
-                    boxShadow: '0 0 0 1px rgba(0,0,0,0.05), 0 8px 16px -4px rgba(0,0,0,0.04)', 
-                    overflow: 'hidden' 
-                }}
+        <div className="border-t border-border pt-4 mt-2">
+            <div 
+                className="overflow-hidden"
             >
-                <div style={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    justifyContent: 'space-between', 
-                    padding: '12px 16px', 
-                    borderBottom: '1px solid rgba(0,0,0,0.06)' 
-                }}>
-                    <span style={{ fontSize: 13, fontWeight: 600, color: '#171717' }}>Color</span>
-                    <div style={{ display: 'flex', background: '#f5f5f5', borderRadius: 8, padding: 2, gap: 2 }}>
+                <div className="flex items-center justify-between px-4 pb-3">
+                    <span className="text-sm font-semibold text-foreground">Color</span>
+                    <div className="flex bg-muted rounded-lg p-0.5 gap-0.5">
                         {(['solid', 'gradient'] as const).map(m => (
                             <button
                                 key={m}
                                 onClick={() => onChange({ iconGradient: m === 'gradient' })}
-                                style={{
-                                    padding: '5px 12px', 
-                                    borderRadius: 6, 
-                                    border: 'none', 
-                                    fontSize: 12, 
-                                    fontWeight: 500, 
-                                    cursor: 'pointer',
-                                    background: mode === m ? '#fff' : 'transparent',
-                                    color: mode === m ? '#171717' : '#525252',
-                                    boxShadow: mode === m ? '0 1px 2px rgba(0,0,0,0.06)' : 'none'
-                                }}
+                                className={cn(
+                                    "px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-150 ease-out active:scale-[0.97]",
+                                    mode === m 
+                                        ? "bg-background text-foreground shadow-sm" 
+                                        : "text-muted-foreground hover:text-foreground"
+                                )}
                             >
                                 {m.charAt(0).toUpperCase() + m.slice(1)}
                             </button>
@@ -94,15 +72,15 @@ export function ColorSection({
                     </div>
                 </div>
 
-                <div style={{ padding: '8px 12px' }}>
-                    <AnimatePresence mode="wait">
+                <div className="px-4 pb-4">
+                    <AnimatePresence mode="wait" initial={false}>
                         {mode === 'solid' ? (
                             <motion.div 
                                 key="solid" 
-                                initial={{ opacity: 0, x: -4 }} 
+                                initial={{ opacity: 0, x: -values.modeSwitchDistance }} 
                                 animate={{ opacity: 1, x: 0 }} 
-                                exit={{ opacity: 0, x: 4 }} 
-                                transition={{ duration: 0.15 }}
+                                exit={{ opacity: 0, x: values.modeSwitchDistance }} 
+                                transition={getFastTransition()}
                             >
                                 <ColorRow 
                                     label="Fill"
@@ -113,10 +91,10 @@ export function ColorSection({
                         ) : (
                             <motion.div 
                                 key="gradient" 
-                                initial={{ opacity: 0, x: -4 }} 
+                                initial={{ opacity: 0, x: -values.modeSwitchDistance }} 
                                 animate={{ opacity: 1, x: 0 }} 
-                                exit={{ opacity: 0, x: 4 }} 
-                                transition={{ duration: 0.15 }}
+                                exit={{ opacity: 0, x: values.modeSwitchDistance }} 
+                                transition={getFastTransition()}
                                 className="flex flex-col gap-1"
                             >
                                 {state.gradient.stops.slice(0, 3).map((stop, i) => (
@@ -124,14 +102,14 @@ export function ColorSection({
                                         key={i} 
                                         label={i === 0 ? "Start" : i === 1 ? "End" : `Stop ${i + 1}`}
                                         value={stop.color as HexColor} 
-                                        onChange={(val) => handleGradientChange(i, val)} 
+                                        onChange={(val: HexColor) => handleGradientChange(i, val)} 
                                     />
                                 ))}
                                 
-                                <div className="mt-3 pt-3 border-t border-black/[0.03] flex items-center justify-between">
-                                    <span className="text-xs font-medium text-muted-foreground/60">Preview</span>
+                                <div className="mt-3 pt-3 border-t border-border/30 flex items-center justify-between px-1">
+                                    <span className="text-xs font-medium text-muted-foreground">Preview</span>
                                     <div 
-                                        className="h-6 flex-1 mx-4 rounded-full border border-black/[0.04]"
+                                        className="h-6 flex-1 mx-4 rounded-full border border-border/50"
                                         style={{ 
                                             background: `linear-gradient(to right, ${state.gradient.stops.map(s => s.color).join(', ')})` 
                                         }}
@@ -141,7 +119,7 @@ export function ColorSection({
                         )}
                     </AnimatePresence>
                 </div>
-            </motion.div>
+            </div>
         </div>
     );
 }

@@ -3,6 +3,7 @@
 import React from "react";
 import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
+import { useTuning } from "./tuning";
 
 interface MorphHoverButtonProps {
   title: string;
@@ -22,15 +23,16 @@ export const MorphHoverButton = ({
   onClick,
 }: MorphHoverButtonProps) => {
   const [isHovered, setIsHovered] = React.useState(false);
+  const { values } = useTuning();
 
   const bg = background || "var(--muted)";
   const pill = pillColor || "var(--foreground)";
 
-  const transition = {
-    type: "spring",
-    bounce: 0.1,
-    duration: 0.4,
-  } as const;
+  const springTransition = {
+    type: "spring" as const,
+    visualDuration: values.morphSpringVisualDuration,
+    bounce: values.morphSpringBounce,
+  };
 
   const Container = href ? motion.a : motion.button;
 
@@ -46,7 +48,7 @@ export const MorphHoverButton = ({
         className,
       )}
       style={{
-        transition: "padding 0.4s",
+        transition: `padding ${values.morphPaddingDuration * 1000}ms ease-out`,
       } as any}
     >
       {/* Title */}
@@ -64,7 +66,7 @@ export const MorphHoverButton = ({
       {/* Pill (Expands to BG) */}
       <motion.div
         layout
-        transition={transition}
+        transition={springTransition}
         className="absolute z-[3]"
         style={{
           backgroundColor: pill,
@@ -80,7 +82,7 @@ export const MorphHoverButton = ({
       {/* BG (Shrinks to Pill) */}
       <motion.div
         layout
-        transition={transition}
+        transition={springTransition}
         className="absolute z-[1]"
         style={{
           backgroundColor: bg,

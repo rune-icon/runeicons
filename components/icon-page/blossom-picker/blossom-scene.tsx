@@ -114,7 +114,7 @@ export function BlossomScene({
             style={{
                 overflow: 'visible',
                 pointerEvents: 'auto',
-                filter: 'drop-shadow(0 24px 40px rgba(0,0,0,0.2))',
+                filter: 'drop-shadow(0 24px 40px hsl(var(--foreground) / 0.2))',
             }}
         >
 
@@ -172,7 +172,7 @@ export function BlossomScene({
                 cy={center.y}
                 r={styleConfig.centerCircleSize / 2}
                 fill={rgbToHex(palette.center[0])}
-                stroke="rgba(0,0,0,0.1)"
+                stroke="hsl(var(--foreground) / 0.1)"
                 strokeOpacity={BLOSSOM_NUMBERS.centerBorderOpacity}
                 strokeWidth={BLOSSOM_NUMBERS.borderWidth}
                 initial={{ scale: 0.9, opacity: 0 }}
@@ -223,7 +223,7 @@ export function BlossomScene({
                     cy={thumbPosition.y}
                     r={styleConfig.sliderWidth / 1.5}
                     fill={currentThumbColor}
-                    stroke="white"
+                    stroke="hsl(var(--background))"
                     strokeWidth={BLOSSOM_NUMBERS.borderWidth * 3}
                     initial={{ scale: 0, opacity: 0 }}
                     animate={{
@@ -234,7 +234,7 @@ export function BlossomScene({
                     transition={THUMB_SPRING}
                     style={{
                         cursor: 'grab',
-                        filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))',
+                        filter: 'drop-shadow(0 2px 4px hsl(var(--foreground) / 0.2))',
                     }}
                 />
             </g>

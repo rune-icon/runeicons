@@ -228,11 +228,11 @@ export const BlossomColorPicker = ({
                     borderRadius: '50%',
                     backgroundColor: selectedColor,
                     border: 'none',
-                    boxShadow: `inset 0 0 0 1px rgba(0,0,0,${BLOSSOM_NUMBERS.collapsedSwatchBorderOpacity}), 0 2px 4px rgba(0,0,0,0.1)`,
+                    boxShadow: `inset 0 0 0 1px hsl(var(--foreground) / ${BLOSSOM_NUMBERS.collapsedSwatchBorderOpacity}), 0 2px 4px hsl(var(--foreground) / 0.1)`,
                     cursor: disabled ? 'default' : 'pointer',
                 }}
-                whileHover={disabled ? {} : { scale: 1.05 }}
-                whileTap={disabled ? {} : { scale: 0.95 }}
+                whileHover={disabled ? {} : { scale: 1.03 }}
+                whileTap={disabled ? {} : { scale: 0.97 }}
                 disabled={disabled}
             />
 
@@ -253,7 +253,7 @@ export const BlossomColorPicker = ({
                             initial={{ opacity: 0, scale: 0.92 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.92 }}
-                            transition={{ duration: 0.2, ease: POP_EASE }}
+                            transition={{ duration: 0.15, ease: [0.23, 1, 0.32, 1] }}
                         >
                             <BlossomScene
                                 svgRef={svgRef}

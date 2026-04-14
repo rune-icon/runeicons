@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { Dribbble as Scribble, Sun, Moon } from "lucide-react";
+import { Sun, Moon } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
@@ -23,13 +23,13 @@ export function HeaderPanel({ className }: HeaderPanelProps) {
   return (
     <header
       className={cn(
-        "h-12 border-b border-border bg-background flex items-center shrink-0 transition-colors duration-300",
+        "h-12 border-b border-border bg-background flex items-center shrink-0 transition-colors duration-200 ease-out",
         className,
       )}
     >
 
-      <div className="w-12 h-full border-r border-border flex items-center justify-center group cursor-pointer hover:bg-muted/50 transition-colors">
-        <HeaderLogo className="w-8  h-8 rounded-md transition-transform" />
+      <div className="w-12 h-full border-r border-border flex items-center justify-center group cursor-pointer hover:bg-muted/50 transition-colors duration-150 ease-out">
+        <HeaderLogo className="w-8 h-8 rounded-md transition-transform duration-150 ease-out group-hover:scale-[1.02]" />
       </div>
 
 
@@ -48,7 +48,7 @@ export function HeaderPanel({ className }: HeaderPanelProps) {
         <Button
           variant="ghost"
           size="icon"
-          className="h-8 w-8 text-muted-foreground hover:text-foreground"
+          className="h-8 w-8 text-muted-foreground hover:text-foreground transition-colors duration-150 ease-out active:scale-[0.97]"
           onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
         >
           {mounted && theme === "dark" ? (

@@ -8,6 +8,7 @@ export function useWorkspaceState() {
   const { resolvedTheme } = useTheme();
   const [state, setState] = useState<CustomizationState>(DEFAULT_STATE);
   const [hasInitializedTheme, setHasInitializedTheme] = useState(false);
+  const [hasLoadedFromStorage, setHasLoadedFromStorage] = useState(false);
   const customIconsRef = useRef<
     Array<{ id: string; name: string; url: string }>
   >([]);
@@ -15,6 +16,38 @@ export function useWorkspaceState() {
   // History management (undo/redo + keyboard shortcuts)
   const { history, historyIndex, handleUndo, handleRedo, pushState, canUndo, canRedo } =
     useHistory<CustomizationState>(DEFAULT_STATE, { maxHistory: 50 });
+
+  // 1. Initial Load from LocalStorage
+  useEffect(() => {
+    if (typeof window === "undefined" || hasLoadedFromStorage) return;
+
+    try {
+      const savedState = localStorage.getItem("rune_workspace_state");
+      if (savedState) {
+        const parsed = JSON.parse(savedState);
+        setState(parsed);
+      }
+    } catch (error) {
+      console.error("Failed to load state from storage:", error);
+    } finally {
+      setHasLoadedFromStorage(true);
+    }
+  }, [hasLoadedFromStorage]);
+
+  // 2. Save to LocalStorage (Debounced)
+  useEffect(() => {
+    if (!hasLoadedFromStorage) return;
+
+    const timeoutId = setTimeout(() => {
+      try {
+        localStorage.setItem("rune_workspace_state", JSON.stringify(state));
+      } catch (error) {
+        console.error("Failed to save state to storage:", error);
+      }
+    }, 1000); // 1s debounce
+
+    return () => clearTimeout(timeoutId);
+  }, [state, hasLoadedFromStorage]);
 
   // Sync state with history: apply historical state on undo/redo,
   // push user changes to history. Uses a single effect to avoid the race.
@@ -41,9 +74,9 @@ export function useWorkspaceState() {
     customIconsRef.current = state.customIcons;
   }, [state.customIcons]);
 
-  // Adaptive defaults for Dark Mode visibility
+  // Adaptive defaults for Dark Mode visibility (only if not loaded from storage)
   useEffect(() => {
-    if (resolvedTheme && !hasInitializedTheme) {
+    if (resolvedTheme && !hasInitializedTheme && !localStorage.getItem("rune_workspace_state")) {
       const isDark = resolvedTheme === "dark";
       const adaptiveColor = isDark ? "#ffffff" : "#000000";
       const adaptiveStop = isDark ? "#cccccc" : "#333333";

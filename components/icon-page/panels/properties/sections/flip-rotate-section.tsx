@@ -19,7 +19,7 @@ export function FlipRotateSection({
   onToggle,
 }: FlipRotateSectionProps) {
   return (
-    <Card className="bg-card border-border py-0 gap-0">
+    <div className="border-t border-border mt-2 pt-2">
       <div className="w-full flex items-center justify-between p-1 pr-3">
         <button
           onClick={onToggle}
@@ -29,7 +29,7 @@ export function FlipRotateSection({
         >
           <ChevronDown
             className={cn(
-              "h-4 w-4 text-muted-foreground transition-transform",
+              "h-4 w-4 text-muted-foreground transition-transform duration-200 ease-out",
               isCollapsed && "rotate-180",
             )}
           />
@@ -42,7 +42,7 @@ export function FlipRotateSection({
             e.stopPropagation();
             onChange({ flipRotateEnabled: !state.flipRotateEnabled });
           }}
-          className="h-8 w-8 text-muted-foreground hover:text-foreground"
+          className="h-8 w-8 text-muted-foreground hover:text-foreground transition-colors duration-150 ease-out active:scale-[0.97]"
           title={state.flipRotateEnabled ? "Disable Flip & Rotate" : "Enable Flip & Rotate"}
         >
           {state.flipRotateEnabled ? (
@@ -53,7 +53,7 @@ export function FlipRotateSection({
         </Button>
       </div>
       {!isCollapsed && state.flipRotateEnabled && (
-        <div id="section-flip-rotate-content" className="px-4 pb-3">
+        <div id="section-flip-rotate-content" className="px-4 pb-4">
           <div className="space-y-2">
             <div>
               <label className="text-xs font-medium text-muted-foreground mb-2 block">
@@ -69,7 +69,7 @@ export function FlipRotateSection({
                   size="sm"
                   onClick={() => onChange({ flipH: !state.flipH })}
                   className={cn(
-                    "flex-1 border-border",
+                    "flex-1 border-border transition-colors duration-150 ease-out active:scale-[0.97]",
                     state.flipH
                       ? "bg-foreground text-background hover:bg-foreground/90 border-foreground"
                       : "bg-background text-foreground hover:bg-muted",
@@ -85,7 +85,7 @@ export function FlipRotateSection({
                   size="sm"
                   onClick={() => onChange({ flipV: !state.flipV })}
                   className={cn(
-                    "flex-1 border-border",
+                    "flex-1 border-border transition-colors duration-150 ease-out active:scale-[0.97]",
                     state.flipV
                       ? "bg-foreground text-background hover:bg-foreground/90 border-foreground"
                       : "bg-background text-foreground hover:bg-muted",
@@ -111,6 +111,6 @@ export function FlipRotateSection({
           </div>
         </div>
       )}
-    </Card>
+    </div>
   );
 }

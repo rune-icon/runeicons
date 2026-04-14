@@ -7,7 +7,7 @@ export const WorkspaceGround: React.FC<{ className?: string }> = ({ className })
   return (
     <div
       className={cn(
-        "absolute inset-0 bg-[#fffafa] dark:bg-[#0a0a0b] overflow-hidden select-none pointer-events-none flex items-center justify-center",
+        "absolute inset-0 bg-background dark:bg-[#121214] overflow-hidden select-none pointer-events-none flex items-center justify-center",
         className
       )}
     >
@@ -16,14 +16,14 @@ export const WorkspaceGround: React.FC<{ className?: string }> = ({ className })
           width="1100"
           height="800"
           viewBox="0 0 1100 800"
-          className="max-w-full max-h-full w-auto h-auto opacity-100 dark:opacity-40"
+          className="max-w-full max-h-full w-auto h-auto opacity-100 dark:opacity-60"
           preserveAspectRatio="xMidYMid meet"
           style={{
-            "--mat-bg": "#fffafa",
-            "--guide-color": "#000000",
-            "--grid-color-light": "color-mix(in srgb, #000000 45%, transparent)",
-            "--grid-color-medium": "color-mix(in srgb, #000000 50.5%, transparent)",
-            backgroundColor: "rgb(255, 250, 250)",
+            "--mat-bg": "transparent",
+            "--guide-color": "color-mix(in srgb, var(--foreground) 20%, transparent)",
+            "--grid-color-light": "color-mix(in srgb, var(--foreground) 8%, transparent)",
+            "--grid-color-medium": "color-mix(in srgb, var(--foreground) 12%, transparent)",
+            backgroundColor: "transparent",
           } as React.CSSProperties}
           xmlns="http://www.w3.org/2000/svg"
         >

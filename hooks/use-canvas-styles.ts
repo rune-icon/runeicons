@@ -37,7 +37,7 @@ export function useCanvasStyles(state: CustomizationState) {
 
   const blurFilter = useMemo(
     () =>
-      state.blurEnabled && state.blur > 0 && supportsFilter
+      (state.blurEnabled || state.blur > 0) && state.blur > 0 && supportsFilter
         ? `blur(${state.blur}px)`
         : "",
     [state.blurEnabled, state.blur, supportsFilter],

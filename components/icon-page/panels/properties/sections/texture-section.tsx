@@ -19,7 +19,7 @@ export function TextureSection({
   onToggle,
 }: TextureSectionProps) {
   return (
-    <Card className="bg-card border-border py-0 gap-0">
+    <div className="border-t border-border mt-2 pt-2">
       <div className="w-full flex items-center justify-between p-1 pr-3">
         <button
           onClick={onToggle}
@@ -29,7 +29,7 @@ export function TextureSection({
         >
           <ChevronDown
             className={cn(
-              "h-4 w-4 text-muted-foreground transition-transform",
+              "h-4 w-4 text-muted-foreground transition-transform duration-200 ease-out",
               isCollapsed && "rotate-180",
             )}
           />
@@ -44,7 +44,7 @@ export function TextureSection({
               texture: { ...state.texture, enabled: !state.texture.enabled },
             });
           }}
-          className="h-8 w-8 text-muted-foreground hover:text-foreground"
+          className="h-8 w-8 text-muted-foreground hover:text-foreground transition-colors duration-150 ease-out active:scale-[0.97]"
           title={state.texture.enabled ? "Disable Texture" : "Enable Texture"}
         >
           {state.texture.enabled ? (
@@ -55,7 +55,7 @@ export function TextureSection({
         </Button>
       </div>
       {!isCollapsed && state.texture.enabled && (
-        <div id="section-texture-content" className="px-4 pb-3 space-y-2">
+        <div id="section-texture-content" className="px-4 pb-4 space-y-2">
           <p className="text-[10px] text-muted-foreground pt-1">
             Apply subtle texturing
           </p>
@@ -108,6 +108,6 @@ export function TextureSection({
           </div>
         </div>
       )}
-    </Card>
+    </div>
   );
 }
