@@ -7,7 +7,7 @@ import { PropertiesPanel } from "@/components/icon-page/panels/properties";
 import type { EditorAssetSummary } from "@/lib/editor/types";
 import { useWorkspaceState } from "@/hooks/use-workspace-state";
 import { useLocalStorageSyncEffect } from "@/hooks/use-localstorage-sync";
-import { useEditorSelectionStore } from "@/stores/use-editor-selection-store";
+import { useEditorSelectionStore } from "@/stores/editor-selection";
 import { EditorLibrarySidebar } from "@/components/editor/EditorLibrarySidebar";
 import { EditorWorkspaceSection } from "@/components/editor/EditorWorkspaceSection";
 

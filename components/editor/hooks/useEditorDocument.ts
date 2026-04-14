@@ -11,14 +11,14 @@ import type {
 import { cloneDocument, documentFromAsset } from "@/lib/editor/svg";
 import { areEditorDocumentsEqual } from "@/lib/editor/document-utils";
 import { isEditableKeyboardTarget } from "@/hooks/use-history";
-import { useEditorEditsStore } from "@/stores/use-editor-edits-store";
-import { useEditorRevisionsStore } from "@/stores/use-editor-revisions-store";
-import { useEditorSavedAssetsStore } from "@/stores/use-editor-saved-assets-store";
+import { useEditorEditsStore } from "@/stores/editor-drafts";
+import { useEditorRevisionsStore } from "@/stores/editor-revisions";
+import { useEditorSavedAssetsStore } from "@/stores/editor-saved-assets";
 import {
   useEditorSelectionStore,
   updateTrayInStore,
   removeFromTrayInStore,
-} from "@/stores/use-editor-selection-store";
+} from "@/stores/editor-selection";
 
 const MAX_HISTORY_ITEMS = 60;
 const PERSIST_DEBOUNCE_MS = 500;

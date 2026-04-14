@@ -5,7 +5,7 @@ import type { EditorAssetSummary } from "@/lib/editor/types";
 import type { CustomizationState } from "@/lib/types";
 import { useEditorDocument } from "@/components/editor/hooks/useEditorDocument";
 import { EditorWorkspacePanel } from "@/components/editor/EditorWorkspacePanel";
-import { selectAssetInStore } from "@/stores/use-editor-selection-store";
+import { selectAssetInStore } from "@/stores/editor-selection";
 
 interface EditorWorkspaceSectionProps {
   assets: EditorAssetSummary[];

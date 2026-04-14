@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect } from "react";
-import { useEditorEditsStore } from "@/stores/use-editor-edits-store";
-import { useEditorSavedAssetsStore } from "@/stores/use-editor-saved-assets-store";
-import { useEditorRevisionsStore } from "@/stores/use-editor-revisions-store";
+import { useEditorEditsStore } from "@/stores/editor-drafts";
+import { useEditorSavedAssetsStore } from "@/stores/editor-saved-assets";
+import { useEditorRevisionsStore } from "@/stores/editor-revisions";
 
 const STORE_KEYS = [
   "runeicons-editor-edits",

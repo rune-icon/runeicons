@@ -6,7 +6,7 @@ import {
   useEditorSelectionStore,
   selectAssetInStore,
   removeFromTrayInStore,
-} from "@/stores/use-editor-selection-store";
+} from "@/stores/editor-selection";
 
 export function useEditorLibrary(assets: EditorAssetSummary[]) {
   const [searchQuery, setSearchQuery] = useState("");
