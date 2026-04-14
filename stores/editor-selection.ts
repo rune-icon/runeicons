@@ -1,8 +1,7 @@
 "use client";
 
 import { create } from "zustand";
-
-const MAX_TRAY_ITEMS = 5;
+import { MAX_TRAY_ITEMS } from "@/constants/workspace";
 
 interface EditorSelectionStore {
   selectedAssetId: string | null;

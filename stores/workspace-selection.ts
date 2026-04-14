@@ -2,9 +2,7 @@
 
 import { create } from "zustand";
 import { IconData, IconCategory } from "@/lib/types";
-import { DEFAULT_TRAY_ICONS } from "@/constants/workspace";
-
-const MAX_TRAY_ITEMS = 5;
+import { DEFAULT_TRAY_ICONS, MAX_TRAY_ITEMS } from "@/constants/workspace";
 
 interface WorkspaceSelectionStore {
   activeCategory: IconCategory;
