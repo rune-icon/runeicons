@@ -1,6 +1,8 @@
 import { Rocket, Heart, Star, Smile, Coffee } from "lucide-react";
 import { CustomizationState, IconData } from "@/lib/types";
 
+export const MAX_TRAY_ITEMS = 5;
+
 export const DEFAULT_STATE: CustomizationState = {
   colors: ["#000000"], // Solid black
   numColors: 1,

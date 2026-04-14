@@ -14,7 +14,6 @@ import { Button } from "@/components/ui/button";
 import { LightDarkMode } from "@/components/ui/light-dark-mode";
 
 const Navbar = () => {
-  const Links = ["About Devs", "Sponsors"];
   const [hidden, setHidden] = useState(false);
   const { scrollY } = useScroll();
 

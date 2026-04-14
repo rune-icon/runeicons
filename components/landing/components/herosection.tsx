@@ -2,8 +2,6 @@ import Link from "next/link";
 
 import { Check, Github } from "lucide-react";
 
-import Mascot from "@/components/landing/svg/mascot";
-
 import { Button } from "../../ui/button";
 import HeroSvg from "../svg/hero-svg";
 
