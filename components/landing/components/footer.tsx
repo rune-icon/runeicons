@@ -29,23 +29,19 @@ const collaboratorsLinks = [
 const Footer = () => {
   return (
     <footer className="w-full">
-      <div className="bg-background border-border/60 w-full rounded-3xl border px-6 py-8 sm:px-10 sm:py-10">
+      <div className="w-full rounded-3xl border border-border/60 bg-background px-6 py-8 sm:px-10 sm:py-10">
         <div className="grid gap-10 md:grid-cols-6">
           <div className="md:col-span-2">
-            <Link
-              href="/"
-              aria-label="go home"
-              className="flex size-fit items-center gap-2"
-            >
+            <Link href="/" aria-label="go home" className="flex size-fit items-center gap-2">
               <LightLogo />
             </Link>
-            <p className="text-muted-foreground mt-4 max-w-xs text-sm leading-relaxed">
+            <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground">
               Manage it all with a fully customizable, no-code platform.
             </p>
           </div>
 
           <div className="space-y-3 text-sm">
-            <p className="text-foreground text-xs font-semibold tracking-wide uppercase">
+            <p className="text-xs font-semibold tracking-wide text-foreground uppercase">
               Useful Link
             </p>
             <div className="space-y-2">
@@ -53,7 +49,7 @@ const Footer = () => {
                 <Link
                   key={item.title}
                   href={item.href}
-                  className="text-muted-foreground hover:text-foreground block transition-colors"
+                  className="block text-muted-foreground transition-colors hover:text-foreground"
                 >
                   {item.title}
                 </Link>
@@ -62,15 +58,13 @@ const Footer = () => {
           </div>
 
           <div className="space-y-3 text-sm">
-            <p className="text-foreground text-xs font-semibold tracking-wide uppercase">
-              Product
-            </p>
+            <p className="text-xs font-semibold tracking-wide text-foreground uppercase">Product</p>
             <div className="space-y-2">
               {productLinks.map((item) => (
                 <Link
                   key={item.title}
                   href={item.href}
-                  className="text-muted-foreground hover:text-foreground block transition-colors"
+                  className="block text-muted-foreground transition-colors hover:text-foreground"
                 >
                   {item.title}
                 </Link>
@@ -79,7 +73,7 @@ const Footer = () => {
           </div>
 
           <div className="space-y-3 text-sm">
-            <p className="text-foreground text-xs font-semibold tracking-wide uppercase">
+            <p className="text-xs font-semibold tracking-wide text-foreground uppercase">
               Collaborators
             </p>
             <div className="space-y-2">
@@ -87,7 +81,7 @@ const Footer = () => {
                 <Link
                   key={item.title}
                   href={item.href}
-                  className="text-muted-foreground hover:text-foreground block transition-colors"
+                  className="block text-muted-foreground transition-colors hover:text-foreground"
                 >
                   {item.title}
                 </Link>
@@ -96,26 +90,37 @@ const Footer = () => {
           </div>
 
           <div className="space-y-3 text-sm">
-            <p className="text-foreground text-xs font-semibold tracking-wide uppercase">
-              Social
-            </p>
+            <p className="text-xs font-semibold tracking-wide text-foreground uppercase">Social</p>
             <div className="flex items-center gap-4">
               <Link
                 href="https://x.com/RuneIcon"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="X/Twitter"
-                className="text-muted-foreground hover:text-foreground transition-colors"
+                className="text-muted-foreground transition-colors hover:text-foreground"
               >
-   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" color="currentColor" fill="none" stroke="#FFFFFF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M3 21L10.5484 13.4516M21 3L13.4516 10.5484M13.4516 10.5484L8 3H3L10.5484 13.4516M13.4516 10.5484L21 21H16L10.5484 13.4516" />
-</svg>               </Link>
+                <svg
+                  className="invert dark:invert-0"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  width="16"
+                  height="16"
+                  color="currentColor"
+                  fill="none"
+                  stroke="#FFFFFF"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M3 21L10.5484 13.4516M21 3L13.4516 10.5484M13.4516 10.5484L8 3H3L10.5484 13.4516M13.4516 10.5484L21 21H16L10.5484 13.4516" />
+                </svg>{" "}
+              </Link>
               <Link
                 href="https://github.com/rune-icon/runeicons"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="GitHub"
-                className=" hover:text-foreground transition-colors"
+                className="transition-colors hover:text-foreground"
               >
                 <Github className="size-4" />
               </Link>
@@ -123,20 +128,20 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="border-border/40 mt-8 flex flex-wrap items-center justify-between gap-4 border-t pt-5">
-          <p className="text-muted-foreground text-xs">
+        <div className="mt-8 flex flex-wrap items-center justify-between gap-4 border-t border-border/40 pt-5">
+          <p className="text-xs text-muted-foreground">
             Copyright © {new Date().getFullYear()} Rune. All rights reserved.
           </p>
           <div className="flex items-center gap-5 text-xs">
             <Link
               href="#"
-              className="text-muted-foreground hover:text-foreground transition-colors"
+              className="text-muted-foreground transition-colors hover:text-foreground"
             >
               Terms of Use
             </Link>
             <Link
               href="#"
-              className="text-muted-foreground hover:text-foreground transition-colors"
+              className="text-muted-foreground transition-colors hover:text-foreground"
             >
               Privacy Policy
             </Link>

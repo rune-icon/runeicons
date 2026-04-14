@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import * as m from 'motion/react-m';
 import { AnimatePresence } from 'motion/react';
 import { CustomizationState } from "@/lib/types";

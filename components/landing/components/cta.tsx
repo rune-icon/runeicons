@@ -1,17 +1,12 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
+
+import { Diamond, Hammer, Paintbrush, Rocket, Sparkles, Zap } from "lucide-react";
 import * as m from "motion/react-m";
-import {
-  Diamond,
-  Hammer,
-  Paintbrush,
-  Rocket,
-  Sparkles,
-  Zap,
-} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+
 import Mascot from "../svg/mascot";
 
 const CTA = () => {
@@ -29,27 +24,21 @@ const CTA = () => {
       {" "}
       <Image
         src="/landing/gradient/cta-gradient.png"
-        className="absolute inset-0 w-full h-full object-cover"
+        className="absolute inset-0 h-full w-full object-cover"
         alt=""
         fill
         sizes="100vw"
       />
       <div className="pointer-events-none absolute inset-0 z-0">
         <div className="absolute inset-0 mask-[radial-gradient(ellipse_at_center,white,transparent_80%)] opacity-[0.03] dark:opacity-[0.05]">
-          <svg preserveAspectRatio="none" className="h-full w-full" xmlns="http://www.w3.org/2000/svg">
+          <svg
+            preserveAspectRatio="none"
+            className="h-full w-full"
+            xmlns="http://www.w3.org/2000/svg"
+          >
             <defs>
-              <pattern
-                id="cta-grid"
-                width="40"
-                height="40"
-                patternUnits="userSpaceOnUse"
-              >
-                <path
-                  d="M 40 0 L 0 0 0 40"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="0.5"
-                />
+              <pattern id="cta-grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="currentColor" strokeWidth="0.5" />
               </pattern>
             </defs>
             <rect width="100%" height="100%" fill="url(#cta-grid)" />
@@ -84,25 +73,22 @@ const CTA = () => {
           </m.div>
         ))}
       </div>
-       
       <div className="relative z-10 mx-auto flex max-w-4xl flex-col items-center text-center">
-        
-        <div className="h-20 w-20 mb-3">
-            <Mascot/>
-          </div>
+        <div className="mb-3 h-20 w-20">
+          <Mascot />
+        </div>
         {/* Heading Style (Synced with HeroSection) */}
         <m.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.1 }}
-          className="mb-8 leading-[1.1] font-medium tracking-tight text-3xl sm:text-xl md:text-xl lg:text-5xl"
+          className="mb-8 text-3xl leading-[1.1] font-medium tracking-tight sm:text-xl md:text-xl lg:text-5xl"
         >
           <span className="bg-linear-to-b from-white to-white/70 bg-clip-text text-transparent">
             Ready to build <br /> something beautiful?
           </span>
         </m.h2>
-
 
         <m.div
           initial={{ opacity: 0, scale: 0.95 }}
@@ -112,17 +98,11 @@ const CTA = () => {
           className="flex flex-col items-center justify-center gap-4 sm:flex-row"
         >
           <Link href="/icons">
-            <Button
-              size={"lg"}
-              variant={"default"}
-            >
+            <Button size={"lg"} variant={"default"}>
               Browse Icons
             </Button>
           </Link>
-          <Button          size={"lg"}
-
-          variant={"secondary"}
-          >
+          <Button size={"lg"} variant={"secondary"}>
             Star On GitHub
           </Button>
         </m.div>
