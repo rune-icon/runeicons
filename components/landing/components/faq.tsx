@@ -7,7 +7,7 @@ import {
     AccordionTrigger,
 } from '@/components/ui/accordion'
 import { Button } from '@/components/ui/button'
-import { Github, MessageCircle, Twitter } from 'lucide-react'
+import { MessageCircle } from 'lucide-react'
 
 type FAQItem = {
     id: string

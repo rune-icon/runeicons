@@ -1,7 +1,6 @@
 import React from "react";
 
 import BentoCenterSvg from "../svg/bento-center-svg";
-import IconDrawSvg from "../svg/bento-draw-svg";
 import BentoSvg from "../svg/bento-svg";
 import RocketInteractive from "../svg/rocket-interactive";
 import IconCarousel from "./icon-carousel";

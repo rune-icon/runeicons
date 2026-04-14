@@ -5,7 +5,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
-import { GithubIcon, Twitter } from "lucide-react";
+import { GithubIcon } from "lucide-react";
 import * as m from "motion/react-m";
 import { useMotionValueEvent, useScroll } from "motion/react";
 

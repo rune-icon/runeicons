@@ -8,8 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { RefObject, useMemo, useState } from "react";
-import { Slider } from "@/components/ui/slider";
+import { RefObject, useMemo } from "react";
 
 interface HeaderProps {
   searchQuery: string;

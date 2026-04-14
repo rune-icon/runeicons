@@ -26,7 +26,6 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { IconData, CustomizationState } from "@/lib/types";
 import { generateStandaloneSvg } from "@/lib/svg-export-utils";
-import { Slider } from "@/components/ui/slider";
 
 export interface WorkspaceActionBarProps {
   onDownload?: () => void;

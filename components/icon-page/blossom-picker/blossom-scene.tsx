@@ -1,6 +1,6 @@
 import { useId } from 'react';
 import * as m from 'motion/react-m';
-import { HexColor, hsbToHex, colorsMatch, rgbToHex } from '@/lib/color-utils';
+import { HexColor, hsbToHex, rgbToHex } from '@/lib/color-utils';
 import { 
     Point, 
     BlossomLayoutConfig, 
@@ -10,7 +10,7 @@ import {
     describeArc, 
     polarToCartesian 
 } from '@/lib/blossom-utils';
-import { BLOSSOM_NUMBERS, DEFAULT_BLOSSOM_PALETTE } from './constants';
+import { BLOSSOM_NUMBERS } from './constants';
 import { Petal } from './petal';
 import { BlossomPalette } from './types';
 

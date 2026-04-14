@@ -5,7 +5,6 @@ import * as m from 'motion/react-m';
 import { AnimatePresence } from 'motion/react';
 import { CustomizationState } from "@/lib/types";
 import { HexColor } from "@/lib/color-utils";
-import { BlossomColorPicker } from "../../../blossom-picker/blossom-picker";
 import { ColorRow } from './color-section/color-row';
 
 interface ColorSectionProps {

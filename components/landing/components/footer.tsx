@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { Github, Twitter } from "lucide-react";
+import { Github } from "lucide-react";
 
 import LightLogo from "@/components/landing/svg/light";
 

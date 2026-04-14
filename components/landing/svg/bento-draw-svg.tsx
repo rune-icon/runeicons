@@ -23,7 +23,6 @@ const IconDrawSvg = () => {
       });
     }
 
-    const tl = gsap.timeline({ repeat: -1, yoyo: true });
     const path = document.querySelector(".path") as SVGPathElement;
     const length = path.getTotalLength();
     gsap.set(".path", {
