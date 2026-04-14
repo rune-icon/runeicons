@@ -1,5 +1,6 @@
 import { forwardRef } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import * as m from "motion/react-m";
+import { AnimatePresence } from "motion/react";
 import { cn } from "@/lib/utils";
 import { IconData, CustomizationState } from "@/lib/types";
 
@@ -31,7 +32,7 @@ export const PreviewContent = forwardRef<HTMLDivElement, PreviewContentProps>(
         ref={ref}
         className="flex-1 flex items-center justify-center relative p-12 overflow-hidden"
       >
-        <motion.div
+        <m.div
           layout
           transition={{
             type: "spring",
@@ -70,7 +71,7 @@ export const PreviewContent = forwardRef<HTMLDivElement, PreviewContentProps>(
         >
           <AnimatePresence>
             {state.texture.enabled && state.texture.selected !== "none" && (
-              <motion.div
+              <m.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: state.texture.opacity / 100 }}
                 exit={{ opacity: 0 }}
@@ -88,11 +89,11 @@ export const PreviewContent = forwardRef<HTMLDivElement, PreviewContentProps>(
 
           <AnimatePresence mode="wait">
             {SelectedIconComponent ? (
-              <motion.div
+              <m.div
                 key={`${selectedIcon?.id}-${state.iconType}`}
-                initial={{ scale: 0, opacity: 0, rotate: -180 }}
+                initial={{ scale: 0.95, opacity: 0, rotate: -180 }}
                 animate={{ scale: 1, opacity: 1, rotate: 0 }}
-                exit={{ scale: 0, opacity: 0, rotate: 180 }}
+                exit={{ scale: 0.95, opacity: 0, rotate: 180 }}
                 transition={{
                   type: "spring",
                   stiffness: 260,
@@ -129,9 +130,9 @@ export const PreviewContent = forwardRef<HTMLDivElement, PreviewContentProps>(
                   }}
                   aria-hidden="true"
                 />
-              </motion.div>
+              </m.div>
             ) : (
-              <motion.div
+              <m.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
@@ -139,10 +140,10 @@ export const PreviewContent = forwardRef<HTMLDivElement, PreviewContentProps>(
               >
                 <p>Select an icon</p>
                 <p className="text-xs opacity-70 mt-1">from the left panel</p>
-              </motion.div>
+              </m.div>
             )}
           </AnimatePresence>
-        </motion.div>
+        </m.div>
       </div>
     );
   },

@@ -1,7 +1,9 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 
-import { AnimatePresence, motion, useAnimation } from "motion/react";
+import Image from "next/image";
+import { AnimatePresence, useAnimation } from "motion/react";
+import * as m from "motion/react-m";
 
 interface CardProps {
   user: {
@@ -48,7 +50,7 @@ const Card = ({ user, onClick, onPlayAudio }: CardProps) => {
   }, []);
 
   return (
-    <motion.div
+    <m.div
       layoutId={`card-${user.id}`}
       className="relative flex size-32 cursor-pointer items-center justify-center rounded-md border bg-[#0A0A0A] md:size-32 lg:size-48"
       drag
@@ -59,8 +61,16 @@ const Card = ({ user, onClick, onPlayAudio }: CardProps) => {
       whileHover="hover"
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
+      role="button"
+      tabIndex={0}
       onClick={() => {
         if (!isDragging.current) {
+          onClick();
+        }
+      }}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
           onClick();
         }
       }}
@@ -114,10 +124,12 @@ const Card = ({ user, onClick, onPlayAudio }: CardProps) => {
         startLevitating();
       }}
     >
-      <img
+      <Image
         src={user.img}
         alt={user.name}
-        className="opacity-100` pointer-events-none absolute inset-0 size-full rounded-md object-cover transition-all duration-300"
+        className="opacity-100 pointer-events-none absolute inset-0 size-full rounded-md object-cover transition-all duration-300"
+        fill
+        sizes="300px"
       />
 
       {/* Noise Overlay */}
@@ -126,7 +138,7 @@ const Card = ({ user, onClick, onPlayAudio }: CardProps) => {
 
       <AnimatePresence>
         {isHovered && (
-          <motion.div
+          <m.div
             key="tooltip"
             className="pointer-events-none absolute -top-12 left-1/2 z-50 -translate-x-1/2 rounded-full border border-white/10 bg-black/90 px-3 py-1.5 whitespace-nowrap"
             initial={{ opacity: 0, y: 10, scale: 0.9 }}
@@ -137,10 +149,10 @@ const Card = ({ user, onClick, onPlayAudio }: CardProps) => {
             <h1 className="font-sans text-sm font-medium text-white/90 select-none">
               {user.name}
             </h1>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
-    </motion.div>
+    </m.div>
   );
 };
 

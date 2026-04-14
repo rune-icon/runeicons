@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { motion } from "motion/react";
+import * as m from "motion/react-m";
 import { cn } from "@/lib/utils";
 
 interface MorphHoverButtonProps {
@@ -32,7 +32,7 @@ export const MorphHoverButton = ({
     duration: 0.4,
   } as const;
 
-  const Container = href ? motion.a : motion.button;
+  const Container = href ? m.a : m.button;
 
   return (
     <Container
@@ -62,7 +62,7 @@ export const MorphHoverButton = ({
       </span>
 
       {/* Pill (Expands to BG) */}
-      <motion.div
+      <m.div
         layout
         transition={transition}
         className="absolute z-[3]"
@@ -78,7 +78,7 @@ export const MorphHoverButton = ({
       />
 
       {/* BG (Shrinks to Pill) */}
-      <motion.div
+      <m.div
         layout
         transition={transition}
         className="absolute z-[1]"

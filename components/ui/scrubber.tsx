@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from 'react';
-import { motion, useMotionValue, useTransform, useSpring, AnimatePresence, useMotionTemplate } from 'motion/react';
+import * as m from "motion/react-m";
+import { useMotionValue, useTransform, useSpring, useMotionTemplate } from "motion/react";
 import { cn } from "@/lib/utils";
 
 interface ScrubberProps {
@@ -27,7 +28,7 @@ export const Scrubber: React.FC<ScrubberProps> = ({
 }) => {
   const [internalValue, setInternalValue] = useState(controlledValue ?? initialValue);
   const [isEditing, setIsEditing] = useState(false);
-  const [inputValue, setInputValue] = useState(internalValue.toString());
+  const [inputValue, setInputValue] = useState(() => internalValue.toString());
   const [isDragging, setIsDragging] = useState(false);
   
   const containerRef = useRef<HTMLDivElement>(null);
@@ -129,7 +130,7 @@ export const Scrubber: React.FC<ScrubberProps> = ({
   };
 
   return (
-    <motion.div 
+    <m.div 
       ref={containerRef}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
@@ -139,18 +140,18 @@ export const Scrubber: React.FC<ScrubberProps> = ({
       transition={{ type: "spring", stiffness: 500, damping: 30 }}
       className="relative h-[44px] w-full cursor-grab active:cursor-grabbing touch-none"
     >
-      <motion.div 
+      <m.div 
         animate={{ backgroundColor: trackClassName ? undefined : (isDragging ? "#D4D4D4" : "#E5E5E5") }}
         transition={{ ease: [0.23, 1, 0.32, 1], duration: 0.2 }}
         className={cn("absolute inset-0 rounded-[10px] overflow-hidden pointer-events-none", trackClassName)}
       >
-        <motion.div 
+        <m.div 
           style={{ transform: progressTransform, transformOrigin: "left" }}
           animate={{ backgroundColor: fillClassName ? undefined : (isDragging ? "rgba(0,0,0,0.15)" : "rgba(0,0,0,0.1)") }}
           transition={{ ease: [0.23, 1, 0.32, 1], duration: 0.2 }}
           className={cn("absolute left-0 top-0 bottom-0 right-0 z-0", fillClassName)}
         />
-      </motion.div>
+      </m.div>
 
       <div className="absolute inset-0 flex items-center px-4 z-10 pointer-events-none select-none text-[14px] font-medium text-[#1A1A1A]">
         <div className="flex justify-between w-full">
@@ -181,7 +182,7 @@ export const Scrubber: React.FC<ScrubberProps> = ({
       </div>
 
       <div className="absolute inset-0 rounded-[10px] overflow-hidden pointer-events-none z-20">
-        <motion.div 
+        <m.div 
           style={{ maskImage: maskImage, WebkitMaskImage: maskImage }}
           className="absolute inset-0 flex items-center"
         >
@@ -193,13 +194,13 @@ export const Scrubber: React.FC<ScrubberProps> = ({
               </span>
             )}
           </div>
-        </motion.div>
+        </m.div>
       </div>
 
-      <motion.div 
+      <m.div 
         style={{ left: thumbPos }}
         className="absolute top-1/2 -translate-y-1/2 h-[16px] w-[2px] bg-white mix-blend-difference z-30 -translate-x-1/2 rounded-full pointer-events-none"
       />
-    </motion.div>
+    </m.div>
   );
 };

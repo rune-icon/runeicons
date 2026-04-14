@@ -1,7 +1,3 @@
-"use client";
-
-import { useEffect, useState } from "react";
-
 import Image from "next/image";
 
 interface Testimonial {
@@ -107,7 +103,7 @@ const TestimonialCard = ({ testimonial }: { testimonial: Testimonial }) => {
           {testimonial.quote}
         </p>
         <div className="mt-auto flex items-center gap-3">
-          <img
+          <Image
             src={testimonial.avatar}
             alt={testimonial.name}
             width={40}
@@ -130,28 +126,7 @@ const TestimonialCard = ({ testimonial }: { testimonial: Testimonial }) => {
   );
 };
 
-const Testimonials = () => {
-  const [stars, setStars] = useState<string>("—");
-
-  useEffect(() => {
-    const fetchStars = async () => {
-      try {
-        const response = await fetch(
-          "https://api.github.com/repos/AitijhyaModak/rune-icons"
-        );
-        const data = await response.json();
-        const count = data.stargazers_count;
-        if (count >= 1000) {
-          setStars(`${(count / 1000).toFixed(1)}k+`);
-        } else {
-          setStars(`${count}+`);
-        }
-      } catch (error) {
-        setStars("—");
-      }
-    };
-    fetchStars();
-  }, []);
+const Testimonials = ({ stars }: { stars: string }) => {
 
   return (
     <section className="mt-8 w-full">
@@ -214,22 +189,22 @@ const Testimonials = () => {
       <div className="grid grid-cols-1 gap-4 mask-b-from-80% md:grid-cols-2 lg:grid-cols-3">
         {/* Column 1 */}
         <div className="flex flex-col gap-4">
-          {column1.map((testimonial, index) => (
-            <TestimonialCard key={index} testimonial={testimonial} />
+          {column1.map((testimonial) => (
+            <TestimonialCard key={testimonial.handle} testimonial={testimonial} />
           ))}
         </div>
 
         {/* Column 2 */}
         <div className="flex flex-col gap-4">
-          {column2.map((testimonial, index) => (
-            <TestimonialCard key={index} testimonial={testimonial} />
+          {column2.map((testimonial) => (
+            <TestimonialCard key={testimonial.handle} testimonial={testimonial} />
           ))}
         </div>
 
         {/* Column 3 */}
         <div className="flex flex-col gap-4">
-          {column3.map((testimonial, index) => (
-            <TestimonialCard key={index} testimonial={testimonial} />
+          {column3.map((testimonial) => (
+            <TestimonialCard key={testimonial.handle} testimonial={testimonial} />
           ))}
         </div>
       </div>

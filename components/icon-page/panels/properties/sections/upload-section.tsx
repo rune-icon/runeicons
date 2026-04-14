@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Card } from "@/components/ui/card";
 import {
   ChevronDown,
@@ -145,9 +146,9 @@ export function UploadSection({
 
           {state.customIcons.length > 0 && (
             <div className="mt-2">
-              <label className="text-xs font-medium text-muted-foreground mb-2 block">
+              <span className="text-xs font-medium text-muted-foreground mb-2 block">
                 Custom Icons
-              </label>
+              </span>
               <div
                 className="space-y-2"
                 role="list"
@@ -159,10 +160,13 @@ export function UploadSection({
                     className="flex items-center gap-3 p-2 rounded-md border border-border bg-background hover:bg-muted transition-colors"
                     role="listitem"
                   >
-                    <img
+                    <Image
                       src={icon.url || "/placeholder.svg"}
                       alt={icon.name}
+                      width={32}
+                      height={32}
                       className="w-8 h-8 object-contain flex-shrink-0"
+                      unoptimized
                     />
                     <span
                       className="text-xs text-foreground flex-1 truncate"

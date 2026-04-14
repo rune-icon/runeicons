@@ -44,7 +44,9 @@ const HeroSection = () => {
         </div>
 
         <div className="mt-8 flex flex-wrap gap-2 sm:gap-4 lg:mt-14">
-          <Button className="py-5">Browse Icons</Button>
+          <Link href="/icons">
+            <Button className="py-5">Browse Icons</Button>
+          </Link>
           <Link
             href="https://github.com/rune-icon/runeicons"
             target="_blank"

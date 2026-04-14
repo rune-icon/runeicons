@@ -1,5 +1,7 @@
 "use client";
-import { motion } from "motion/react";
+import Image from "next/image";
+import Link from "next/link";
+import * as m from "motion/react-m";
 import {
   Diamond,
   Hammer,
@@ -25,10 +27,12 @@ const CTA = () => {
   return (
     <section className="relative h-full w-full overflow-hidden rounded-3xl py-24">
       {" "}
-      <img
+      <Image
         src="/landing/gradient/cta-gradient.png"
         className="absolute inset-0 w-full h-full object-cover"
         alt=""
+        fill
+        sizes="100vw"
       />
       <div className="pointer-events-none absolute inset-0 z-0">
         <div className="absolute inset-0 mask-[radial-gradient(ellipse_at_center,white,transparent_80%)] opacity-[0.03] dark:opacity-[0.05]">
@@ -54,8 +58,8 @@ const CTA = () => {
 
         {/* Floating Icons */}
         {icons.map((item, i) => (
-          <motion.div
-            key={i}
+          <m.div
+            key={`${item.x}-${item.y}`}
             className="text-white/75 drop-shadow-[0_1px_2px_rgba(0,0,0,0.35)]"
             initial={{ opacity: 0 }}
             animate={{
@@ -77,7 +81,7 @@ const CTA = () => {
             }}
           >
             <item.icon size={item.size} strokeWidth={1.5} />
-          </motion.div>
+          </m.div>
         ))}
       </div>
        
@@ -87,7 +91,7 @@ const CTA = () => {
             <Mascot/>
           </div>
         {/* Heading Style (Synced with HeroSection) */}
-        <motion.h2
+        <m.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -97,30 +101,31 @@ const CTA = () => {
           <span className="bg-linear-to-b from-white to-white/70 bg-clip-text text-transparent">
             Ready to build <br /> something beautiful?
           </span>
-        </motion.h2>
+        </m.h2>
 
 
-        <motion.div
+        <m.div
           initial={{ opacity: 0, scale: 0.95 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.3 }}
           className="flex flex-col items-center justify-center gap-4 sm:flex-row"
         >
-          <Button
-          size={"lg"}
-          variant={"default"}
-
-          >
-            Browse Icons
-          </Button>
+          <Link href="/icons">
+            <Button
+              size={"lg"}
+              variant={"default"}
+            >
+              Browse Icons
+            </Button>
+          </Link>
           <Button          size={"lg"}
 
           variant={"secondary"}
           >
             Star On GitHub
           </Button>
-        </motion.div>
+        </m.div>
       </div>
     </section>
   );

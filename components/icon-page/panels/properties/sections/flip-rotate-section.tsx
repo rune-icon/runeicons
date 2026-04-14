@@ -56,9 +56,9 @@ export function FlipRotateSection({
         <div id="section-flip-rotate-content" className="px-4 pb-3">
           <div className="space-y-2">
             <div>
-              <label className="text-xs font-medium text-muted-foreground mb-2 block">
+              <span className="text-xs font-medium text-muted-foreground mb-2 block">
                 Flip
-              </label>
+              </span>
               <div
                 className="flex gap-2"
                 role="group"

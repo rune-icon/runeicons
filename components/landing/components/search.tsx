@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import {
   Bell,
   Calendar,
@@ -65,10 +66,12 @@ const Search = () => {
       {/* Left - Hero text card */}
       <div className="min-h-[400px] lg:min-h-0 lg:w-1/2">
         <div className="bg-background relative h-full min-h-[400px] w-full overflow-hidden rounded-2xl bg-center">
-          <img
+          <Image
             className="h-full w-full object-cover"
             src="https://i.pinimg.com/1200x/d3/49/0e/d3490eaa1637583dca52fe021fa38d19.jpg"
             alt=""
+            fill
+            sizes="(max-width: 1024px) 100vw, 50vw"
           />
         </div>
       </div>
@@ -101,7 +104,7 @@ const Search = () => {
               <div className="my-3 mt-4 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 justify-items-center gap-2 px-1 sm:my-4 sm:mt-6 sm:gap-3 sm:px-0">
                 {ICONS.map(({ Icon, name }, index) => (
                   <div
-                    key={index}
+                    key={name}
                     className={`flex w-14 flex-col items-center gap-1 ${index >= 9 ? 'hidden sm:flex' : ''}`}
                   >
                     <div className="bg-muted/50 hover:bg-muted flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg transition-colors">

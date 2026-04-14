@@ -1,5 +1,11 @@
+import type { Metadata } from "next";
 import { HeaderPanel } from "@/components/icon-page/panels/header";
 import { WorkspaceShell } from "@/components/icon-page/panels/workspace";
+
+export const metadata: Metadata = {
+  title: "Icons | RuneIcons",
+  description: "Browse and customize 1000+ beautiful icons.",
+};
 
 export default function Home() {
   return (
