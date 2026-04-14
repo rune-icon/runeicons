@@ -10,6 +10,7 @@ import type {
 } from "@/lib/editor/types";
 import { cloneDocument, documentFromAsset } from "@/lib/editor/svg";
 import { areEditorDocumentsEqual } from "@/lib/editor/document-utils";
+import { isEditableKeyboardTarget } from "@/hooks/use-history";
 import { useEditorEditsStore } from "@/stores/use-editor-edits-store";
 import { useEditorRevisionsStore } from "@/stores/use-editor-revisions-store";
 import { useEditorSavedAssetsStore } from "@/stores/use-editor-saved-assets-store";
@@ -28,7 +29,6 @@ export function useEditorDocument(assets: EditorAssetSummary[]) {
 
   const [document, setDocument] = useState<EditorDocument | null>(null);
   const [selectedPathId, setSelectedPathId] = useState<string | null>(null);
-  const [showPathEditor, setShowPathEditor] = useState(true);
   const [history, setHistory] = useState<EditorDocument[]>([]);
   const [historyIndex, setHistoryIndex] = useState(0);
   const [saveDialogOpen, setSaveDialogOpen] = useState(false);
@@ -134,7 +134,6 @@ export function useEditorDocument(assets: EditorAssetSummary[]) {
         window.clearTimeout(persistTimerRef.current);
         const doc = documentRef.current;
         if (doc) {
-          // eslint-disable-next-line react-hooks/exhaustive-deps
           upsertDocument(doc);
         }
       }
@@ -188,7 +187,6 @@ export function useEditorDocument(assets: EditorAssetSummary[]) {
   );
 
   // Hydration: load document when selected asset changes
-  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (!hasHydrated || !effectiveSelectedAssetId) return;
 
@@ -203,6 +201,7 @@ export function useEditorDocument(assets: EditorAssetSummary[]) {
     if (areEditorDocumentsEqual(documentRef.current, nextDocument)) return;
 
     skipNextRevision.current = true;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadDocument(nextDocument, { pushHistory: false });
   }, [
     assetMap,
@@ -211,7 +210,6 @@ export function useEditorDocument(assets: EditorAssetSummary[]) {
     loadDocument,
     persistedDocument,
   ]);
-  /* eslint-enable react-hooks/set-state-in-effect */
 
   // Debounced persistence on document change
   useEffect(() => {
@@ -414,6 +412,34 @@ export function useEditorDocument(assets: EditorAssetSummary[]) {
     skipNextRevision.current = true;
   }, []);
 
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.defaultPrevented || isEditableKeyboardTarget(event.target)) {
+        return;
+      }
+
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "z") {
+        event.preventDefault();
+
+        if (event.shiftKey) {
+          handleRedo();
+          return;
+        }
+
+        handleUndo();
+        return;
+      }
+
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "y") {
+        event.preventDefault();
+        handleRedo();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [handleRedo, handleUndo]);
+
   const saveCurrentAsset = useCallback(
     (name: string) => {
       if (!document) return;
@@ -444,6 +470,11 @@ export function useEditorDocument(assets: EditorAssetSummary[]) {
     [assets],
   );
 
+  const isModified = useMemo(() => {
+    if (!document || !selectedAsset) return false;
+    return !areEditorDocumentsEqual(document, documentFromAsset(selectedAsset));
+  }, [document, selectedAsset]);
+
   const canUndo = historyIndex > 0;
   const canRedo = historyIndex < history.length - 1;
 
@@ -454,8 +485,6 @@ export function useEditorDocument(assets: EditorAssetSummary[]) {
     selectedPath,
     selectedPathId,
     setSelectedPathId,
-    showPathEditor,
-    setShowPathEditor,
     updateSelectedPath,
     commitPathDraft,
     togglePathVisibility,
@@ -467,6 +496,7 @@ export function useEditorDocument(assets: EditorAssetSummary[]) {
     handleRedo,
     canUndo,
     canRedo,
+    isModified,
     savedAssets,
     saveCurrentAsset,
     removeSavedAsset,

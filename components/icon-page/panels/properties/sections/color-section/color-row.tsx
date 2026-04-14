@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 import { HexColor } from "@/lib/color-utils";
 import { BlossomColorPicker } from "@/components/icon-page/blossom-picker/blossom-picker";

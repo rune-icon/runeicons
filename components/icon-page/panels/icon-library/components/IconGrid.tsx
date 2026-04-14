@@ -1,4 +1,5 @@
-import { motion, AnimatePresence } from "motion/react";
+import * as m from "motion/react-m";
+import { AnimatePresence } from "motion/react";
 import { IconData } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -14,14 +15,14 @@ export function IconGrid({
   onIconClick,
 }: IconGridProps) {
   return (
-    <motion.div layout className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 border-b border-border">
+    <m.div layout className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 border-b border-border">
       <AnimatePresence mode="popLayout">
         {icons.map((icon, index) => {
           const Icon = icon.icon;
           const isSelected = selectedIconId === icon.id;
 
           return (
-            <motion.div
+            <m.div
               key={icon.id}
               layout
               initial={{ opacity: 0 }}
@@ -53,10 +54,10 @@ export function IconGrid({
                   aria-hidden="true"
                 />
               </button>
-            </motion.div>
+            </m.div>
           );
         })}
       </AnimatePresence>
-    </motion.div>
+    </m.div>
   );
 }

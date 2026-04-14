@@ -41,7 +41,6 @@ export const EditorAssetLibrary = memo(function EditorAssetLibrary({
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
-
     const observer = new ResizeObserver((entries) => {
       for (const entry of entries) {
         setContainerWidth(entry.contentRect.width);
@@ -141,10 +140,7 @@ export const EditorAssetLibrary = memo(function EditorAssetLibrary({
           >
             {rowVirtualizer.getVirtualItems().map((virtualRow) => {
               const startIndex = virtualRow.index * columns;
-              const rowAssets = assets.slice(
-                startIndex,
-                startIndex + columns,
-              );
+              const rowAssets = assets.slice(startIndex, startIndex + columns);
               return (
                 <div
                   key={virtualRow.index}
@@ -162,7 +158,8 @@ export const EditorAssetLibrary = memo(function EditorAssetLibrary({
                         type="button"
                         onClick={() => onAssetSelect(asset)}
                         className={cn(
-                          "group relative aspect-square cursor-pointer overflow-hidden transition-all duration-200 border-r border-b border-border flex flex-col items-center justify-center p-2",
+                          "group relative aspect-square cursor-pointer overflow-hidden border-r border-b border-border flex flex-col items-center justify-center p-2",
+                          "transition-[background-color,color] duration-200 ease",
                           isSelected
                             ? "bg-accent"
                             : "bg-transparent hover:bg-muted",
@@ -174,10 +171,10 @@ export const EditorAssetLibrary = memo(function EditorAssetLibrary({
                           <EditorSvgPreview
                             document={asset}
                             className={cn(
-                              "max-h-10 max-w-10 transition-transform duration-200 group-hover:scale-110",
+                              "max-h-10 max-w-10 transition-transform duration-150 ease-out group-hover:scale-110",
                               isSelected
                                 ? "text-primary"
-                                : "text-muted-foreground",
+                                : "text-muted-foreground group-hover:text-foreground",
                             )}
                           />
                         </div>

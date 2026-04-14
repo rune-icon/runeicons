@@ -3,9 +3,11 @@
 import { useState } from "react";
 
 import Link from "next/link";
+import Image from "next/image";
 
 import { GithubIcon, Twitter } from "lucide-react";
-import { motion, useMotionValueEvent, useScroll } from "motion/react";
+import * as m from "motion/react-m";
+import { useMotionValueEvent, useScroll } from "motion/react";
 
 import LightLogo from "@/components/landing/svg/light";
 import { Button } from "@/components/ui/button";
@@ -27,7 +29,7 @@ const Navbar = () => {
 
   return (
     <div className="bg-background fixed inset-x-0 z-50 ">
-      <motion.div
+      <m.div
         className="overflow-hidden"
         initial={false}
         animate={hidden ? "hidden" : "visible"}
@@ -37,7 +39,7 @@ const Navbar = () => {
         }}
         transition={{ duration: 0.18, ease: "easeOut" }}
       >
-        <motion.div
+        <m.div
           initial={false}
           animate={hidden ? "hidden" : "visible"}
           variants={{
@@ -52,17 +54,20 @@ const Navbar = () => {
             rel="noopener noreferrer"
             className="relative block overflow-hidden border-b border-black/15 px-4 py-2 text-center text-xs font-medium text-white sm:px-8 md:px-24"
           >
-            <img
+            <Image
               src="/landing/gradient/cta-gradient.png"
               className="absolute inset-0 h-full w-full object-cover"
               alt=""
+              fill
+              sizes="100vw"
+              priority
             />
             <span className="relative z-10 text-[10px] leading-tight sm:text-xs sm:leading-snug">
               Rune Icons now includes 1000+ modern icons for your products.
             </span>
           </Link>
-        </motion.div>
-      </motion.div>
+        </m.div>
+      </m.div>
 
 <div className=" w-full bg-[#F5F5F5]  dark:bg-background   border-b-2 border-dashed flex justify-center">
 

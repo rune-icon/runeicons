@@ -34,10 +34,6 @@ export function EditorWorkspaceSection({
     [assets],
   );
 
-  const handleTogglePathEditor = useCallback(() => {
-    doc.setShowPathEditor((prev: boolean) => !prev);
-  }, [doc.setShowPathEditor]);
-
   return (
     <EditorWorkspacePanel
       state={state}
@@ -50,16 +46,16 @@ export function EditorWorkspaceSection({
       selectedPath={doc.selectedPath}
       onSelectPath={doc.setSelectedPathId}
       onCommitPathDraft={doc.commitPathDraft}
+      isModified={doc.isModified}
       onResetAsset={doc.resetCurrentAsset}
       onUndo={doc.handleUndo}
       onRedo={doc.handleRedo}
       canUndo={doc.canUndo}
       canRedo={doc.canRedo}
-      showPathEditor={doc.showPathEditor}
-      onTogglePathEditor={handleTogglePathEditor}
       saveDialogOpen={doc.saveDialogOpen}
       onSaveDialogOpenChange={doc.setSaveDialogOpen}
       onSaveSnapshot={doc.saveCurrentAsset}
+      onAddPath={doc.addPath}
       onGlobalStateChange={onGlobalStateChange}
     />
   );

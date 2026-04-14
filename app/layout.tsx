@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Gemunu_Libre, Inter, Inter_Tight } from "next/font/google";
 import { ThemeProvider } from "@/provider/theme-provider";
+import { MotionProvider } from "@/provider/motion-provider";
 import { ShapeProvider } from "@/lib/shape-context";
 import { Toaster } from "@/components/ui/sonner";
 
@@ -43,21 +44,24 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning data-scroll-behavior="smooth">
       <body
+        suppressHydrationWarning
         className={`${inter.variable} ${geistSans.variable} ${geistMono.variable} ${gemunuLibre.variable} ${interTight.variable} antialiased`}
       >
-        <ShapeProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            {children}
-            <Toaster />
-          </ThemeProvider>
-        </ShapeProvider>
+        <MotionProvider>
+          <ShapeProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              {children}
+              <Toaster />
+            </ThemeProvider>
+          </ShapeProvider>
+        </MotionProvider>
       </body>
     </html>
   );

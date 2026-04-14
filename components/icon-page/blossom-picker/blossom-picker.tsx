@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { createPortal } from 'react-dom';
-import { AnimatePresence, motion } from 'motion/react';
+import * as m from "motion/react-m";
+import { AnimatePresence } from "motion/react";
 import { 
     HexColor, 
     colorsMatch, 
@@ -217,7 +218,7 @@ export const BlossomColorPicker = ({
 
     return (
         <div className={className}>
-            <motion.button
+            <m.button
                 ref={buttonRef}
                 type="button"
                 className="blossom-picker-swatch"
@@ -239,7 +240,7 @@ export const BlossomColorPicker = ({
             {anchor && portalTarget && createPortal(
                 <AnimatePresence>
                     {isOpen && (
-                        <motion.div
+                        <m.div
                             ref={portalRef}
                             style={{
                                 position: 'fixed',
@@ -279,7 +280,7 @@ export const BlossomColorPicker = ({
                                     setHoveredRing(ring);
                                 }}
                             />
-                        </motion.div>
+                        </m.div>
                     )}
                 </AnimatePresence>,
                 portalTarget

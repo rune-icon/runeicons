@@ -1,5 +1,5 @@
 import { useId } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import * as m from 'motion/react-m';
 import { HexColor, hsbToHex, colorsMatch, rgbToHex } from '@/lib/color-utils';
 import { 
     Point, 
@@ -118,7 +118,7 @@ export function BlossomScene({
             }}
         >
 
-            <motion.circle
+            <m.circle
                 cx={center.x}
                 cy={center.y}
                 r={ringRadius}
@@ -167,7 +167,7 @@ export function BlossomScene({
             })}
 
 
-            <motion.circle
+            <m.circle
                 cx={center.x}
                 cy={center.y}
                 r={styleConfig.centerCircleSize / 2}
@@ -189,7 +189,7 @@ export function BlossomScene({
 
             <g>
                 {arcSteps.map((step) => (
-                    <motion.path
+                    <m.path
                         key={step.id}
                         d={step.d}
                         fill="none"
@@ -218,19 +218,19 @@ export function BlossomScene({
                 />
 
 
-                <motion.circle
+                <m.circle
                     cx={thumbPosition.x}
                     cy={thumbPosition.y}
                     r={styleConfig.sliderWidth / 1.5}
                     fill={currentThumbColor}
                     stroke="white"
                     strokeWidth={BLOSSOM_NUMBERS.borderWidth * 3}
-                    initial={{ scale: 0, opacity: 0 }}
+                    initial={{ scale: 0.95, opacity: 0 }}
                     animate={{
                         scale: isDraggingArc ? BLOSSOM_NUMBERS.arcThumbDragScale : 1,
                         opacity: 1,
                     }}
-                    exit={{ scale: 0, opacity: 0 }}
+                    exit={{ scale: 0.95, opacity: 0 }}
                     transition={THUMB_SPRING}
                     style={{
                         cursor: 'grab',

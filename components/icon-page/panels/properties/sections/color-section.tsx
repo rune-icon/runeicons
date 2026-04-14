@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useCallback } from 'react';
-import { AnimatePresence, motion } from 'motion/react';
+import * as m from 'motion/react-m';
+import { AnimatePresence } from 'motion/react';
 import { CustomizationState } from "@/lib/types";
 import { HexColor } from "@/lib/color-utils";
 import { BlossomColorPicker } from "../../../blossom-picker/blossom-picker";
@@ -52,7 +53,7 @@ export function ColorSection({
 
     return (
         <div className="px-1.5 pb-2 pt-0.5">
-            <motion.div 
+            <m.div 
                 className="color-card"
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -72,10 +73,10 @@ export function ColorSection({
                 }}>
                     <span style={{ fontSize: 13, fontWeight: 600, color: '#171717' }}>Color</span>
                     <div style={{ display: 'flex', background: '#f5f5f5', borderRadius: 8, padding: 2, gap: 2 }}>
-                        {(['solid', 'gradient'] as const).map(m => (
+                        {(['solid', 'gradient'] as const).map(opt => (
                             <button
-                                key={m}
-                                onClick={() => onChange({ iconGradient: m === 'gradient' })}
+                                key={opt}
+                                onClick={() => onChange({ iconGradient: opt === 'gradient' })}
                                 style={{
                                     padding: '5px 12px', 
                                     borderRadius: 6, 
@@ -83,12 +84,12 @@ export function ColorSection({
                                     fontSize: 12, 
                                     fontWeight: 500, 
                                     cursor: 'pointer',
-                                    background: mode === m ? '#fff' : 'transparent',
-                                    color: mode === m ? '#171717' : '#525252',
-                                    boxShadow: mode === m ? '0 1px 2px rgba(0,0,0,0.06)' : 'none'
+                                    background: mode === opt ? '#fff' : 'transparent',
+                                    color: mode === opt ? '#171717' : '#525252',
+                                    boxShadow: mode === opt ? '0 1px 2px rgba(0,0,0,0.06)' : 'none'
                                 }}
                             >
-                                {m.charAt(0).toUpperCase() + m.slice(1)}
+                                {opt.charAt(0).toUpperCase() + opt.slice(1)}
                             </button>
                         ))}
                     </div>
@@ -97,7 +98,7 @@ export function ColorSection({
                 <div style={{ padding: '8px 12px' }}>
                     <AnimatePresence mode="wait">
                         {mode === 'solid' ? (
-                            <motion.div 
+                            <m.div 
                                 key="solid" 
                                 initial={{ opacity: 0, x: -4 }} 
                                 animate={{ opacity: 1, x: 0 }} 
@@ -109,9 +110,9 @@ export function ColorSection({
                                     value={state.colors[0] as HexColor} 
                                     onChange={handleSolidChange} 
                                 />
-                            </motion.div>
+                            </m.div>
                         ) : (
-                            <motion.div 
+                            <m.div 
                                 key="gradient" 
                                 initial={{ opacity: 0, x: -4 }} 
                                 animate={{ opacity: 1, x: 0 }} 
@@ -121,7 +122,7 @@ export function ColorSection({
                             >
                                 {state.gradient.stops.slice(0, 3).map((stop, i) => (
                                     <ColorRow 
-                                        key={i} 
+                                        key={`stop-${i}-${stop.position}`} 
                                         label={i === 0 ? "Start" : i === 1 ? "End" : `Stop ${i + 1}`}
                                         value={stop.color as HexColor} 
                                         onChange={(val) => handleGradientChange(i, val)} 
@@ -137,11 +138,11 @@ export function ColorSection({
                                         }}
                                     />
                                 </div>
-                            </motion.div>
+                            </m.div>
                         )}
                     </AnimatePresence>
                 </div>
-            </motion.div>
+            </m.div>
         </div>
     );
 }

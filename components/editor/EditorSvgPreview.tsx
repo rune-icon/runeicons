@@ -1,9 +1,10 @@
 "use client";
 
-import { memo } from "react";
-import type { EditorDocument, EditorIconPath } from "@/lib/editor/types";
+import { memo, useRef, useEffect } from "react";
+import type { EditorDocument } from "@/lib/editor/types";
 import type { CustomizationState } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { resolveEditorPathPaint } from "@/lib/editor/svg";
 
 function stripDefsWrapper(defs?: string) {
   if (!defs) {
@@ -16,46 +17,15 @@ function stripDefsWrapper(defs?: string) {
     .trim();
 }
 
-function resolvePathPaint(path: EditorIconPath, state?: CustomizationState) {
-  if (!state) {
-    return {
-      stroke: path.stroke ?? "none",
-      fill: path.fill ?? "none",
-    };
-  }
-
-  if (state.iconGradient) {
-    return {
-      stroke:
-        path.stroke && path.stroke !== "none" ? "url(#icon-gradient)" : path.stroke,
-      fill: path.fill && path.fill !== "none" ? "url(#icon-gradient)" : path.fill,
-    };
-  }
-
-  const strokeUsesDefault =
-    !path.stroke ||
-    path.stroke === "black" ||
-    path.stroke === "#000000" ||
-    path.stroke === "#ffffff" ||
-    path.stroke === "currentColor";
-  const fillUsesDefault =
-    !path.fill ||
-    path.fill === "black" ||
-    path.fill === "#000000" ||
-    path.fill === "#ffffff" ||
-    path.fill === "currentColor";
-
-  return {
-    stroke:
-      path.stroke && path.stroke !== "none" && strokeUsesDefault
-        ? state.colors[0]
-        : path.stroke ?? "none",
-    fill:
-      path.fill && path.fill !== "none" && fillUsesDefault
-        ? state.colors[0]
-        : path.fill ?? "none",
-  };
-}
+const SvgDefs = memo(function SvgDefs({ markup }: { markup: string }) {
+  const ref = useRef<SVGDefsElement>(null);
+  useEffect(() => {
+    if (ref.current) {
+      ref.current.innerHTML = markup;
+    }
+  }, [markup]);
+  return <defs ref={ref} />;
+});
 
 interface EditorSvgPreviewProps {
   document: Pick<EditorDocument, "viewBox" | "defs" | "paths">;
@@ -80,11 +50,11 @@ export const EditorSvgPreview = memo(function EditorSvgPreview({
       className={cn("h-full w-full", className)}
       aria-hidden="true"
     >
-      {defsMarkup ? <defs dangerouslySetInnerHTML={{ __html: defsMarkup }} /> : null}
+      {defsMarkup ? <SvgDefs markup={defsMarkup} /> : null}
       {document.paths
         .filter((path) => path.visible)
         .map((path) => {
-          const paint = resolvePathPaint(path, state);
+          const paint = resolveEditorPathPaint(path, state);
           return (
             <path
               key={path.id}

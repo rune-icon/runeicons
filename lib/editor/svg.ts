@@ -36,6 +36,24 @@ function normalizeNumeric(value?: string) {
   return Number.isFinite(parsed) ? parsed : undefined;
 }
 
+function normalizeEditorPaintValue(value?: string) {
+  return value?.trim().toLowerCase() ?? "";
+}
+
+export function isDefaultEditorPaint(value?: string) {
+  const normalizedValue = normalizeEditorPaintValue(value);
+
+  return (
+    !normalizedValue ||
+    normalizedValue === "black" ||
+    normalizedValue === "#000" ||
+    normalizedValue === "#000000" ||
+    normalizedValue === "#fff" ||
+    normalizedValue === "#ffffff" ||
+    normalizedValue === "currentcolor"
+  );
+}
+
 function parseTagAttributes(input: string) {
   const attributes: Record<string, string> = {};
   const attributeRegex = /([:\w-]+)\s*=\s*("([^"]*)"|'([^']*)')/g;
@@ -387,21 +405,11 @@ function buildExportFilter(state: CustomizationState) {
   return `<filter id="editor-export-filter" x="-50%" y="-50%" width="200%" height="200%">${blur}${shadow}</filter>`;
 }
 
-function resolvePathPaint(path: EditorIconPath, state: CustomizationState) {
-  const usesDefaultStroke =
-    !path.stroke ||
-    path.stroke === "black" ||
-    path.stroke === "#000000" ||
-    path.stroke === "#ffffff" ||
-    path.stroke === "currentColor";
-  const usesDefaultFill =
-    !path.fill ||
-    path.fill === "black" ||
-    path.fill === "#000000" ||
-    path.fill === "#ffffff" ||
-    path.fill === "currentColor";
-
-  if (state.iconGradient) {
+export function resolveEditorPathPaint(
+  path: Pick<EditorIconPath, "stroke" | "fill">,
+  state?: CustomizationState,
+) {
+  if (state?.iconGradient) {
     return {
       stroke:
         path.stroke && path.stroke !== "none" ? "url(#icon-gradient)" : path.stroke,
@@ -409,13 +417,17 @@ function resolvePathPaint(path: EditorIconPath, state: CustomizationState) {
     };
   }
 
+  const defaultPaint = state?.colors[0] ?? "currentColor";
+
   return {
     stroke:
-      path.stroke && path.stroke !== "none" && usesDefaultStroke
-        ? state.colors[0]
-        : path.stroke,
+      path.stroke && path.stroke !== "none" && isDefaultEditorPaint(path.stroke)
+        ? defaultPaint
+        : path.stroke ?? "none",
     fill:
-      path.fill && path.fill !== "none" && usesDefaultFill ? state.colors[0] : path.fill,
+      path.fill && path.fill !== "none" && isDefaultEditorPaint(path.fill)
+        ? defaultPaint
+        : path.fill ?? "none",
   };
 }
 
@@ -463,7 +475,7 @@ export function createEditorSvgMarkup(
   const visiblePaths = document.paths
     .filter((path) => path.visible)
     .map((path) => {
-      const paint = resolvePathPaint(path, state);
+      const paint = resolveEditorPathPaint(path, state);
       return `<path ${serializePathAttributes(path, paint)} />`;
     })
     .join("");

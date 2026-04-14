@@ -1,4 +1,5 @@
-import { motion, AnimatePresence } from "motion/react";
+import * as m from "motion/react-m";
+import { AnimatePresence } from "motion/react";
 import { Plus, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { IconData, CustomizationState } from "@/lib/types";
@@ -42,7 +43,7 @@ export function IconTray({
               >
                 <AnimatePresence mode="popLayout" initial={false}>
                   {trayIcon ? (
-                    <motion.div
+                    <m.div
                       key={trayIcon.id}
                       layout
                       initial={{ opacity: 0, scale: 0.5, y: 10 }}
@@ -54,7 +55,15 @@ export function IconTray({
                         damping: 25,
                       }}
                       className="absolute inset-0 flex items-center justify-center p-2 cursor-pointer group"
+                      role="button"
+                      tabIndex={0}
                       onClick={() => onSelectIcon(trayIcon)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          onSelectIcon(trayIcon);
+                        }
+                      }}
                     >
                       <trayIcon.icon
                         className="w-full h-full transition-all drop-shadow-sm hover:scale-110 active:scale-95"
@@ -78,7 +87,7 @@ export function IconTray({
                       >
                         <X className="w-3 h-3" />
                       </button>
-                    </motion.div>
+                    </m.div>
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-muted-foreground/10">
                       <Plus className="w-4 h-4" />

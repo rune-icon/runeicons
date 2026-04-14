@@ -5,10 +5,15 @@ import { fileURLToPath } from "node:url";
 const projectRoot = dirname(fileURLToPath(import.meta.url));
 
 const nextConfig: NextConfig = {
-  /* config options here */
   reactCompiler: true,
   turbopack: {
     root: projectRoot,
+  },
+  images: {
+    remotePatterns: [
+      { hostname: "i.pinimg.com" },
+      { hostname: "i.pravatar.cc" },
+    ],
   },
 };
 

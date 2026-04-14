@@ -6,6 +6,7 @@ import { ToolRail } from "@/components/icon-page/panels/outline";
 import { PropertiesPanel } from "@/components/icon-page/panels/properties";
 import type { EditorAssetSummary } from "@/lib/editor/types";
 import { useWorkspaceState } from "@/hooks/use-workspace-state";
+import { useLocalStorageSyncEffect } from "@/hooks/use-localstorage-sync";
 import { useEditorSelectionStore } from "@/stores/use-editor-selection-store";
 import { EditorLibrarySidebar } from "@/components/editor/EditorLibrarySidebar";
 import { EditorWorkspaceSection } from "@/components/editor/EditorWorkspaceSection";
@@ -17,7 +18,10 @@ interface EditorShellProps {
 }
 
 export function EditorShell({ assets }: EditorShellProps) {
-  const { state, handleChange, handleReset } = useWorkspaceState();
+  useLocalStorageSyncEffect();
+  const { state, handleChange, handleReset } = useWorkspaceState({
+    enableKeyboardShortcuts: false,
+  });
   const resetDocumentRef = useRef<() => void>(() => {});
 
   const hasInitRef = useRef(false);

@@ -1,4 +1,5 @@
-import { motion, AnimatePresence } from "motion/react";
+import * as m from "motion/react-m";
+import { AnimatePresence } from "motion/react";
 
 interface EmptyStateProps {
   isVisible: boolean;
@@ -9,7 +10,7 @@ export function EmptyState({ isVisible, onClearSearch }: EmptyStateProps) {
   return (
     <AnimatePresence>
       {isVisible && (
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
@@ -30,7 +31,7 @@ export function EmptyState({ isVisible, onClearSearch }: EmptyStateProps) {
               Clear search
             </button>
           )}
-        </motion.div>
+        </m.div>
       )}
     </AnimatePresence>
   );

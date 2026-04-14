@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useTransform, type MotionValue } from "motion/react";
+import * as m from "motion/react-m";
+import { useTransform, type MotionValue } from "motion/react";
 import { cn } from "@/lib/utils";
 import { useShape } from "@/lib/shape-context";
 import { springs } from "@/lib/springs";
@@ -17,7 +18,7 @@ export function TooltipValue({ value, formatValue, motionX }: TooltipValueProps)
   const tooltipX = useTransform(motionX, (x) => x + THUMB_SIZE / 2);
   
   return (
-    <motion.div
+    <m.div
       className="absolute -translate-x-1/2 pointer-events-none z-20"
       style={{
         x: tooltipX,
@@ -34,6 +35,6 @@ export function TooltipValue({ value, formatValue, motionX }: TooltipValueProps)
       >
         {formatValue(value)}
       </span>
-    </motion.div>
+    </m.div>
   );
 }

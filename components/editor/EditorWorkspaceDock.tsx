@@ -120,9 +120,10 @@ function SelectedPathStylePanel({
         </div>
 
         <div className="grid grid-cols-2 gap-3">
-          <label className="space-y-1 text-xs text-muted-foreground">
+          <label htmlFor="dock-stroke" className="space-y-1 text-xs text-muted-foreground">
             Stroke
             <Input
+              id="dock-stroke"
               type="color"
               value={selectedStroke}
               onChange={(event) =>
@@ -134,9 +135,10 @@ function SelectedPathStylePanel({
               className="h-10 p-1"
             />
           </label>
-          <label className="space-y-1 text-xs text-muted-foreground">
+          <label htmlFor="dock-fill" className="space-y-1 text-xs text-muted-foreground">
             Fill
             <Input
+              id="dock-fill"
               type="color"
               value={selectedFill}
               onChange={(event) =>
@@ -151,9 +153,10 @@ function SelectedPathStylePanel({
         </div>
 
         <div className="grid grid-cols-2 gap-3">
-          <label className="space-y-1 text-xs text-muted-foreground">
+          <label htmlFor="dock-stroke-width" className="space-y-1 text-xs text-muted-foreground">
             Stroke Width
             <Input
+              id="dock-stroke-width"
               type="number"
               min={0}
               step={0.1}
@@ -166,9 +169,10 @@ function SelectedPathStylePanel({
               }
             />
           </label>
-          <label className="space-y-1 text-xs text-muted-foreground">
+          <label htmlFor="dock-opacity" className="space-y-1 text-xs text-muted-foreground">
             Opacity
             <Input
+              id="dock-opacity"
               type="number"
               min={0}
               max={1}

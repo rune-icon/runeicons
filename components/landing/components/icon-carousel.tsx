@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-import { motion } from "motion/react";
+import * as m from "motion/react-m";
 import {
   Atom,
   AudioLines,
@@ -141,7 +141,7 @@ const IconCarousel = () => {
       </div>
 
       <div className="relative flex flex-1 items-center justify-center">
-        <motion.div
+        <m.div
           className="absolute flex items-center justify-center"
           animate={{ x: -activeIndex * ICON_GAP }}
           transition={{ type: "spring", stiffness: 200, damping: 28 }}
@@ -152,9 +152,17 @@ const IconCarousel = () => {
             const dist = Math.abs(i - activeIndex);
 
             return (
-              <motion.div
+              <m.div
                 key={item.name}
                 className="flex shrink-0 cursor-pointer items-center justify-center"
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    goTo(i);
+                  }
+                }}
                 style={{ width: ICON_GAP }}
                 animate={
                   isActive
@@ -211,16 +219,16 @@ const IconCarousel = () => {
                   style={{ color: isActive ? strokeColor : undefined }}
                   className={`${isActive ? "" : "text-foreground"} transition-all duration-500`}
                 />
-              </motion.div>
+              </m.div>
             );
           })}
-        </motion.div>
+        </m.div>
       </div>
 
       <div className="flex items-center justify-center gap-1.5">
         {ICONS.map((_, i) => (
           <button
-            key={i}
+            key={`dot-${i}`}
             onClick={() => goTo(i)}
             className={`h-1.5 w-1.5 cursor-pointer rounded-full transition-all duration-300 ${
               i === activeIndex

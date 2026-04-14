@@ -8,8 +8,8 @@ import {
   useCallback,
   type HTMLAttributes,
 } from "react";
+import * as m from "motion/react-m";
 import {
-  motion,
   useMotionValue,
   useTransform,
   animate,
@@ -27,6 +27,46 @@ import {
   toRadixValue 
 } from "./slider-utils";
 import { ValueDisplay, type ValuePosition } from "./value-display";
+
+interface VisualThumbProps {
+  index: number;
+  motionX: MotionValue<number>;
+  focusedThumb: number | null;
+}
+
+function VisualThumb({ index, motionX, focusedThumb }: VisualThumbProps) {
+  return (
+    <m.span
+      className="flex items-center justify-center pointer-events-none"
+      style={{
+        width: THUMB_SIZE,
+        height: THUMB_SIZE,
+        marginTop: -THUMB_SIZE / 2,
+        x: motionX,
+        position: "absolute",
+        top: "50%",
+        left: 0,
+        zIndex: 10,
+      }}
+      transition={springs.moderate}
+    >
+      <m.span
+        className="block rounded-full bg-white shadow-[0_1px_3px_rgba(0,0,0,0.1),0_0_0_0.5px_rgba(0,0,0,0.05)] border border-border/50"
+        animate={{
+          width: THUMB_SIZE_REST,
+          height: THUMB_SIZE_REST,
+        }}
+        transition={springs.fast}
+      />
+      <m.span
+        className="absolute rounded-full border border-[#6B97FF]"
+        animate={{ opacity: focusedThumb === index ? 1 : 0, width: THUMB_SIZE + 4, height: THUMB_SIZE + 4 }}
+        transition={springs.fast}
+        style={{ fontVariationSettings: "var(--font-weight-medium)" }}
+      />
+    </m.span>
+  );
+}
 import { TooltipValue } from "./tooltip-value";
 
 const THUMB_SIZE_REST = 18;
@@ -329,42 +369,6 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
 
     const isInteracting = isHovered || isPressed;
 
-    const renderVisualThumb = (index: number) => {
-      const motionX = index === 0 ? motionX0 : motionX1;
-      return (
-        <motion.span
-          key={`visual-thumb-${index}`}
-          className="flex items-center justify-center pointer-events-none"
-          style={{
-            width: THUMB_SIZE,
-            height: THUMB_SIZE,
-            marginTop: -THUMB_SIZE / 2,
-            x: motionX,
-            position: "absolute",
-            top: "50%",
-            left: 0,
-            zIndex: 10,
-          }}
-          transition={springs.moderate}
-        >
-          <motion.span
-            className="block rounded-full bg-white shadow-[0_1px_3px_rgba(0,0,0,0.1),0_0_0_0.5px_rgba(0,0,0,0.05)] border border-border/50"
-            animate={{
-              width: THUMB_SIZE_REST,
-              height: THUMB_SIZE_REST,
-            }}
-            transition={springs.fast}
-          />
-          <motion.span
-            className="absolute rounded-full border border-[#6B97FF]"
-            animate={{ opacity: focusedThumb === index ? 1 : 0, width: THUMB_SIZE + 4, height: THUMB_SIZE + 4 }}
-            transition={springs.fast}
-            style={{ fontVariationSettings: "var(--font-weight-medium)" }}
-          />
-        </motion.span>
-      );
-    };
-
     return (
       <div
         ref={ref}
@@ -437,7 +441,7 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
             <div className="absolute inset-0" />
             <AnimatePresence>
               {hoverPreview && valuePosition !== "tooltip" && (
-                <motion.div
+                <m.div
                   className="absolute -translate-x-1/2 pointer-events-none z-20"
                   initial={{ opacity: 0, y: 4 }}
                   animate={{ opacity: 1, y: 0, left: hoverPreview.cursorX }}
@@ -446,11 +450,11 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
                   style={{ top: -20 }}
                 >
                   <span className={cn("text-[12px] text-background bg-foreground px-2 py-1", shape.bg)}>{formatValue(hoverPreview.snappedValue)}</span>
-                </motion.div>
+                </m.div>
               )}
             </AnimatePresence>
 
-            <motion.div
+            <m.div
               className={cn(
                 "absolute bg-accent rounded-full overflow-hidden",
                 shape.bg,
@@ -464,12 +468,12 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
               }}
               transition={springs.fast}
             >
-              <motion.div
+              <m.div
                 className={cn("absolute h-full bg-foreground rounded-full", shape.bg, fillClassName)}
                 style={{ left: fillLeft, width: fillWidth }}
               />
               
-              <motion.div
+              <m.div
                 className={cn("absolute h-full pointer-events-none bg-foreground/20 rounded-full", shape.bg)}
                 animate={{
                   left: hoverPreview && !hoverPreview.onFilledSide ? hoverPreview.left : 0,
@@ -479,7 +483,7 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
                 transition={springs.moderate}
               />
 
-              <motion.div
+              <m.div
                 className={cn("absolute h-full pointer-events-none z-[2] bg-background/25 rounded-full", shape.bg)}
                 animate={{
                   left: hoverPreview?.onFilledSide ? hoverPreview.left : 0,
@@ -488,11 +492,11 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
                 }}
                 transition={springs.moderate}
               />
-            </motion.div>
+            </m.div>
 
             {stepDots.map(({ value: v, percent }) => (
               <div key={v} className="absolute inset-y-0" style={{ left: `${percent * 100}%`, width: 0 }}>
-                <motion.div
+                <m.div
                   className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 rounded-full z-[6]"
                   animate={{ width: isHovered ? DOT_SIZE * 1.25 : DOT_SIZE, height: isHovered ? DOT_SIZE * 1.25 : DOT_SIZE }}
                   style={{ backgroundColor: (isRange ? v >= values[0] && v <= values[1] : v <= values[0]) ? "var(--background)" : "var(--muted-foreground)" }}
@@ -500,8 +504,8 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
               </div>
             ))}
 
-            {renderVisualThumb(0)}
-            {isRange && renderVisualThumb(1)}
+            <VisualThumb key="visual-thumb-0" index={0} motionX={motionX0} focusedThumb={focusedThumb} />
+            {isRange && <VisualThumb key="visual-thumb-1" index={1} motionX={motionX1} focusedThumb={focusedThumb} />}
           </div>
         </div>
         {(valuePosition === "bottom" || valuePosition === "right") && showValue && (

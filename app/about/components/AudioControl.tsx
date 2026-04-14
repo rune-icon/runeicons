@@ -1,4 +1,5 @@
-import { motion, AnimatePresence } from "motion/react";
+import { AnimatePresence } from "motion/react";
+import * as m from "motion/react-m";
 
 interface AudioControlProps {
   isMuted: boolean;
@@ -12,7 +13,7 @@ const AudioControl = ({ isMuted, onToggle }: AudioControlProps) => {
   };
 
   return (
-    <motion.button
+    <m.button
       onClick={onToggle}
       className="absolute top-8 left-8 z-50 p-2 rounded-full cursor-pointer group"
       whileHover="hover"
@@ -28,7 +29,7 @@ const AudioControl = ({ isMuted, onToggle }: AudioControlProps) => {
           xmlns="http://www.w3.org/2000/svg"
           className="absolute inset-0"
         >
-          <motion.path
+          <m.path
             d="M13 7L8 11H4V17H8L13 21V7Z"
             variants={pathVariants}
             strokeWidth="1.5"
@@ -39,7 +40,7 @@ const AudioControl = ({ isMuted, onToggle }: AudioControlProps) => {
 
         <AnimatePresence mode="wait">
           {!isMuted ? (
-            <motion.svg
+            <m.svg
               key="speaker-on"
               width="28"
               height="28"
@@ -53,14 +54,14 @@ const AudioControl = ({ isMuted, onToggle }: AudioControlProps) => {
               transition={{ duration: 0.2 }}
             >
               <g>
-                <motion.path
+                <m.path
                   d="M21.07 7C22.9447 8.87528 23.9979 11.4184 23.9979 14.07C23.9979 16.7216 22.9447 19.2647 21.07 21.14"
                   variants={pathVariants}
                   strokeWidth="1.5"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 />
-                <motion.path
+                <m.path
                   d="M17.54 10.53C18.4773 11.4676 19.0039 12.7392 19.0039 14.065C19.0039 15.3908 18.4773 16.6624 17.54 17.6"
                   variants={pathVariants}
                   strokeWidth="1.5"
@@ -68,9 +69,9 @@ const AudioControl = ({ isMuted, onToggle }: AudioControlProps) => {
                   strokeLinejoin="round"
                 />
               </g>
-            </motion.svg>
+            </m.svg>
           ) : (
-            <motion.svg
+            <m.svg
               key="speaker-off"
               width="28"
               height="28"
@@ -84,14 +85,14 @@ const AudioControl = ({ isMuted, onToggle }: AudioControlProps) => {
               transition={{ duration: 0.2 }}
             >
               <g>
-                <motion.path
+                <m.path
                   d="M25 11L19 17"
                   variants={pathVariants}
                   strokeWidth="1.5"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 />
-                <motion.path
+                <m.path
                   d="M19 11L25 17"
                   variants={pathVariants}
                   strokeWidth="1.5"
@@ -99,11 +100,11 @@ const AudioControl = ({ isMuted, onToggle }: AudioControlProps) => {
                   strokeLinejoin="round"
                 />
               </g>
-            </motion.svg>
+            </m.svg>
           )}
         </AnimatePresence>
       </div>
-    </motion.button>
+    </m.button>
   );
 };
 
