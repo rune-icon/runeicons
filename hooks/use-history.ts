@@ -4,6 +4,7 @@ import { useState, useCallback, useEffect, useRef } from "react";
 
 interface UseHistoryOptions {
   maxHistory?: number;
+  enableKeyboardShortcuts?: boolean;
 }
 
 interface UseHistoryReturn<T> {
@@ -20,7 +21,15 @@ export function useHistory<T>(
   initialState: T,
   options: UseHistoryOptions = {},
 ): UseHistoryReturn<T> {
-  const { maxHistory = 50 } = options;
+  const { maxHistory = 50, enableKeyboardShortcuts = true } = options;
+
+  function isRedoShortcut(event: KeyboardEvent) {
+    return (
+      (event.metaKey || event.ctrlKey) &&
+      (event.key.toLowerCase() === "y" ||
+        (event.key.toLowerCase() === "z" && event.shiftKey))
+    );
+  }
 
   const [history, setHistory] = useState<T[]>([initialState]);
   const [historyIndex, setHistoryIndex] = useState(0);
@@ -71,6 +80,10 @@ export function useHistory<T>(
 
   // Keyboard shortcuts: Ctrl+Z / Ctrl+Y -- stable, never re-attaches
   useEffect(() => {
+    if (!enableKeyboardShortcuts) {
+      return;
+    }
+
     const handleKeyDown = (e: KeyboardEvent) => {
       const isZ = e.key.toLowerCase() === "z";
       const isY = e.key.toLowerCase() === "y";
@@ -91,7 +104,7 @@ export function useHistory<T>(
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [handleUndo, handleRedo]);
+  }, [enableKeyboardShortcuts, handleUndo, handleRedo]);
 
   return {
     history,
@@ -102,4 +115,17 @@ export function useHistory<T>(
     canUndo: historyIndex > 0,
     canRedo: historyIndex < history.length - 1,
   };
+}
+
+export function isEditableKeyboardTarget(target: EventTarget | null) {
+  if (!(target instanceof HTMLElement)) {
+    return false;
+  }
+
+  if (target.isContentEditable || target.closest('[contenteditable="true"]')) {
+    return true;
+  }
+
+  const editableTagNames = new Set(["INPUT", "TEXTAREA", "SELECT"]);
+  return editableTagNames.has(target.tagName);
 }

@@ -5,6 +5,9 @@ import { Sun, Moon } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
+
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import { MorphHoverButton } from "@/components/icon-page/morph-hover-button";
 import { HeaderLogo } from "@/components/icons/HeaderLogo";
 
@@ -15,6 +18,9 @@ interface HeaderPanelProps {
 export function HeaderPanel({ className }: HeaderPanelProps) {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const router = useRouter();
+  const pathname = usePathname();
+  const isEditorPage = pathname === "/editor";
 
   useEffect(() => {
     setMounted(true);
@@ -37,7 +43,19 @@ export function HeaderPanel({ className }: HeaderPanelProps) {
 
 
       <div className="flex-1 h-full border-r border-border flex items-center px-6 justify-end">
-        <MorphHoverButton title="Edit" />
+        {isEditorPage ? (
+          <MorphHoverButton
+            title="Icons"
+            onClick={() => router.push("/icons")}
+            pillColor="rgb(99, 102, 241)" /* indigo-500 */
+          />
+        ) : (
+          <MorphHoverButton
+            title="Edit"
+            onClick={() => router.push("/editor")}
+            pillColor="rgb(34, 197, 94)" /* green-500 */
+          />
+        )}
       </div>
 
 
@@ -50,6 +68,7 @@ export function HeaderPanel({ className }: HeaderPanelProps) {
           size="icon"
           className="h-8 w-8 text-muted-foreground hover:text-foreground transition-colors duration-150 ease-out active:scale-[0.97]"
           onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+          suppressHydrationWarning
         >
           {mounted && theme === "dark" ? (
             <Sun className="h-4 w-4" />

@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useCallback } from 'react';
-import { AnimatePresence, motion } from 'motion/react';
+import { useCallback } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { CustomizationState } from "@/lib/types";
 import { HexColor } from "@/lib/color-utils";
 import { ColorRow } from './color-section/color-row';

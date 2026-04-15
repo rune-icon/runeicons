@@ -2,17 +2,8 @@
 
 import { useEffect, useState } from "react";
 
-import { motion } from "motion/react";
-import {
-  Atom,
-  AudioLines,
-  Bug,
-  Cat,
-  Flower2,
-  Hop,
-  Minus,
-  Plus,
-} from "lucide-react";
+import { Atom, AudioLines, Bug, Cat, Flower2, Hop, Minus, Plus } from "lucide-react";
+import * as m from "motion/react-m";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -63,12 +54,12 @@ const IconCarousel = () => {
   };
 
   return (
-    <div className="flex h-full w-full flex-col justify-between self-stretch min-h-48">
+    <div className="flex h-full min-h-48 w-full flex-col justify-between self-stretch">
       <div className="no-scrollbar flex h-12 items-center gap-2 overflow-x-auto mask-r-from-90% mask-l-from-90% px-4">
         {/* Animation Group */}
         <div className="flex h-8 shrink-0 items-center rounded-md border shadow-sm">
           <Select value={animation} onValueChange={setAnimation}>
-            <SelectTrigger className="hover:bg-accent h-full w-24 shrink-0 justify-between gap-1 rounded-none border-none px-3 text-[10px] shadow-none transition-colors focus:ring-0 sm:text-xs">
+            <SelectTrigger className="h-full w-24 shrink-0 justify-between gap-1 rounded-none border-none px-3 text-[10px] shadow-none transition-colors hover:bg-accent focus:ring-0 sm:text-xs">
               <SelectValue placeholder="Anim" />
             </SelectTrigger>
             <SelectContent>
@@ -81,24 +72,24 @@ const IconCarousel = () => {
         </div>
 
         {/* Stroke Group */}
-        <div className="bg-background flex h-8 shrink-0 items-center rounded-md border shadow-sm">
+        <div className="flex h-8 shrink-0 items-center rounded-md border bg-background shadow-sm">
           <Button
             variant="ghost"
             size="icon"
-            className="hover:bg-accent h-full w-7 rounded-none border-none transition-colors"
+            className="h-full w-7 rounded-none border-none transition-colors hover:bg-accent"
             onClick={() => setStrokeWidth(Math.max(0.5, strokeWidth - 0.5))}
           >
             <Minus className="h-3 w-3" />
           </Button>
-          <div className="bg-muted/10 flex h-full w-8 items-center justify-center border-x">
-            <span className="text-muted-foreground font-mono text-[10px] font-medium">
+          <div className="flex h-full w-8 items-center justify-center border-x bg-muted/10">
+            <span className="font-mono text-[10px] font-medium text-muted-foreground">
               {strokeWidth}
             </span>
           </div>
           <Button
             variant="ghost"
             size="icon"
-            className="hover:bg-accent h-full w-7 rounded-none border-none transition-colors"
+            className="h-full w-7 rounded-none border-none transition-colors hover:bg-accent"
             onClick={() => setStrokeWidth(Math.min(4, strokeWidth + 0.5))}
           >
             <Plus className="h-3 w-3" />
@@ -106,14 +97,14 @@ const IconCarousel = () => {
         </div>
 
         {/* Color Group */}
-        <div className="bg-background flex h-8 shrink-0 items-center gap-2 rounded-md border px-3 shadow-sm">
+        <div className="flex h-8 shrink-0 items-center gap-2 rounded-md border bg-background px-3 shadow-sm">
           {COLORS.map((c) => (
             <button
               key={c.value}
               onClick={() => setStrokeColor(c.value)}
               className={`h-3.5 w-3.5 rounded-full ${c.bg} border border-black/5 transition-all duration-200 ${
                 strokeColor === c.value
-                  ? "ring-foreground/20 scale-110 shadow-sm ring-2 ring-offset-1"
+                  ? "scale-110 shadow-sm ring-2 ring-foreground/20 ring-offset-1"
                   : "opacity-70 hover:scale-105 hover:opacity-100"
               }`}
               title={c.label}
@@ -122,8 +113,8 @@ const IconCarousel = () => {
         </div>
 
         {/* Size Group */}
-        <div className="bg-background ml-auto flex h-8 min-w-[110px] shrink-0 items-center gap-3 rounded-md border px-3 shadow-sm">
-          <span className="text-muted-foreground text-[10px] font-semibold tracking-tight whitespace-nowrap uppercase">
+        <div className="ml-auto flex h-8 min-w-[110px] shrink-0 items-center gap-3 rounded-md border bg-background px-3 shadow-sm">
+          <span className="text-[10px] font-semibold tracking-tight whitespace-nowrap text-muted-foreground uppercase">
             Size
           </span>
           <Slider
@@ -134,14 +125,14 @@ const IconCarousel = () => {
             step={1}
             className="w-14 cursor-pointer"
           />
-          <span className="text-muted-foreground w-4 text-right font-mono text-[10px] font-medium">
+          <span className="w-4 text-right font-mono text-[10px] font-medium text-muted-foreground">
             {iconSize}
           </span>
         </div>
       </div>
 
       <div className="relative flex flex-1 items-center justify-center">
-        <motion.div
+        <m.div
           className="absolute flex items-center justify-center"
           animate={{ x: -activeIndex * ICON_GAP }}
           transition={{ type: "spring", stiffness: 200, damping: 28 }}
@@ -152,9 +143,17 @@ const IconCarousel = () => {
             const dist = Math.abs(i - activeIndex);
 
             return (
-              <motion.div
+              <m.div
                 key={item.name}
                 className="flex shrink-0 cursor-pointer items-center justify-center"
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    goTo(i);
+                  }
+                }}
                 style={{ width: ICON_GAP }}
                 animate={
                   isActive
@@ -211,21 +210,19 @@ const IconCarousel = () => {
                   style={{ color: isActive ? strokeColor : undefined }}
                   className={`${isActive ? "" : "text-foreground"} transition-all duration-500`}
                 />
-              </motion.div>
+              </m.div>
             );
           })}
-        </motion.div>
+        </m.div>
       </div>
 
       <div className="flex items-center justify-center gap-1.5">
         {ICONS.map((_, i) => (
           <button
-            key={i}
+            key={`dot-${i}`}
             onClick={() => goTo(i)}
             className={`h-1.5 w-1.5 cursor-pointer rounded-full transition-all duration-300 ${
-              i === activeIndex
-                ? "bg-foreground/70 scale-125"
-                : "bg-foreground/15"
+              i === activeIndex ? "scale-125 bg-foreground/70" : "bg-foreground/15"
             }`}
           />
         ))}

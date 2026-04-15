@@ -6,8 +6,10 @@ import {
   Globe,
   X,
 } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence } from "motion/react";
+import * as m from "motion/react-m";
 
+import Image from "next/image";
 import XIcon from "./icons/XIcon";
 
 interface DetailViewProps {
@@ -48,13 +50,21 @@ const DetailView = ({
   return (
     <>
       {/* Backdrop */}
-      <motion.div
+      <m.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.3 }}
         className="fixed inset-0 z-40 bg-black/80 backdrop-blur-sm"
+        role="button"
+        tabIndex={0}
         onClick={onClose}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            onClose();
+          }
+        }}
       />
 
       {/* Container - Full viewport */}
@@ -69,7 +79,7 @@ const DetailView = ({
           </button>
 
           {/* Left Panel - Carousel */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -87,7 +97,7 @@ const DetailView = ({
             <div className="perspective-1000 relative flex h-[500px] w-full items-center justify-center">
               {/* Prev User (Left) */}
               {prevUser && (
-                <motion.div
+                <m.div
                   key={prevUser.id}
                   layoutId={`avatar-${prevUser.id}`}
                   className="absolute z-10 cursor-pointer opacity-40 blur-[1px] grayscale transition-all hover:opacity-80 hover:grayscale-0"
@@ -105,21 +115,23 @@ const DetailView = ({
                 >
                   <div className="flex size-56 items-center justify-center overflow-hidden rounded-full border border-white/10 bg-white/5">
                     {prevUser.img ? (
-                      <img
+                      <Image
                         src={prevUser.img}
                         alt={prevUser.name}
                         className="size-full object-cover"
+                        fill
+                        sizes="224px"
                       />
                     ) : (
                       <span className="text-4xl select-none">👻</span>
                     )}
                   </div>
-                </motion.div>
+                </m.div>
               )}
 
               {/* Next User (Right) */}
               {nextUser && (
-                <motion.div
+                <m.div
                   key={nextUser.id}
                   layoutId={`avatar-${nextUser.id}`}
                   className="absolute z-10 cursor-pointer opacity-40 blur-[1px] grayscale transition-all hover:opacity-80 hover:grayscale-0"
@@ -137,19 +149,21 @@ const DetailView = ({
                 >
                   <div className="flex size-56 items-center justify-center overflow-hidden rounded-full border border-white/10 bg-white/5">
                     {nextUser.img ? (
-                      <img
+                      <Image
                         src={nextUser.img}
                         alt={nextUser.name}
                         className="size-full object-cover"
+                        fill
+                        sizes="224px"
                       />
                     ) : (
                       <span className="text-4xl select-none">👻</span>
                     )}
                   </div>
-                </motion.div>
+                </m.div>
               )}
 
-              <motion.div
+              <m.div
                 key={user.id}
                 layoutId={`card-${user.id}`}
                 className="absolute z-20"
@@ -167,20 +181,22 @@ const DetailView = ({
                 <div className="bg-primary/20 absolute inset-0 rounded-full blur-3xl" />
                 <div className="relative flex size-64 items-center justify-center overflow-hidden rounded-full border border-white/20 bg-linear-to-tr from-cyan-400/20 to-blue-500/20 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
                   {user.img ? (
-                    <img
+                    <Image
                       src={user.img}
                       alt={user.name}
                       className="size-full object-cover"
+                      fill
+                      sizes="256px"
                     />
                   ) : (
                     <span className="text-7xl select-none">👻</span>
                   )}
                 </div>
-              </motion.div>
+              </m.div>
             </div>
 
             {/* Navigation Buttons - Centered Bottom of Left Panel */}
-            <motion.div
+            <m.div
               className="absolute bottom-8 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 rounded-full border border-white/10 bg-[#0A0A0A]/80 px-2 py-2 backdrop-blur-md"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -203,11 +219,11 @@ const DetailView = ({
               >
                 <ChevronRight size={20} />
               </button>
-            </motion.div>
-          </motion.div>
+            </m.div>
+          </m.div>
 
           {/* Right Panel - Details */}
-          <motion.div
+          <m.div
             initial={{ x: 100, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: 100, opacity: 0 }}
@@ -220,7 +236,7 @@ const DetailView = ({
             className="relative flex h-full w-[30%] flex-col justify-center border-l border-white/10 bg-[#0A0A0A]/95 p-12 backdrop-blur-xl"
           >
             <AnimatePresence mode="wait" initial={false}>
-              <motion.div
+              <m.div
                 key={`info-${user.id}`}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -258,9 +274,9 @@ const DetailView = ({
 
                 {/* Socials */}
                 <div className="mb-20 flex items-center gap-4">
-                  {user.socials?.map((social, index) => (
+                  {user.socials?.map((social) => (
                     <a
-                      key={index}
+                      key={social.url}
                       href={social.url}
                       target="_blank"
                       rel="noreferrer"
@@ -273,9 +289,9 @@ const DetailView = ({
                     </a>
                   ))}
                 </div>
-              </motion.div>
+              </m.div>
             </AnimatePresence>
-          </motion.div>
+          </m.div>
         </div>
       </div>
     </>

@@ -43,17 +43,18 @@ export function IconGrid({
                 onClick={() => onIconClick(icon)}
                 className={cn(
                   "group relative aspect-square cursor-pointer overflow-hidden transition-colors duration-150 ease-out w-full border-r border-b border-border flex items-center justify-center",
-                  isSelected ? "bg-accent" : "bg-transparent hover:bg-muted",
+                  isSelected ? "bg-accent" : "bg-transparent hover:bg-muted focus-visible:bg-muted outline-none",
                 )}
                 type="button"
                 aria-label={`${icon.name} icon`}
+                title={icon.name}
               >
                 <Icon
                   className={cn(
                     "w-5 h-5 transition-transform duration-150 ease-out",
                     isSelected
                       ? "text-primary"
-                      : "text-muted-foreground group-hover:text-foreground",
+                      : "text-muted-foreground group-hover:text-foreground group-focus-visible:text-foreground",
                   )}
                   style={{
                     transform: `scale(1)`,
@@ -68,6 +69,12 @@ export function IconGrid({
                   strokeWidth={1.5}
                   aria-hidden="true"
                 />
+
+                <div className="absolute bottom-1 left-0 right-0 px-1 opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity duration-150 pointer-events-none">
+                  <span className="text-[8px] text-muted-foreground/60 truncate block font-medium uppercase tracking-[0.05em]">
+                    {icon.name}
+                  </span>
+                </div>
               </button>
             </motion.div>
           );

@@ -1,8 +1,9 @@
 "use client";
-
 import { useEffect, useState } from "react";
 
 import Image from "next/image";
+
+import { Hand } from "lucide-react";
 
 interface Testimonial {
   quote: string;
@@ -69,8 +70,7 @@ const testimonials: Testimonial[] = [
     avatar: "https://i.pravatar.cc/150?u=jamescarter",
   },
   {
-    quote:
-      "1000+ icons and every single one is beautiful. Rune Icons is... wow. Just wow 🤩🤩�",
+    quote: "1000+ icons and every single one is beautiful. Rune Icons is... wow. Just wow 🤩🤩�",
     name: "Nina Petrova",
     handle: "@ninapetrova",
     avatar: "https://i.pravatar.cc/150?u=ninapetrova",
@@ -102,12 +102,12 @@ const TestimonialCard = ({ testimonial }: { testimonial: Testimonial }) => {
       {/* Rainbow gradient border - visible on hover */}
       <div className="animate-rainbow absolute inset-0 rounded-xl bg-[linear-gradient(45deg,var(--color-1),var(--color-5),var(--color-3),var(--color-4),var(--color-2))] bg-[length:200%] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
       {/* Inner card */}
-      <div className="bg-card relative m-[1.5px] flex flex-col gap-4 rounded-[12px] p-6 transition-all duration-300">
-        <p className="text-card-foreground text-sm leading-relaxed whitespace-pre-line">
+      <div className="relative m-[1.5px] flex flex-col gap-4 rounded-[12px] bg-card p-6 transition-all duration-300">
+        <p className="text-sm leading-relaxed whitespace-pre-line text-card-foreground">
           {testimonial.quote}
         </p>
         <div className="mt-auto flex items-center gap-3">
-          <img
+          <Image
             src={testimonial.avatar}
             alt={testimonial.name}
             width={40}
@@ -115,17 +115,17 @@ const TestimonialCard = ({ testimonial }: { testimonial: Testimonial }) => {
             className="h-10 w-10 rounded-full object-cover"
           />
           <div className="flex flex-col">
-            <span className="text-card-foreground text-sm leading-tight font-medium">
+            <span className="text-sm leading-tight font-medium text-card-foreground">
               {testimonial.name}
             </span>
-            <span className="text-muted-foreground text-xs leading-tight">
+            <span className="text-xs leading-tight text-muted-foreground">
               {testimonial.handle}
             </span>
           </div>
         </div>
       </div>
       {/* Default border (visible when not hovered) */}
-      <div className="border-border pointer-events-none absolute inset-0 rounded-xl border transition-opacity duration-500 group-hover:opacity-0" />
+      <div className="pointer-events-none absolute inset-0 rounded-xl border border-border transition-opacity duration-500 group-hover:opacity-0" />
     </div>
   );
 };
@@ -136,9 +136,7 @@ const Testimonials = () => {
   useEffect(() => {
     const fetchStars = async () => {
       try {
-        const response = await fetch(
-          "https://api.github.com/repos/AitijhyaModak/rune-icons"
-        );
+        const response = await fetch("https://api.github.com/repos/AitijhyaModak/rune-icons");
         const data = await response.json();
         const count = data.stargazers_count;
         if (count >= 1000) {
@@ -158,53 +156,35 @@ const Testimonials = () => {
       {/* Header */}
       <div className="mb-16 flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
         <div className="flex flex-col gap-3">
-          <h2 className="text-foreground text-2xl font-semibold tracking-tight sm:text-3xl md:text-4xl">
+          <h2 className="text-4xl font-medium tracking-tight text-foreground">
             Loved by the <span className="text-blue-700">community</span>
           </h2>
-          <p className="text-muted-foreground max-w-md text-base">
-            Don&apos;t take our word for it listen to what developers using Rune
-            Icons have to say.
+          <p className="max-w-md text-base text-muted-foreground">
+            Don&apos;t take our word for it listen to what developers using Rune Icons have to say.
           </p>
         </div>
         <div className="flex flex-col items-start gap-6 sm:flex-row sm:gap-10">
           <div className="flex flex-col items-start">
-            <span className="text-foreground text-4xl font-semibold tracking-tight">
-              1.2k+
-            </span>
+            <span className="text-4xl tracking-tight text-foreground">1.2k+</span>
             <div className="mt-1 flex items-center gap-1.5">
-              <svg
-                viewBox="0 0 16 16"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                className="text-muted-foreground h-4 w-4"
-              >
-                <rect x="2" y="2" width="12" height="12" rx="2" />
-                <path d="M5.5 8h5M8 5.5v5" />
-              </svg>
-              <span className="text-muted-foreground text-sm">
-                Hand-crafted Icons
-              </span>
+              <Hand className="text-muted-foreground" size={16} />{" "}
+              <span className="text-base text-muted-foreground">Hand-crafted Icons</span>
             </div>
           </div>
           <div className="flex flex-col items-start">
-            <span className="text-foreground text-4xl font-semibold tracking-tight">
-              {stars}
-            </span>
+            <span className="text-4xl tracking-tight text-foreground">{stars}</span>
             <div className="mt-1 flex items-center gap-1.5">
               <svg
                 viewBox="0 0 16 16"
                 fill="currentColor"
-                className="text-muted-foreground h-4 w-4"
+                className="h-4 w-4 text-muted-foreground"
               >
                 <path
                   fillRule="evenodd"
                   d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"
                 />
               </svg>
-              <span className="text-muted-foreground text-sm">
-                Github Stars
-              </span>
+              <span className="text-base text-muted-foreground">Github Stars</span>
             </div>
           </div>
         </div>
@@ -214,22 +194,22 @@ const Testimonials = () => {
       <div className="grid grid-cols-1 gap-4 mask-b-from-80% md:grid-cols-2 lg:grid-cols-3">
         {/* Column 1 */}
         <div className="flex flex-col gap-4">
-          {column1.map((testimonial, index) => (
-            <TestimonialCard key={index} testimonial={testimonial} />
+          {column1.map((testimonial) => (
+            <TestimonialCard key={testimonial.handle} testimonial={testimonial} />
           ))}
         </div>
 
         {/* Column 2 */}
         <div className="flex flex-col gap-4">
-          {column2.map((testimonial, index) => (
-            <TestimonialCard key={index} testimonial={testimonial} />
+          {column2.map((testimonial) => (
+            <TestimonialCard key={testimonial.handle} testimonial={testimonial} />
           ))}
         </div>
 
         {/* Column 3 */}
         <div className="flex flex-col gap-4">
-          {column3.map((testimonial, index) => (
-            <TestimonialCard key={index} testimonial={testimonial} />
+          {column3.map((testimonial) => (
+            <TestimonialCard key={testimonial.handle} testimonial={testimonial} />
           ))}
         </div>
       </div>

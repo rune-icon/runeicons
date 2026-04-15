@@ -24,7 +24,7 @@ export function SvgDefinitions({ state }: SvgDefinitionsProps) {
           >
             {state.gradient.stops.map((stop, i) => (
               <stop
-                key={i}
+                key={`stop-${i}-${stop.position}`}
                 offset={`${Math.max(0, Math.min(100, stop.position))}%`}
                 style={{
                   stopColor: stop.color || "#000000",
@@ -38,7 +38,7 @@ export function SvgDefinitions({ state }: SvgDefinitionsProps) {
           <radialGradient id="icon-gradient" cx="50%" cy="50%" r="50%">
             {state.gradient.stops.map((stop, i) => (
               <stop
-                key={i}
+                key={`stop-${i}-${stop.position}`}
                 offset={`${Math.max(0, Math.min(100, stop.position))}%`}
                 style={{
                   stopColor: stop.color || "#000000",

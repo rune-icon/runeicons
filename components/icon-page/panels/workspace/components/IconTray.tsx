@@ -58,7 +58,15 @@ export function IconTray({
                         damping: values.iconTraySpringDamping,
                       })}
                       className="absolute inset-0 flex items-center justify-center p-2 cursor-pointer group"
+                      role="button"
+                      tabIndex={0}
                       onClick={() => onSelectIcon(trayIcon)}
+                      onKeyDown={(e: React.KeyboardEvent) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          onSelectIcon(trayIcon);
+                        }
+                      }}
                     >
                       <trayIcon.icon
                         className="w-full h-full transition-transform duration-200 ease-out drop-shadow-sm hover:scale-110 active:scale-[0.97]"

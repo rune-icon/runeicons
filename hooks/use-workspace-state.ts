@@ -4,7 +4,60 @@ import { useHistory } from "@/hooks/use-history";
 import { CustomizationState } from "@/lib/types";
 import { DEFAULT_STATE } from "@/constants/workspace";
 
-export function useWorkspaceState() {
+interface UseWorkspaceStateOptions {
+  enableKeyboardShortcuts?: boolean;
+}
+
+function createAdaptiveState(theme?: string): CustomizationState {
+  const isDark = theme === "dark";
+  const adaptiveColor = isDark ? "#ffffff" : "#000000";
+  const adaptiveStop = isDark ? "#cccccc" : "#333333";
+
+  return {
+    ...DEFAULT_STATE,
+    colors: [adaptiveColor],
+    gradient: {
+      ...DEFAULT_STATE.gradient,
+      stops: [
+        { color: adaptiveColor, position: 0 },
+        { color: adaptiveStop, position: 100 },
+      ],
+    },
+  };
+}
+
+function areStringArraysEqual(a: string[], b: string[]) {
+  return a.length === b.length && a.every((value, index) => value === b[index]);
+}
+
+function areGradientStopsEqual(
+  a: CustomizationState["gradient"]["stops"],
+  b: CustomizationState["gradient"]["stops"],
+) {
+  return (
+    a.length === b.length &&
+    a.every(
+      (stop, index) =>
+        stop.color === b[index]?.color && stop.position === b[index]?.position,
+    )
+  );
+}
+
+function areGradientsEqual(
+  a: CustomizationState["gradient"],
+  b: CustomizationState["gradient"],
+) {
+  return (
+    a.type === b.type &&
+    a.angle === b.angle &&
+    areGradientStopsEqual(a.stops, b.stops)
+  );
+}
+
+export function useWorkspaceState(
+  options: UseWorkspaceStateOptions = {},
+) {
+  const { enableKeyboardShortcuts = true } = options;
   const { resolvedTheme } = useTheme();
   const [state, setState] = useState<CustomizationState>(DEFAULT_STATE);
   const [hasInitializedTheme, setHasInitializedTheme] = useState(false);
@@ -12,10 +65,14 @@ export function useWorkspaceState() {
   const customIconsRef = useRef<
     Array<{ id: string; name: string; url: string }>
   >([]);
+  const lastResolvedThemeRef = useRef<string | undefined>(undefined);
 
   // History management (undo/redo + keyboard shortcuts)
   const { history, historyIndex, handleUndo, handleRedo, pushState, canUndo, canRedo } =
-    useHistory<CustomizationState>(DEFAULT_STATE, { maxHistory: 50 });
+    useHistory<CustomizationState>(DEFAULT_STATE, {
+      maxHistory: 50,
+      enableKeyboardShortcuts,
+    });
 
   // 1. Initial Load from LocalStorage
   useEffect(() => {
@@ -59,6 +116,7 @@ export function useWorkspaceState() {
       lastHistoryIndexRef.current = historyIndex;
       const historicalState = history[historyIndex];
       lastStateRef.current = historicalState;
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setState(historicalState);
       return;
     }
@@ -94,26 +152,39 @@ export function useWorkspaceState() {
       }));
       setHasInitializedTheme(true);
     }
-  }, [resolvedTheme, hasInitializedTheme]);
+
+    const adaptiveState = createAdaptiveState(resolvedTheme);
+    const previousTheme = lastResolvedThemeRef.current;
+    const previousAdaptiveState = previousTheme
+      ? createAdaptiveState(previousTheme)
+      : null;
+    const currentState = lastStateRef.current;
+    const shouldSyncAdaptivePalette =
+      !previousAdaptiveState ||
+      (areStringArraysEqual(currentState.colors, previousAdaptiveState.colors) &&
+        areGradientsEqual(currentState.gradient, previousAdaptiveState.gradient));
+
+    lastResolvedThemeRef.current = resolvedTheme;
+
+    if (!shouldSyncAdaptivePalette) {
+      return;
+    }
+
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setState((prev: CustomizationState) => ({
+      ...prev,
+      colors: adaptiveState.colors,
+      gradient: adaptiveState.gradient,
+    }));
+  }, [resolvedTheme]);
 
   const handleChange = useCallback((updates: Partial<CustomizationState>) => {
     setState((prev: CustomizationState) => ({ ...prev, ...updates }));
   }, []);
 
   const handleReset = useCallback(() => {
-    setState(DEFAULT_STATE);
-  }, []);
-
-  // Warn before closing tab with unsaved changes
-  useEffect(() => {
-    const handler = (e: BeforeUnloadEvent) => {
-      if (JSON.stringify(state) !== JSON.stringify(DEFAULT_STATE)) {
-        e.preventDefault();
-      }
-    };
-    window.addEventListener("beforeunload", handler);
-    return () => window.removeEventListener("beforeunload", handler);
-  }, [state]);
+    setState(createAdaptiveState(resolvedTheme));
+  }, [resolvedTheme]);
 
   // Cleanup blob URLs on unmount
   useEffect(() => {

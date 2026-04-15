@@ -2,17 +2,18 @@
 
 import { useState } from "react";
 
+import Image from "next/image";
 import Link from "next/link";
 
-import { GithubIcon, Twitter } from "lucide-react";
-import { motion, useMotionValueEvent, useScroll } from "motion/react";
+import { GithubIcon } from "lucide-react";
+import { useMotionValueEvent, useScroll } from "motion/react";
+import * as m from "motion/react-m";
 
 import LightLogo from "@/components/landing/svg/light";
 import { Button } from "@/components/ui/button";
 import { LightDarkMode } from "@/components/ui/light-dark-mode";
 
 const Navbar = () => {
-  const Links = ["About Devs", "Sponsors"];
   const [hidden, setHidden] = useState(false);
   const { scrollY } = useScroll();
 
@@ -26,8 +27,8 @@ const Navbar = () => {
   });
 
   return (
-    <div className="bg-background fixed inset-x-0 z-50 ">
-      <motion.div
+    <div className="fixed inset-x-0 z-50 bg-background">
+      <m.div
         className="overflow-hidden"
         initial={false}
         animate={hidden ? "hidden" : "visible"}
@@ -37,7 +38,7 @@ const Navbar = () => {
         }}
         transition={{ duration: 0.18, ease: "easeOut" }}
       >
-        <motion.div
+        <m.div
           initial={false}
           animate={hidden ? "hidden" : "visible"}
           variants={{
@@ -52,25 +53,38 @@ const Navbar = () => {
             rel="noopener noreferrer"
             className="relative block overflow-hidden border-b border-black/15 px-4 py-2 text-center text-xs font-medium text-white sm:px-8 md:px-24"
           >
-            <img
+            <Image
               src="/landing/gradient/cta-gradient.png"
               className="absolute inset-0 h-full w-full object-cover"
               alt=""
+              fill
+              sizes="100vw"
+              priority
             />
             <span className="relative z-10 text-[10px] leading-tight sm:text-xs sm:leading-snug">
               Rune Icons now includes 1000+ modern icons for your products.
             </span>
           </Link>
-        </motion.div>
-      </motion.div>
+        </m.div>
+      </m.div>
 
-<div className=" w-full bg-[#F5F5F5]  dark:bg-background   border-b-2 border-dashed flex justify-center">
-
-
-      <div className=" bg-[#F5F5F5] dark:bg-background  w-[90vw] 2xl:w-[85vw] flex items-center justify-between   px-4 py-3 ">
-        <LightLogo />
-        <div className="flex items-center gap-2">
-          <ul className="hidden gap-2 md:flex">
+      <div className="flex w-full justify-center border-b-2 border-dashed bg-[#F5F5F5] dark:bg-background">
+        <div className="flex w-[90vw] items-center justify-between bg-[#F5F5F5] px-4 py-3 max-sm:px-1.5 2xl:w-[85vw] dark:bg-background">
+          <div className="flex items-end justify-center gap-5">
+            <span>
+              <LightLogo />
+            </span>
+            <div className="mb-0.5 flex gap-4 text-sm max-sm:hidden">
+              <span className="cursor-pointer text-muted-foreground transition-all duration-150 hover:text-accent-foreground">
+                About dev
+              </span>
+              <span className="cursor-pointer text-muted-foreground transition-all duration-150 hover:text-accent-foreground">
+                Sponsor
+              </span>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            {/* <ul className="hidden gap-2 md:flex">
             {Links.map((link) => (
               <Button
                 variant={"ghost"}
@@ -80,40 +94,44 @@ const Navbar = () => {
                 {link}
               </Button>
             ))}
-          </ul>
-          <div className="flex items-center gap-2">
-            <Link
-              href="https://github.com/AitijhyaModak/rune-icons"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Button
-                variant="outline"
-                className="group relative overflow-hidden text-xs"
-                aria-label="GitHub"
+          </ul> */}
+            <div className="flex items-center gap-2">
+              <Link
+                href="https://github.com/AitijhyaModak/rune-icons"
+                target="_blank"
+                rel="noopener noreferrer"
               >
-                <GithubIcon className="size-4" />
-                {/* <StarsCount /> */}1000+
-              </Button>
-            </Link>
-            <Link
-              href="https://x.com/RuneIcon"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Button
-                variant="outline"
-                size={"icon"}
-                className="text-xs"
-                aria-label="Rune on X"
-              >
-                <Twitter />
-              </Button>
-            </Link>
-            <LightDarkMode />
+                <Button
+                  variant="outline"
+                  className="group relative gap-1 overflow-hidden text-xs"
+                  aria-label="GitHub"
+                >
+                  <GithubIcon className="size-4" /> 1.1K
+                </Button>
+              </Link>
+              <Link href="https://x.com/RuneIcon" target="_blank" rel="noopener noreferrer">
+                <Button variant="outline" size={"icon"} className="text-xs" aria-label="Rune on X">
+                  <svg
+                    className="invert dark:invert-0"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    width="24"
+                    height="24"
+                    color="currentColor"
+                    fill="none"
+                    stroke="#FFFFFF"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M3 21L10.5484 13.4516M21 3L13.4516 10.5484M13.4516 10.5484L8 3H3L10.5484 13.4516M13.4516 10.5484L21 21H16L10.5484 13.4516" />
+                  </svg>{" "}
+                </Button>
+              </Link>
+              <LightDarkMode />
+            </div>
           </div>
         </div>
-      </div>
       </div>
     </div>
   );

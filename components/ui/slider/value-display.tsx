@@ -6,6 +6,95 @@ import { useShape } from "@/lib/shape-context";
 
 export type ValuePosition = "left" | "right" | "top" | "bottom" | "tooltip";
 
+interface ValueItemProps {
+  index: number;
+  isEditing: boolean;
+  value: number;
+  inputValue: string;
+  inputRef: React.RefObject<HTMLInputElement | null>;
+  onInputChange: (v: string) => void;
+  onCommitEdit: (index: number) => void;
+  onCancelEdit: () => void;
+  onStartEdit: (index: number) => void;
+  formatValue: (v: number) => string;
+  min: number;
+  max: number;
+  step: number;
+  isRange: boolean;
+  shapeInput: string;
+}
+
+function ValueItem({
+  index,
+  isEditing,
+  value,
+  inputValue,
+  inputRef,
+  onInputChange,
+  onCommitEdit,
+  onCancelEdit,
+  onStartEdit,
+  formatValue,
+  min,
+  max,
+  step,
+  isRange,
+  shapeInput,
+}: ValueItemProps) {
+  if (isEditing) {
+    return (
+      <span className="inline-grid text-[13px]">
+        <span
+          className="col-start-1 row-start-1 invisible"
+          style={{ fontVariationSettings: "var(--font-weight-medium)" }}
+          aria-hidden="true"
+        >
+          {formatValue(max)}
+        </span>
+        <span className="col-start-1 row-start-1 flex items-center gap-1">
+          <input
+            ref={inputRef}
+            type="number"
+            value={inputValue}
+            min={min}
+            max={max}
+            step={step}
+            onChange={(e) => onInputChange(e.target.value)}
+            onBlur={() => onCommitEdit(index)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") onCommitEdit(index);
+              if (e.key === "Escape") onCancelEdit();
+            }}
+            aria-label={`Edit slider value${isRange ? (index === 0 ? " (start)" : " (end)") : ""}`}
+            className={cn(
+              "w-[5ch] bg-transparent text-foreground outline-none border-b border-border text-center",
+              shapeInput,
+            )}
+            style={{ fontVariationSettings: "var(--font-weight-medium)" }}
+          />
+        </span>
+      </span>
+    );
+  }
+
+  return (
+    <span
+      className="cursor-text select-none"
+      role="button"
+      tabIndex={0}
+      onClick={() => onStartEdit(index)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onStartEdit(index);
+        }
+      }}
+    >
+      {formatValue(value)}
+    </span>
+  );
+}
+
 interface ValueDisplayProps {
   values: number[];
   editingIndex: number | null;
@@ -62,51 +151,19 @@ export function ValueDisplay({
     [inputValue, min, max, step, onCommitEdit, onCancelEdit]
   );
 
-  const renderValue = (index: number) => {
-    if (editingIndex === index) {
-      return (
-        <span className="inline-grid text-[13px]">
-          <span
-            className="col-start-1 row-start-1 invisible"
-            style={{ fontVariationSettings: "var(--font-weight-medium)" }}
-            aria-hidden="true"
-          >
-            {formatValue(max)}
-          </span>
-          <span className="col-start-1 row-start-1 flex items-center gap-1">
-            <input
-              ref={inputRef}
-              type="number"
-              value={inputValue}
-              min={min}
-              max={max}
-              step={step}
-              onChange={(e) => setInputValue(e.target.value)}
-              onBlur={() => commitEdit(index)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") commitEdit(index);
-                if (e.key === "Escape") onCancelEdit();
-              }}
-              aria-label={`Edit slider value${isRange ? (index === 0 ? " (start)" : " (end)") : ""}`}
-              className={cn(
-                "w-[5ch] bg-transparent text-foreground outline-none border-b border-border text-center",
-                shape.input
-              )}
-              style={{ fontVariationSettings: "var(--font-weight-medium)" }}
-            />
-          </span>
-        </span>
-      );
-    }
-
-    return (
-      <span
-        className="cursor-text select-none"
-        onClick={() => onStartEdit(index)}
-      >
-        {formatValue(values[index])}
-      </span>
-    );
+  const valueItemProps = {
+    inputValue,
+    inputRef,
+    onInputChange: setInputValue,
+    onCommitEdit: commitEdit,
+    onCancelEdit,
+    onStartEdit,
+    formatValue,
+    min,
+    max,
+    step,
+    isRange,
+    shapeInput: shape.input,
   };
 
   const isRowLayout = valuePosition === "top" || valuePosition === "bottom";
@@ -135,12 +192,12 @@ export function ValueDisplay({
       <span className={cn(!isRowLayout && "text-muted-foreground", isRowLayout && "text-sm text-muted-foreground")}>
         {isRange ? (
           <>
-            {renderValue(0)}
+            <ValueItem index={0} isEditing={editingIndex === 0} value={values[0]} {...valueItemProps} />
             <span className="mx-1 text-muted-foreground/50">—</span>
-            {renderValue(1)}
+            <ValueItem index={1} isEditing={editingIndex === 1} value={values[1]} {...valueItemProps} />
           </>
         ) : (
-          renderValue(0)
+          <ValueItem index={0} isEditing={editingIndex === 0} value={values[0]} {...valueItemProps} />
         )}
       </span>
     </div>

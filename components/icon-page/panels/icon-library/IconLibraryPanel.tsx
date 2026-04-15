@@ -1,6 +1,7 @@
 "use client";
 
-import type React from "react";
+import { useState } from "react";
+import { motion, AnimatePresence } from "motion/react";
 import { IconLibraryPanelProps } from "./types";
 import { useIconLibrary } from "./hooks/use-icon-library";
 import { IconLibraryHeader } from "./components/IconLibraryHeader";
@@ -23,7 +24,7 @@ export function IconLibraryPanel({
   } = useIconLibrary(selectedCategory, onIconSelect);
 
   return (
-    <div className="h-full flex flex-col bg-workspace-pattern border-r border-border relative">
+    <div className="h-full flex flex-col bg-workspace-pattern border-r border-border relative group/panel">
       <div className="absolute inset-0 bg-background/80 pointer-events-none" />
       <div className="relative z-10 flex flex-col h-full">
         <IconLibraryHeader

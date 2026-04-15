@@ -12,7 +12,7 @@ export function SizeTransformSection({
 }: SizeTransformSectionProps) {
   return (
     <div className="px-4 pb-4 space-y-5">
-      <h3 className="text-xs font-semibold text-foreground uppercase tracking-wider opacity-70 mb-4">Size</h3>
+
       <div className="flex flex-col gap-5 pt-2">
         <Scrubber
           label="Scale"

@@ -1,6 +1,6 @@
 import { useId } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { HexColor, hsbToHex, colorsMatch, rgbToHex } from '@/lib/color-utils';
+import { motion } from 'motion/react';
+import { HexColor, hsbToHex, rgbToHex } from '@/lib/color-utils';
 import { 
     Point, 
     BlossomLayoutConfig, 
@@ -10,7 +10,7 @@ import {
     describeArc, 
     polarToCartesian 
 } from '@/lib/blossom-utils';
-import { BLOSSOM_NUMBERS, DEFAULT_BLOSSOM_PALETTE } from './constants';
+import { BLOSSOM_NUMBERS } from './constants';
 import { Petal } from './petal';
 import { BlossomPalette } from './types';
 
@@ -91,7 +91,7 @@ export function BlossomScene({
             startT * (BLOSSOM_NUMBERS.arcEndAngle - BLOSSOM_NUMBERS.arcStartAngle);
         const endAngle =
             BLOSSOM_NUMBERS.arcStartAngle +
-            endT * (BLOSSOM_NUMBERS.arcEndAngle - BLOSSOM_NUMBERS.arcStartAngle);
+            startT === (totalSteps - 1) / totalSteps ? BLOSSOM_NUMBERS.arcEndAngle : endT * (BLOSSOM_NUMBERS.arcEndAngle - BLOSSOM_NUMBERS.arcStartAngle);
 
         return {
             id: `${instanceId}-arc-${index}`,
@@ -225,12 +225,12 @@ export function BlossomScene({
                     fill={currentThumbColor}
                     stroke="hsl(var(--background))"
                     strokeWidth={BLOSSOM_NUMBERS.borderWidth * 3}
-                    initial={{ scale: 0, opacity: 0 }}
+                    initial={{ scale: 0.95, opacity: 0 }}
                     animate={{
                         scale: isDraggingArc ? BLOSSOM_NUMBERS.arcThumbDragScale : 1,
                         opacity: 1,
                     }}
-                    exit={{ scale: 0, opacity: 0 }}
+                    exit={{ scale: 0.95, opacity: 0 }}
                     transition={THUMB_SPRING}
                     style={{
                         cursor: 'grab',

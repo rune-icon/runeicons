@@ -1,6 +1,4 @@
 "use client";
-import React from "react";
-
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { MotionPathPlugin } from "gsap/MotionPathPlugin";
@@ -23,7 +21,6 @@ const IconDrawSvg = () => {
       });
     }
 
-    const tl = gsap.timeline({ repeat: -1, yoyo: true });
     const path = document.querySelector(".path") as SVGPathElement;
     const length = path.getTotalLength();
     gsap.set(".path", {
