@@ -46,7 +46,7 @@ export function UploadSection({
   deleteIcon,
   maxIcons,
 }: UploadSectionProps) {
-  const { getSpring } = useTuning();
+  useTuning();
   const [armedDeleteId, setArmedDeleteId] = useState<string | null>(null);
   const deleteTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 

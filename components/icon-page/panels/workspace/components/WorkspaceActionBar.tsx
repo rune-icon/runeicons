@@ -73,7 +73,7 @@ export function WorkspaceActionBar({
   onChange,
   className,
 }: WorkspaceActionBarProps) {
-  const { values, getSpring } = useTuning();
+  useTuning();
   const [isResetArmed, setIsResetArmed] = useState(false);
   const [timeLeft, setTimeLeft] = useState(5);
   const resetTimeoutRef = useRef<NodeJS.Timeout | null>(null);

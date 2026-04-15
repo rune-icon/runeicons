@@ -37,7 +37,7 @@ export function ColorSection({
     handleColorInputChange,
     handleColorInputBlur,
 }: ColorSectionProps) {
-    const { getSpring, getFastTransition, values } = useTuning();
+    const { getFastTransition } = useTuning();
 
     const handleSolidChange = useCallback((hex: HexColor) => {
         const newColors = [...state.colors];

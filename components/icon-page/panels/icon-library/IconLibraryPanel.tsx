@@ -1,7 +1,5 @@
 "use client";
 
-import { useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
 import { IconLibraryPanelProps } from "./types";
 import { useIconLibrary } from "./hooks/use-icon-library";
 import { IconLibraryHeader } from "./components/IconLibraryHeader";

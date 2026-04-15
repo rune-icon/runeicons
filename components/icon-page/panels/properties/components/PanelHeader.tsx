@@ -16,7 +16,7 @@ interface PanelHeaderProps {
 }
 
 export function PanelHeader({ onExport, onImport, onReset }: PanelHeaderProps) {
-  const { getSpring } = useTuning();
+  useTuning();
   const [isResetArmed, setIsResetArmed] = useState(false);
   const [countdown, setCountdown] = useState(5);
   const resetTimeoutRef = useRef<NodeJS.Timeout | null>(null);

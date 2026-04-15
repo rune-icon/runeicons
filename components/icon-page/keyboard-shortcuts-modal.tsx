@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "motion/react";
-import { X, Command, CornerDownLeft } from "lucide-react";
+import { X, Command } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useTuning } from "./tuning";
@@ -29,7 +29,7 @@ function ShortcutKey({ children, className }: { children: React.ReactNode; class
 }
 
 function ShortcutRow({ shortcut }: { shortcut: { key: string; desc: string } }) {
-  const { getSpring } = useTuning();
+  useTuning();
 
   // Split key combination for display
   const keys = shortcut.key.split(/\s+/).flatMap((k: string, i: number, arr: string[]) => {
