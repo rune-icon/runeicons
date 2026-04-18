@@ -1,4 +1,4 @@
-import * as m from 'motion/react-m';
+import { motion } from 'motion/react';
 import { HexColor, adjustBorderColor } from '@/lib/color-utils';
 import { Ring, BlossomLayoutConfig } from '@/lib/blossom-utils';
 import { BLOSSOM_NUMBERS } from './constants';
@@ -41,7 +41,7 @@ export function Petal({
     const delay = (ring === 'inner' ? index : layout.innerPetalCount + index) * BLOSSOM_NUMBERS.bloomDelayMs / 1000;
 
     return (
-        <m.circle
+        <motion.circle
             cx={center.x}
             cy={center.y}
             r={size / 2}

@@ -11,6 +11,7 @@ interface PreviewAreaProps {
   selectedIcon: IconData | null;
   onSelectIcon: (icon: IconData) => void;
   onRemoveFromTray: (iconName: string) => void;
+  showGrid: boolean;
 }
 
 export function PreviewArea({
@@ -19,6 +20,7 @@ export function PreviewArea({
   selectedIcon,
   onSelectIcon,
   onRemoveFromTray,
+  showGrid,
 }: PreviewAreaProps) {
   const canvasRef = useRef<HTMLDivElement>(null);
   const { boxShadow, supportsFilter, noiseFilter, blurFilter } =
@@ -26,6 +28,7 @@ export function PreviewArea({
 
   return (
     <CanvasFrame
+      showGrid={showGrid}
       trayNode={
         <IconTray
           trayIcons={trayIcons}

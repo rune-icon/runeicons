@@ -22,7 +22,7 @@ export function IconLibraryPanel({
   } = useIconLibrary(selectedCategory, onIconSelect);
 
   return (
-    <div className="h-full flex flex-col bg-workspace-pattern border-r border-border relative">
+    <div className="h-full flex flex-col bg-workspace-pattern border-r border-border relative group/panel">
       <div className="absolute inset-0 bg-background/80 pointer-events-none" />
       <div className="relative z-10 flex flex-col h-full">
         <IconLibraryHeader

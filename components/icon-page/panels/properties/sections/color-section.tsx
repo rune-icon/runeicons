@@ -1,11 +1,13 @@
 "use client";
 
 import { useCallback } from 'react';
-import * as m from 'motion/react-m';
-import { AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { CustomizationState } from "@/lib/types";
 import { HexColor } from "@/lib/color-utils";
 import { ColorRow } from './color-section/color-row';
+import { cn } from "@/lib/utils";
+import { useTuning } from "@/components/icon-page/tuning";
+
 
 interface ColorSectionProps {
     state: CustomizationState;
@@ -25,17 +27,18 @@ interface ColorSectionProps {
 export function ColorSection({ 
     state, 
     onChange, 
-    isCollapsed, 
-    onToggle, 
-    inputFormat, 
-    setInputFormat,
+    isCollapsed,
     addGradientStop,
-    updateGradientStop,
     removeGradientStop,
+    updateGradientStop,
+    inputFormat,
+    setInputFormat,
     getColorInputValue,
     handleColorInputChange,
-    handleColorInputBlur
+    handleColorInputBlur,
 }: ColorSectionProps) {
+    const { getFastTransition } = useTuning();
+
     const handleSolidChange = useCallback((hex: HexColor) => {
         const newColors = [...state.colors];
         newColors[0] = hex;
@@ -51,97 +54,117 @@ export function ColorSection({
     const mode = state.iconGradient ? 'gradient' : 'solid';
 
     return (
-        <div className="px-1.5 pb-2 pt-0.5">
-            <m.div 
-                className="color-card"
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                style={{ 
-                    background: '#fff', 
-                    borderRadius: 12, 
-                    boxShadow: '0 0 0 1px rgba(0,0,0,0.05), 0 8px 16px -4px rgba(0,0,0,0.04)', 
-                    overflow: 'hidden' 
-                }}
-            >
-                <div style={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    justifyContent: 'space-between', 
-                    padding: '12px 16px', 
-                    borderBottom: '1px solid rgba(0,0,0,0.06)' 
-                }}>
-                    <span style={{ fontSize: 13, fontWeight: 600, color: '#171717' }}>Color</span>
-                    <div style={{ display: 'flex', background: '#f5f5f5', borderRadius: 8, padding: 2, gap: 2 }}>
-                        {(['solid', 'gradient'] as const).map(opt => (
-                            <button
-                                key={opt}
-                                onClick={() => onChange({ iconGradient: opt === 'gradient' })}
-                                style={{
-                                    padding: '5px 12px', 
-                                    borderRadius: 6, 
-                                    border: 'none', 
-                                    fontSize: 12, 
-                                    fontWeight: 500, 
-                                    cursor: 'pointer',
-                                    background: mode === opt ? '#fff' : 'transparent',
-                                    color: mode === opt ? '#171717' : '#525252',
-                                    boxShadow: mode === opt ? '0 1px 2px rgba(0,0,0,0.06)' : 'none'
-                                }}
-                            >
-                                {opt.charAt(0).toUpperCase() + opt.slice(1)}
-                            </button>
-                        ))}
-                    </div>
-                </div>
-
-                <div style={{ padding: '8px 12px' }}>
-                    <AnimatePresence mode="wait">
-                        {mode === 'solid' ? (
-                            <m.div 
-                                key="solid" 
-                                initial={{ opacity: 0, x: -4 }} 
-                                animate={{ opacity: 1, x: 0 }} 
-                                exit={{ opacity: 0, x: 4 }} 
-                                transition={{ duration: 0.15 }}
-                            >
-                                <ColorRow 
-                                    label="Fill"
-                                    value={state.colors[0] as HexColor} 
-                                    onChange={handleSolidChange} 
-                                />
-                            </m.div>
-                        ) : (
-                            <m.div 
-                                key="gradient" 
-                                initial={{ opacity: 0, x: -4 }} 
-                                animate={{ opacity: 1, x: 0 }} 
-                                exit={{ opacity: 0, x: 4 }} 
-                                transition={{ duration: 0.15 }}
-                                className="flex flex-col gap-1"
-                            >
-                                {state.gradient.stops.slice(0, 3).map((stop, i) => (
-                                    <ColorRow 
-                                        key={`stop-${i}-${stop.position}`} 
-                                        label={i === 0 ? "Start" : i === 1 ? "End" : `Stop ${i + 1}`}
-                                        value={stop.color as HexColor} 
-                                        onChange={(val) => handleGradientChange(i, val)} 
-                                    />
-                                ))}
-                                
-                                <div className="mt-3 pt-3 border-t border-black/[0.03] flex items-center justify-between">
-                                    <span className="text-xs font-medium text-muted-foreground/60">Preview</span>
-                                    <div 
-                                        className="h-6 flex-1 mx-4 rounded-full border border-black/[0.04]"
-                                        style={{ 
-                                            background: `linear-gradient(to right, ${state.gradient.stops.map(s => s.color).join(', ')})` 
-                                        }}
-                                    />
-                                </div>
-                            </m.div>
+        <div className="pt-4 px-4 pb-4">
+            <div className="flex items-center justify-between mb-4">
+                <h3 className="text-xs font-semibold text-foreground uppercase tracking-wider opacity-70">Color</h3>
+                <div className="flex bg-muted rounded-lg p-0.5 gap-0.5 border border-border/50">
+                    <button
+                        onClick={() => onChange({ iconGradient: false })}
+                        className={cn(
+                            "px-3 py-1.5 rounded-md text-[10px] font-bold uppercase tracking-wider transition-all duration-200 ease-out active:scale-[0.97]",
+                            mode === 'solid' 
+                                ? "bg-background text-foreground shadow-[0_2px_8px_rgba(0,0,0,0.1)] ring-1 ring-border" 
+                                : "text-muted-foreground hover:text-foreground"
                         )}
-                    </AnimatePresence>
+                    >
+                        Solid
+                    </button>
+                    <button
+                        onClick={() => onChange({ iconGradient: true })}
+                        className={cn(
+                            "px-3 py-1.5 rounded-md text-[10px] font-bold uppercase tracking-wider transition-all duration-200 ease-out active:scale-[0.97] relative overflow-hidden",
+                            mode === 'gradient' 
+                                ? "bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white shadow-md ring-1 ring-white/20" 
+                                : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                        )}
+                    >
+                        {mode === 'gradient' && (
+                            <motion.div 
+                                layoutId="gradient-active"
+                                className="absolute inset-0 bg-white/10"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                            />
+                        )}
+                        <span className="relative z-10">Gradient</span>
+                    </button>
                 </div>
-            </m.div>
-        </div>
+            </div>
+
+            <div className="space-y-4">
+                <AnimatePresence mode="wait" initial={false}>
+                    {mode === 'solid' ? (
+                        <motion.div 
+                            key="solid" 
+                            initial={{ opacity: 0, x: -10 }} 
+                            animate={{ opacity: 1, x: 0 }} 
+                            exit={{ opacity: 0, x: 10 }} 
+                            transition={getFastTransition()}
+                        >
+                            <ColorRow 
+                                label="Fill"
+                                value={state.colors[0] as HexColor} 
+                                onChange={handleSolidChange} 
+                            />
+                        </motion.div>
+                    ) : (
+                        <motion.div 
+                            key="gradient" 
+                            initial={{ opacity: 0, x: 10 }} 
+                            animate={{ opacity: 1, x: 0 }} 
+                            exit={{ opacity: 0, x: -10 }} 
+                            transition={getFastTransition()}
+                            className="flex flex-col gap-1"
+                        >
+                            <div className="space-y-1">
+                                {state.gradient.stops.map((stop, i) => (
+                                    <div key={i} className="flex items-center gap-1">
+                                        <div className="flex-1">
+                                            <ColorRow 
+                                                label={i === 0 ? "Start" : i === state.gradient.stops.length - 1 ? "End" : `Stop ${i + 1}`}
+                                                value={stop.color as HexColor} 
+                                                onChange={(val: HexColor) => handleGradientChange(i, val)} 
+                                            />
+                                        </div>
+                                        {state.gradient.stops.length > 2 && (
+                                            <button 
+                                                onClick={() => removeGradientStop?.(i)}
+                                                className="h-6 w-6 flex items-center justify-center rounded-md hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors active:scale-90"
+                                                title="Remove stop"
+                                            >
+                                                <span className="text-lg leading-none">×</span>
+                                            </button>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                            
+                            <button 
+                                onClick={addGradientStop}
+                                className="mt-2 py-1.5 w-full border border-dashed border-border hover:border-primary/50 hover:bg-primary/5 rounded-md text-[10px] font-bold tracking-wider text-muted-foreground hover:text-primary transition-all active:scale-[0.98]"
+                            >
+                                + ADD GRADIENT STOP
+                            </button>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
+                {mode === 'gradient' && (
+                  <div className="pt-2 flex items-center justify-between group">
+                    <span className="text-[13px] font-medium text-muted-foreground/80 group-hover:text-foreground transition-colors duration-200">
+                      Preview
+                    </span>
+                    <div className="flex-1 max-w-[140px] h-6 rounded-md bg-muted/30 p-[1.5px] border border-border/50 shadow-inner">
+                      <div 
+                        className="h-full w-full rounded-[4px]"
+                        style={{ 
+                          background: `linear-gradient(to right, ${state.gradient.stops.map(s => s.color).join(', ')})` 
+                        }}
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
     );
 }

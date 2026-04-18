@@ -1,5 +1,5 @@
 import { useId } from 'react';
-import * as m from 'motion/react-m';
+import { motion } from 'motion/react';
 import { HexColor, hsbToHex, rgbToHex } from '@/lib/color-utils';
 import { 
     Point, 
@@ -91,7 +91,7 @@ export function BlossomScene({
             startT * (BLOSSOM_NUMBERS.arcEndAngle - BLOSSOM_NUMBERS.arcStartAngle);
         const endAngle =
             BLOSSOM_NUMBERS.arcStartAngle +
-            endT * (BLOSSOM_NUMBERS.arcEndAngle - BLOSSOM_NUMBERS.arcStartAngle);
+            startT === (totalSteps - 1) / totalSteps ? BLOSSOM_NUMBERS.arcEndAngle : endT * (BLOSSOM_NUMBERS.arcEndAngle - BLOSSOM_NUMBERS.arcStartAngle);
 
         return {
             id: `${instanceId}-arc-${index}`,
@@ -114,11 +114,11 @@ export function BlossomScene({
             style={{
                 overflow: 'visible',
                 pointerEvents: 'auto',
-                filter: 'drop-shadow(0 24px 40px rgba(0,0,0,0.2))',
+                filter: 'drop-shadow(0 24px 40px hsl(var(--foreground) / 0.2))',
             }}
         >
 
-            <m.circle
+            <motion.circle
                 cx={center.x}
                 cy={center.y}
                 r={ringRadius}
@@ -167,12 +167,12 @@ export function BlossomScene({
             })}
 
 
-            <m.circle
+            <motion.circle
                 cx={center.x}
                 cy={center.y}
                 r={styleConfig.centerCircleSize / 2}
                 fill={rgbToHex(palette.center[0])}
-                stroke="rgba(0,0,0,0.1)"
+                stroke="hsl(var(--foreground) / 0.1)"
                 strokeOpacity={BLOSSOM_NUMBERS.centerBorderOpacity}
                 strokeWidth={BLOSSOM_NUMBERS.borderWidth}
                 initial={{ scale: 0.9, opacity: 0 }}
@@ -189,7 +189,7 @@ export function BlossomScene({
 
             <g>
                 {arcSteps.map((step) => (
-                    <m.path
+                    <motion.path
                         key={step.id}
                         d={step.d}
                         fill="none"
@@ -218,12 +218,12 @@ export function BlossomScene({
                 />
 
 
-                <m.circle
+                <motion.circle
                     cx={thumbPosition.x}
                     cy={thumbPosition.y}
                     r={styleConfig.sliderWidth / 1.5}
                     fill={currentThumbColor}
-                    stroke="white"
+                    stroke="hsl(var(--background))"
                     strokeWidth={BLOSSOM_NUMBERS.borderWidth * 3}
                     initial={{ scale: 0.95, opacity: 0 }}
                     animate={{
@@ -234,7 +234,7 @@ export function BlossomScene({
                     transition={THUMB_SPRING}
                     style={{
                         cursor: 'grab',
-                        filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))',
+                        filter: 'drop-shadow(0 2px 4px hsl(var(--foreground) / 0.2))',
                     }}
                 />
             </g>

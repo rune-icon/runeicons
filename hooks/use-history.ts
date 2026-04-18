@@ -85,14 +85,18 @@ export function useHistory<T>(
     }
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.defaultPrevented || isEditableKeyboardTarget(e.target)) {
-        return;
-      }
+      const isZ = e.key.toLowerCase() === "z";
+      const isY = e.key.toLowerCase() === "y";
+      const hasMod = e.metaKey || e.ctrlKey;
 
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "z" && !e.shiftKey) {
+      if (hasMod && isZ) {
         e.preventDefault();
-        handleUndo();
-      } else if (isRedoShortcut(e)) {
+        if (e.shiftKey) {
+          handleRedo();
+        } else {
+          handleUndo();
+        }
+      } else if (hasMod && isY) {
         e.preventDefault();
         handleRedo();
       }

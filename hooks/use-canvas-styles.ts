@@ -35,21 +35,8 @@ export function useCanvasStyles(state: CustomizationState) {
     [],
   );
 
-  const blurFilter = useMemo(
-    () =>
-      state.blurEnabled && state.blur > 0 && supportsFilter
-        ? `blur(${state.blur}px)`
-        : "",
-    [state.blurEnabled, state.blur, supportsFilter],
-  );
-
-  const noiseFilter = useMemo(
-    () =>
-      state.noise.enabled && supportsFilter
-        ? `contrast(${100 + state.noise.intensity * 0.5}%) brightness(${100 - state.noise.intensity * 0.2}%)`
-        : "",
-    [state.noise.enabled, state.noise.intensity, supportsFilter],
-  );
+  const blurFilter = "";
+  const noiseFilter = "";
 
   return {
     transform,

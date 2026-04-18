@@ -48,30 +48,46 @@ export function SvgDefinitions({ state }: SvgDefinitionsProps) {
             ))}
           </radialGradient>
         )}
+        <filter id="inner-blur" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur in="SourceGraphic" stdDeviation={state.blur} result="blur" />
+          <feComposite operator="in" in="blur" in2="SourceAlpha" />
+        </filter>
+
         <filter id="inner-shadow" x="-50%" y="-50%" width="200%" height="200%">
-          {/* 1. Blur the source alpha */}
           <feGaussianBlur
             in="SourceAlpha"
             stdDeviation={state.shadow.blur}
             result="blur"
           />
-          {/* 2. Composite out: keep area inside shape but outside blur */}
           <feComposite
             operator="out"
             in="SourceAlpha"
             in2="blur"
             result="inverse"
           />
-          {/* 3. Flood with shadow color */}
           <feFlood
             floodColor="black"
             floodOpacity={state.shadow.opacity / 100}
             result="color"
           />
-          {/* 4. Composite in: clip color to the inverse shape */}
           <feComposite operator="in" in="color" in2="inverse" result="shadow" />
-          {/* 5. Composite over: put shadow ON TOP of the original graphic */}
           <feComposite operator="over" in="shadow" in2="SourceGraphic" />
+        </filter>
+
+        <filter id="noise-filter" x="-20%" y="-20%" width="140%" height="140%">
+          <feTurbulence
+            type="fractalNoise"
+            baseFrequency="0.65"
+            numOctaves="4"
+            stitchTiles="stitch"
+            result="noise"
+          />
+          <feColorMatrix 
+            in="noise"
+            type="matrix" 
+            values="0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0 0 0 0.4 0"
+          />
+          <feComposite operator="in" in2="SourceGraphic" />
         </filter>
 
         {/* Pixelate Filter */}

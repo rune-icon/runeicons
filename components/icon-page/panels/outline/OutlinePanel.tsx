@@ -103,7 +103,7 @@ function IconTypeList({
                   size="icon"
                   onClick={() => onTypeChange?.(type.id)}
                   className={cn(
-                    "h-8 w-8 rounded-md transition-all",
+                    "h-8 w-8 rounded-md transition-colors duration-150 ease-out active:scale-[0.97]",
                     isActive
                       ? "bg-primary/20 text-primary hover:bg-primary/30"
                       : "text-muted-foreground hover:text-foreground hover:bg-accent",
@@ -134,7 +134,7 @@ export function ToolRail({ activeType = "normal", onTypeChange }: ToolRailProps)
       <div className="relative z-10 flex flex-col h-full">
         <IconTypeList activeType={activeType} onTypeChange={onTypeChange} compact />
         <div className="mt-auto pt-4 flex justify-center border-t border-border/20">
-          <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-accent/80">
+          <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-accent/80 transition-colors duration-150 ease-out active:scale-[0.97]">
             <Menu className="h-4 w-4" />
           </Button>
         </div>
