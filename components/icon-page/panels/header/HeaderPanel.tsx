@@ -1,19 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
 import { useTheme } from "next-themes";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-
 import { Github, Heart } from "lucide-react";
 import { motion } from "motion/react";
-
 import { HeaderLogo } from "@/components/icons/HeaderLogo";
 import { Button } from "@/components/ui/button";
 import { LightDarkMode } from "@/components/ui/light-dark-mode";
 import { cn } from "@/lib/utils";
-
 import { useGitHubStars } from "./hooks/use-github-stars";
 
 interface HeaderPanelProps {
