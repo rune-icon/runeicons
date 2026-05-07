@@ -4,20 +4,19 @@ import { Button } from "@/components/ui/button";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 
-export function LightDarkMode() {
+export function LightDarkMode({ className }: { className?: string }) {
   const { theme, setTheme } = useTheme();
-
-  const handleThemeToggle = () => {
-    setTheme(theme === "dark" ? "light" : "dark");
-  };
 
   return (
     <Button
+      variant="outline"
       size="icon"
-      onClick={handleThemeToggle}
+      className={className}
+      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+      suppressHydrationWarning
     >
-      <Sun className=" dark:hidden block" />
-      <Moon className=" hidden dark:block" />
+      <Sun className="size-4 dark:hidden block" />
+      <Moon className="size-4 hidden dark:block" />
     </Button>
   );
 }
