@@ -20,16 +20,16 @@ export function FlipRotateSection({
     <div className="px-4 pb-4 space-y-5">
       <div className="flex flex-col gap-5 pt-2">
         <div className="flex items-center justify-between group">
-          <span className="text-[13px] font-medium text-muted-foreground/80 group-hover:text-foreground transition-colors duration-200">
+          <h3 className="text-xs font-semibold text-foreground uppercase tracking-wider opacity-70 text-balance">
             Flip
-          </span>
+          </h3>
           <div className="flex bg-muted p-0.5 rounded-lg border border-border/50">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => onChange({ flipH: !state.flipH })}
               className={cn(
-                "h-7 px-3 text-[10px] font-bold uppercase tracking-wider rounded-md transition-all duration-200 ease-out active:scale-95",
+                "h-7 px-3 text-[10px] font-bold uppercase tracking-wider rounded-md transition-[scale,background-color,color,box-shadow,ring] duration-200 ease-out active:scale-[0.96]",
                 state.flipH 
                   ? "bg-background text-foreground shadow-sm ring-1 ring-border" 
                   : "text-muted-foreground hover:text-foreground hover:bg-background/20"
@@ -42,7 +42,7 @@ export function FlipRotateSection({
               size="sm"
               onClick={() => onChange({ flipV: !state.flipV })}
               className={cn(
-                "h-7 px-3 text-[10px] font-bold uppercase tracking-wider rounded-md transition-all duration-200 ease-out active:scale-95",
+                "h-7 px-3 text-[10px] font-bold uppercase tracking-wider rounded-md transition-[scale,background-color,color,box-shadow,ring] duration-200 ease-out active:scale-[0.96]",
                 state.flipV 
                   ? "bg-background text-foreground shadow-sm ring-1 ring-border" 
                   : "text-muted-foreground hover:text-foreground hover:bg-background/20"

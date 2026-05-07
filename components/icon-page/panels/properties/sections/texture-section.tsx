@@ -17,26 +17,26 @@ export function TextureSection({
   return (
     <div className="pt-2 px-4 pb-4">
       <div className="space-y-4">
-        <h3 className="text-xs font-semibold text-foreground uppercase tracking-wider opacity-70">
+        <h3 className="text-xs font-semibold text-foreground uppercase tracking-wider opacity-70 text-balance">
           Texture Overlay
         </h3>
         
         <div className="grid grid-cols-3 gap-2">
           {TEXTURES.map((tex) => (
             <button
-              key={tex.id}
-              onClick={() => onChange({
-                texture: { ...state.texture, selected: tex.id },
-              })}
-              className={cn(
-                "group relative flex flex-col items-center gap-1.5 p-2 rounded-xl border transition-all duration-200 ease-out active:scale-95 overflow-hidden",
-                state.texture.selected === tex.id
-                  ? "border-primary bg-primary/5 shadow-sm"
-                  : "border-border bg-muted/20 hover:border-border/80 hover:bg-muted/30"
-              )}
-            >
+               key={tex.id}
+               onClick={() => onChange({
+                 texture: { ...state.texture, selected: tex.id },
+               })}
+               className={cn(
+                 "group relative flex flex-col items-center gap-1.5 p-2 rounded-xl border transition-[scale,border-color,background-color,box-shadow] duration-200 ease-out active:scale-[0.96] overflow-hidden",
+                 state.texture.selected === tex.id
+                   ? "border-primary bg-primary/5 shadow-sm"
+                   : "border-border bg-muted/20 hover:border-border/80 hover:bg-muted/30"
+               )}
+             >
               <div 
-                className="w-full aspect-square rounded-lg border border-border/50 bg-background overflow-hidden relative"
+                className="w-full aspect-square rounded-[4px] border border-border/50 bg-background overflow-hidden relative outline outline-1 -outline-offset-1 outline-black/10 dark:outline-white/10"
                 style={tex.id !== 'none' ? {
                   backgroundImage: `url(${tex.path || `/placeholder.svg?height=100&width=100&query=${tex.id}-texture`}) `,
                   backgroundSize: 'cover'
@@ -48,7 +48,7 @@ export function TextureSection({
                   </div>
                 )}
                 {state.texture.selected === tex.id && (
-                  <div className="absolute inset-0 ring-2 ring-primary ring-inset rounded-lg" />
+                  <div className="absolute inset-0 ring-2 ring-primary ring-inset rounded-[4px]" />
                 )}
               </div>
               <span className={cn(

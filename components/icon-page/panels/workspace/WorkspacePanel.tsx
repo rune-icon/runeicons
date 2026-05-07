@@ -4,6 +4,7 @@ import { CustomizationState, IconData } from "@/lib/types";
 import { PreviewArea } from "./components/PreviewArea";
 import { SvgDefinitions } from "./components/SvgDefinitions";
 import { WorkspaceActionBar } from "./components/WorkspaceActionBar";
+import { AnimationPopBar } from "./components/AnimationPopBar";
 
 export interface WorkspacePanelProps {
   state: CustomizationState;
@@ -51,6 +52,10 @@ export function WorkspacePanel({
           onRemoveFromTray={onRemoveFromTray}
           showGrid={showGrid}
         />
+
+        <div className="absolute left-[546px] top-[731px] z-20">
+          <AnimationPopBar />
+        </div>
 
         <div className="absolute bottom-9.5 left-1/2 -translate-x-1/2 z-10">
           <WorkspaceActionBar

@@ -17,8 +17,11 @@ export function CornerRadiusSection({
   onChange,
 }: CornerRadiusSectionProps) {
   return (
-    <div className="px-4 pb-4 space-y-5">
-      <div className="flex flex-col gap-5 pt-2">
+    <div className="px-4 pb-4 space-y-4">
+      <h3 className="text-xs font-semibold text-foreground uppercase tracking-wider opacity-70 text-balance pt-2">
+        Corner Radius
+      </h3>
+      <div className="flex flex-col gap-5">
         <Scrubber
           label="Radius"
           value={state.cornerRadius}

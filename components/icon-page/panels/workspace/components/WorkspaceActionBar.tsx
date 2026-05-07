@@ -1,21 +1,26 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
-import { Button } from "@/components/ui/button";
+import { useCallback, useRef, useState } from "react";
+
 import {
-  Download,
-  RotateCcw,
-  Code,
-  Undo,
-  Redo,
-  ChevronDown,
-  FileCode,
   Box,
-  Layers,
   Check,
-  X,
+  ChevronDown,
+  Code,
+  Download,
+  FileCode,
   Grid3X3,
+  Layers,
+  Redo,
+  RotateCcw,
+  Undo,
+  X,
 } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
+import { toast } from "sonner";
+
+import { useTuning } from "@/components/icon-page/tuning";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,24 +28,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { toast } from "sonner";
-import { cn } from "@/lib/utils";
-import { IconData, CustomizationState } from "@/lib/types";
-import { generateStandaloneSvg } from "@/lib/svg-export-utils";
-import {
-  generateReactSnippet,
-  generateFramerMotionSnippet,
-  generateTailwindSnippet,
   generateFigmaSvgSnippet,
+  generateFramerMotionSnippet,
+  generateReactSnippet,
+  generateTailwindSnippet,
 } from "@/lib/code-snippets";
-import { useTuning } from "@/components/icon-page/tuning";
-import { motion, AnimatePresence } from "motion/react";
+import { generateStandaloneSvg } from "@/lib/svg-export-utils";
+import { CustomizationState, IconData } from "@/lib/types";
+import { cn } from "@/lib/utils";
 
 export interface WorkspaceActionBarProps {
   onDownload?: () => void;
@@ -95,7 +92,7 @@ export function WorkspaceActionBar({
   const armReset = useCallback(() => {
     setIsResetArmed(true);
     setTimeLeft(5);
-    
+
     // Countdown interval
     countdownIntervalRef.current = setInterval(() => {
       setTimeLeft((prev) => {
@@ -168,7 +165,7 @@ export function WorkspaceActionBar({
     <TooltipProvider delayDuration={400}>
       <div
         className={cn(
-          "flex items-center gap-3 px-1 py-1 bg-background/90 backdrop-blur-xl border border-border rounded-xl shadow-[0_1px_2px_rgba(0,0,0,0.1),0_12px_24px_-12px_rgba(0,0,0,0.2)] dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1),0_1px_2px_rgba(0,0,0,0.4),0_12px_24px_-12px_rgba(0,0,0,0.5)] transition-shadow duration-200",
+          "flex items-center gap-3 rounded-xl border border-border bg-background/90 px-1 py-1 shadow-[0_1px_2px_rgba(0,0,0,0.1),0_12px_24px_-12px_rgba(0,0,0,0.2)] backdrop-blur-xl transition-shadow duration-200 dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1),0_1px_2px_rgba(0,0,0,0.4),0_12px_24px_-12px_rgba(0,0,0,0.5)]",
           className,
         )}
       >
@@ -177,26 +174,26 @@ export function WorkspaceActionBar({
             <Button
               variant="outline"
               size="sm"
-              className="h-10 px-4 border-border bg-background text-foreground hover:bg-muted flex items-center gap-2 group min-w-[100px] justify-between"
+              className="group flex h-10 min-w-[100px] items-center justify-between gap-2 border-border bg-background px-4 text-foreground hover:bg-muted"
               aria-label="Change Dimension"
             >
               <span className="text-sm font-medium">{state?.width}px</span>
-              <ChevronDown className="h-3 w-3 opacity-50 group-hover:opacity-100 transition-opacity" />
+              <ChevronDown className="h-3 w-3 opacity-50 transition-opacity group-hover:opacity-100" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent
             align="start"
-            className="w-24 p-1 bg-card border-border text-foreground"
+            className="w-[var(--radix-dropdown-menu-trigger-width)] border-border bg-card p-1 text-foreground"
           >
             {[16, 20, 24, 28, 32, 48, 64, 96, 128].map((size) => (
               <DropdownMenuItem
                 key={size}
-                className="flex items-center justify-between px-3 py-2 text-sm focus:bg-muted focus:text-foreground cursor-pointer"
+                className="relative flex cursor-pointer items-center justify-start px-2 py-1.5 text-sm focus:bg-muted focus:text-foreground"
                 onClick={() => onChange?.({ width: size, height: size })}
               >
-                <span>{size}px</span>
+                <span className="font-medium">{size}px</span>
                 {state?.width === size && state?.height === size && (
-                  <Check className="h-3.5 w-3.5 ml-2" />
+                  <Check className="absolute right-4 h-3.5 w-3.5 opacity-50" />
                 )}
               </DropdownMenuItem>
             ))}
@@ -215,29 +212,29 @@ export function WorkspaceActionBar({
                 toast.error("Select an icon first");
               }
             }}
-            className="relative bg-foreground text-background hover:bg-foreground/90 h-10 px-5 rounded-l-lg rounded-r-none font-medium transition-transform duration-150 ease-out hover:z-10 group overflow-hidden border-r border-background/20"
+            className="group relative h-10 overflow-hidden rounded-l-lg rounded-r-none border-r border-background/20 bg-foreground px-5 font-medium text-background transition-[scale,background-color] duration-150 ease-out hover:z-10 hover:bg-foreground/90 active:scale-[0.96]"
             aria-label="Copy SVG to clipboard"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-500 ease-out" />
-            <Download className="h-4 w-4 mr-2 group-hover:scale-110 transition-transform duration-200 ease-out" />
+            <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent transition-transform duration-500 ease-out group-hover:translate-x-full" />
+            <Download className="mr-2 h-4 w-4 transition-transform duration-200 ease-out group-hover:scale-110" />
             <span className="relative z-10">Export SVG</span>
           </Button>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
-                className="bg-foreground text-background hover:bg-foreground/90 h-10 px-2 rounded-r-lg rounded-l-none border-l border-background/10 transition-colors"
+                className="h-10 rounded-l-none rounded-r-lg border-l border-background/10 bg-foreground px-2 text-background transition-[scale,background-color] hover:bg-foreground/90 active:scale-[0.96]"
                 aria-label="More Export Options"
               >
-                <ChevronDown className="h-4 w-4 opacity-70 group-hover:opacity-100 transition-opacity" />
+                <ChevronDown className="h-4 w-4 opacity-70 transition-opacity group-hover:opacity-100" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="end"
-              className="w-56 p-1 bg-card border-border text-foreground"
+              className="w-48 border-border bg-card p-1 text-foreground"
             >
               <DropdownMenuItem
-                className="flex items-center gap-3 px-3 py-2 text-sm focus:bg-muted focus:text-foreground cursor-pointer"
+                className="flex cursor-pointer items-center gap-3 px-2 py-1.5 text-sm focus:bg-muted focus:text-foreground"
                 onClick={() => {
                   const svg = getSvgContent();
                   if (svg) {
@@ -248,13 +245,13 @@ export function WorkspaceActionBar({
                 }}
               >
                 <FileCode className="h-4 w-4" />
-                <div className="flex-1 flex items-center justify-between">
+                <div className="flex flex-1 items-center justify-between">
                   <span>Copy as SVG</span>
-                  <span className="text-[10px] opacity-50 font-mono">SVG</span>
+                  <span className="font-mono text-[10px] opacity-50">SVG</span>
                 </div>
               </DropdownMenuItem>
               <DropdownMenuItem
-                className="flex items-center gap-3 px-3 py-2 text-sm focus:bg-muted focus:text-foreground cursor-pointer"
+                className="flex cursor-pointer items-center gap-3 px-2 py-1.5 text-sm focus:bg-muted focus:text-foreground"
                 onClick={() => {
                   if (selectedIcon && state) {
                     copyToClipboard(generateReactSnippet(selectedIcon, state), "React Component");
@@ -265,7 +262,7 @@ export function WorkspaceActionBar({
                 <span>Copy as React</span>
               </DropdownMenuItem>
               <DropdownMenuItem
-                className="flex items-center gap-3 px-3 py-2 text-sm focus:bg-muted focus:text-foreground cursor-pointer"
+                className="flex cursor-pointer items-center gap-3 px-2 py-1.5 text-sm focus:bg-muted focus:text-foreground"
                 onClick={() => {
                   if (selectedIcon && state) {
                     copyToClipboard(generateFigmaSvgSnippet(selectedIcon, state), "Figma SVG");
@@ -277,7 +274,7 @@ export function WorkspaceActionBar({
               </DropdownMenuItem>
               <DropdownMenuSeparator className="bg-border" />
               <DropdownMenuItem
-                className="flex items-center gap-3 px-3 py-2 text-sm focus:bg-foreground focus:text-background bg-foreground text-background font-medium cursor-pointer"
+                className="flex cursor-pointer items-center gap-3 bg-foreground px-2 py-1.5 text-sm font-medium text-background focus:bg-foreground focus:text-background"
                 onClick={downloadSvg}
               >
                 <Download className="h-4 w-4" />
@@ -287,7 +284,6 @@ export function WorkspaceActionBar({
           </DropdownMenu>
         </div>
 
-
         <div className="flex items-center gap-2">
           <AnimatePresence mode="popLayout">
             {isResetArmed && (
@@ -295,25 +291,25 @@ export function WorkspaceActionBar({
                 initial={{ opacity: 0, x: 20, scale: 0.9 }}
                 animate={{ opacity: 1, x: 0, scale: 1 }}
                 exit={{ opacity: 0, x: 20, scale: 0.9 }}
-                className="flex items-center gap-0 bg-muted/50 rounded-lg p-0.5 border border-border overflow-hidden"
+                className="flex items-center gap-0 overflow-hidden rounded-lg border border-border bg-muted/50 p-0.5"
               >
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={handleConfirmReset}
-                  className="h-8 w-8 text-foreground hover:bg-primary/20 bg-primary/10 rounded-md transition-colors"
+                  className="h-8 w-8 rounded-md bg-primary/10 text-foreground transition-colors hover:bg-primary/20"
                   aria-label="Confirm Reset"
                 >
                   <Check className="h-3.5 w-3.5" />
                 </Button>
-                <div className="px-2 text-[10px] font-mono font-bold text-muted-foreground w-6 text-center">
+                <div className="w-6 px-2 text-center font-mono text-[10px] font-bold text-muted-foreground">
                   {timeLeft}
                 </div>
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={disarmReset}
-                  className="h-8 w-8 text-muted-foreground hover:text-foreground rounded-md transition-colors"
+                  className="h-8 w-8 rounded-md text-muted-foreground transition-colors hover:text-foreground"
                   aria-label="Cancel Reset"
                 >
                   <X className="h-3.5 w-3.5" />
@@ -330,8 +326,8 @@ export function WorkspaceActionBar({
                 onClick={handleResetClick}
                 disabled={isResetArmed}
                 className={cn(
-                  "h-10 w-10 transition-all duration-150 ease-out active:scale-[0.97] text-muted-foreground hover:text-foreground hover:bg-muted",
-                  isResetArmed && "opacity-0 scale-75 pointer-events-none"
+                  "h-10 w-10 text-muted-foreground transition-all duration-150 ease-out hover:bg-muted hover:text-foreground active:scale-[0.96]",
+                  isResetArmed && "pointer-events-none scale-75 opacity-0",
                 )}
                 aria-label="Reset all customizations"
               >
@@ -349,7 +345,7 @@ export function WorkspaceActionBar({
             <Button
               variant="ghost"
               size="icon"
-              className="h-10 w-10 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors duration-150 ease-out active:scale-[0.97]"
+              className="h-10 w-10 text-muted-foreground transition-colors duration-150 ease-out hover:bg-muted hover:text-foreground active:scale-[0.96]"
               aria-label="Animation and Code Options"
             >
               <Code className="h-4 w-4" />
@@ -357,10 +353,10 @@ export function WorkspaceActionBar({
           </DropdownMenuTrigger>
           <DropdownMenuContent
             align="end"
-            className="w-56 p-1 bg-card border-border text-foreground"
+            className="w-48 border-border bg-card p-1 text-foreground"
           >
             <DropdownMenuItem
-              className="flex items-center gap-3 px-3 py-2 text-sm focus:bg-muted focus:text-foreground cursor-pointer"
+              className="flex cursor-pointer items-center gap-3 px-2 py-1.5 text-sm focus:bg-muted focus:text-foreground"
               onClick={() => {
                 if (selectedIcon && state && onCode) {
                   onCode(generateReactSnippet(selectedIcon, state));
@@ -371,10 +367,13 @@ export function WorkspaceActionBar({
               <span>View React Code</span>
             </DropdownMenuItem>
             <DropdownMenuItem
-              className="flex items-center gap-3 px-3 py-2 text-sm focus:bg-muted focus:text-foreground cursor-pointer"
+              className="flex cursor-pointer items-center gap-3 px-2 py-1.5 text-sm focus:bg-muted focus:text-foreground"
               onClick={() => {
                 if (selectedIcon && state) {
-                  copyToClipboard(generateFramerMotionSnippet(selectedIcon, state), "Animation Code");
+                  copyToClipboard(
+                    generateFramerMotionSnippet(selectedIcon, state),
+                    "Animation Code",
+                  );
                 }
               }}
             >
@@ -382,7 +381,7 @@ export function WorkspaceActionBar({
               <span>Copy Animation (Framer)</span>
             </DropdownMenuItem>
             <DropdownMenuItem
-              className="flex items-center gap-3 px-3 py-2 text-sm focus:bg-muted focus:text-foreground cursor-pointer"
+              className="flex cursor-pointer items-center gap-3 px-2 py-1.5 text-sm focus:bg-muted focus:text-foreground"
               onClick={() => {
                 if (state) {
                   copyToClipboard(generateTailwindSnippet(state), "CSS Animation");
@@ -395,7 +394,7 @@ export function WorkspaceActionBar({
           </DropdownMenuContent>
         </DropdownMenu>
 
-        <div className="h-6 w-px bg-border hidden" />
+        <div className="hidden h-6 w-px bg-border" />
 
         <Tooltip>
           <TooltipTrigger asChild>
@@ -404,14 +403,16 @@ export function WorkspaceActionBar({
               size="icon"
               onClick={onUndo}
               disabled={!canUndo}
-              className="h-10 w-10 text-muted-foreground hover:text-foreground hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed transition-colors duration-150 ease-out active:scale-[0.97]"
+              className="h-10 w-10 text-muted-foreground transition-colors duration-150 ease-out hover:bg-muted hover:text-foreground active:scale-[0.96] disabled:cursor-not-allowed disabled:opacity-40"
               aria-label="Undo"
             >
               <Undo className="h-4 w-4" />
             </Button>
           </TooltipTrigger>
           <TooltipContent side="top">
-            <p>Undo <span className="opacity-50 text-[10px] ml-1">Ctrl+Z</span></p>
+            <p>
+              Undo <span className="ml-1 text-[10px] opacity-50">Ctrl+Z</span>
+            </p>
           </TooltipContent>
         </Tooltip>
 
@@ -422,14 +423,16 @@ export function WorkspaceActionBar({
               size="icon"
               onClick={onRedo}
               disabled={!canRedo}
-              className="h-10 w-10 text-muted-foreground hover:text-foreground hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed transition-colors duration-150 ease-out active:scale-[0.97]"
+              className="h-10 w-10 text-muted-foreground transition-colors duration-150 ease-out hover:bg-muted hover:text-foreground active:scale-[0.96] disabled:cursor-not-allowed disabled:opacity-40"
               aria-label="Redo"
             >
               <Redo className="h-4 w-4" />
             </Button>
           </TooltipTrigger>
           <TooltipContent side="top">
-            <p>Redo <span className="opacity-50 text-[10px] ml-1">Ctrl+Shift+Z</span></p>
+            <p>
+              Redo <span className="ml-1 text-[10px] opacity-50">Ctrl+Shift+Z</span>
+            </p>
           </TooltipContent>
         </Tooltip>
 
@@ -442,8 +445,10 @@ export function WorkspaceActionBar({
               size="icon"
               onClick={onGridToggle}
               className={cn(
-                "h-10 w-10 transition-colors duration-150 ease-out active:scale-[0.97]",
-                showGrid ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                "h-10 w-10 transition-colors duration-150 ease-out active:scale-[0.96]",
+                showGrid
+                  ? "bg-primary/10 text-primary"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground",
               )}
               aria-label={showGrid ? "Hide Grid" : "Show Grid"}
             >

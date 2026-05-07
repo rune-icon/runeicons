@@ -4,6 +4,7 @@ import { ThemeProvider } from "@/provider/theme-provider";
 import { MotionProvider } from "@/provider/motion-provider";
 import { ShapeProvider } from "@/lib/shape-context";
 import { Toaster } from "@/components/ui/sonner";
+import { Agentation } from "agentation";
 
 import "./globals.css";
 
@@ -49,6 +50,7 @@ export default function RootLayout({
         suppressHydrationWarning
         className={`${inter.variable} ${geistSans.variable} ${geistMono.variable} ${gemunuLibre.variable} ${interTight.variable} antialiased`}
       >
+         {process.env.NODE_ENV === "development" && <Agentation />}
         <MotionProvider>
           <ShapeProvider>
             <ThemeProvider

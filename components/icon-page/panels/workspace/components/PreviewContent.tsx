@@ -1,7 +1,9 @@
 import { forwardRef, memo } from "react";
-import { motion, AnimatePresence } from "motion/react";
+
+import { AnimatePresence, motion } from "motion/react";
+
+import { CustomizationState, IconData } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { IconData, CustomizationState } from "@/lib/types";
 
 interface PreviewContentProps {
   state: CustomizationState;
@@ -14,23 +16,13 @@ interface PreviewContentProps {
 
 export const PreviewContent = memo(
   forwardRef<HTMLDivElement, PreviewContentProps>(
-    (
-      {
-        state,
-        selectedIcon,
-        boxShadow,
-        supportsFilter,
-        noiseFilter,
-        blurFilter,
-      },
-      ref,
-    ) => {
+    ({ state, selectedIcon, boxShadow, supportsFilter, noiseFilter, blurFilter }, ref) => {
       const SelectedIconComponent = selectedIcon?.icon;
 
       return (
         <div
           ref={ref}
-          className="flex-1 flex items-center justify-center relative p-12 overflow-hidden"
+          className="relative flex flex-1 items-center justify-center overflow-hidden p-12"
         >
           <motion.div
             layout
@@ -50,8 +42,7 @@ export const PreviewContent = memo(
               rotateZ: state.rotation,
               scaleX: state.flipH ? -1 : 1,
               scaleY: state.flipV ? -1 : 1,
-              boxShadow:
-                state.shadow.enabled && state.shadow.inner ? "none" : boxShadow,
+              boxShadow: state.shadow.enabled && state.shadow.inner ? "none" : boxShadow,
               filter: [blurFilter, noiseFilter].filter(Boolean).join(" "),
             }}
             style={{
@@ -76,7 +67,7 @@ export const PreviewContent = memo(
                   animate={{ opacity: state.texture.opacity / 100 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.3 }}
-                  className="absolute inset-0 pointer-events-none"
+                  className="pointer-events-none absolute inset-0"
                   style={{
                     background: `url(/placeholder.svg?height=200&width=200&query=${state.texture.selected}-texture) repeat`,
                     backgroundSize: "200px 200px",
@@ -100,13 +91,13 @@ export const PreviewContent = memo(
                     damping: 20,
                   }}
                   className={cn(
-                    "w-full h-full flex items-center justify-center",
+                    "flex h-full w-full items-center justify-center",
                     state.iconType === "isometric" &&
-                      "transform [transform:rotateX(45deg)_rotateZ(-45deg)]",
+                      "[transform:rotateX(45deg)_rotateZ(-45deg)] transform",
                     state.iconType === "pixelated" &&
-                      "[image-rendering:pixelated] [filter:url(#pixelate)]",
+                      "[filter:url(#pixelate)] [image-rendering:pixelated]",
                     state.iconType === "glass" &&
-                      "backdrop-blur-md bg-white/10 border border-white/20 rounded-xl p-4",
+                      "rounded-xl border border-white/20 bg-white/10 p-4 backdrop-blur-md",
                     state.iconType === "dither" && "[filter:url(#dither-filter)]",
                   )}
                 >
@@ -124,11 +115,14 @@ export const PreviewContent = memo(
                           : state.iconType === "duotone"
                             ? `${state.colors[0] || "currentColor"}33`
                             : "none",
-                      filter: [
-                        state.shadow.inner ? "url(#inner-shadow)" : null,
-                        state.blur > 0 ? "url(#inner-blur)" : null,
-                        state.noise.enabled ? "url(#noise-filter)" : null,
-                      ].filter(Boolean).join(" ") || undefined,
+                      filter:
+                        [
+                          state.shadow.inner ? "url(#inner-shadow)" : null,
+                          state.blur > 0 ? "url(#inner-blur)" : null,
+                          state.noise.enabled ? "url(#noise-filter)" : null,
+                        ]
+                          .filter(Boolean)
+                          .join(" ") || undefined,
                     }}
                     aria-hidden="true"
                   />
@@ -138,10 +132,10 @@ export const PreviewContent = memo(
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  className="text-center text-muted-foreground font-medium text-sm"
+                  className="text-center text-sm font-medium text-muted-foreground"
                 >
                   <p>Select an icon</p>
-                  <p className="text-xs opacity-70 mt-1">from the left panel</p>
+                  <p className="mt-1 text-xs opacity-70">from the left panel</p>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -149,7 +143,7 @@ export const PreviewContent = memo(
         </div>
       );
     },
-  )
+  ),
 );
 
 PreviewContent.displayName = "PreviewContent";

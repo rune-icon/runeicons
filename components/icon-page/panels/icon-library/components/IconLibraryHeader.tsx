@@ -42,26 +42,28 @@ export function IconLibraryHeader({
   return (
     <div className="px-3 pt-9 pb-3 border-b border-border flex items-center gap-2">
       <div className="flex-1 min-w-0">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
+        <div className="relative group/search">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none transition-colors group-focus-within/search:text-primary" />
           <Input
             ref={searchInputRef}
             type="text"
             placeholder="Search..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9 pr-8 bg-muted/20 border-border text-foreground placeholder:text-muted-foreground h-9 rounded-md focus:bg-muted/40 focus:ring-0 shadow-none transition-all text-xs border"
+            className="pl-9 pr-12 bg-muted/20 border-border text-foreground placeholder:text-muted-foreground h-9 rounded-md transition-[background-color,border-color,box-shadow,ring] focus:bg-muted/40 focus:border-brand/40 focus:ring-4 focus:ring-brand/10 shadow-none text-xs border outline-none font-medium"
             aria-label="Search icons and shapes"
           />
-          {searchQuery && (
-            <button
-              onClick={clearSearch}
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-1 rounded focus-visible:ring-1 focus-visible:ring-ring"
-              aria-label="Clear search"
-            >
-              <X className="h-3 w-3" />
-            </button>
-          )}
+          <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1.5 px-0.5">
+            {searchQuery && (
+              <button
+                onClick={clearSearch}
+                className="text-muted-foreground hover:text-foreground p-1 rounded transition-[scale,color] active:scale-[0.96] focus-visible:ring-1 focus-visible:ring-ring outline-none"
+                aria-label="Clear search"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
@@ -69,7 +71,7 @@ export function IconLibraryHeader({
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button
-              className="relative h-9 px-3 rounded-md border border-border bg-muted/20 text-foreground hover:bg-muted/40 flex items-center gap-2 whitespace-nowrap transition-colors text-xs font-medium focus:outline-none min-w-[100px]"
+              className="relative h-9 px-3 rounded-md border border-border bg-muted/20 text-foreground hover:bg-muted/40 flex items-center gap-2 whitespace-nowrap transition-[scale,background-color] active:scale-[0.96] text-xs font-medium focus:outline-none min-w-[100px]"
               aria-label="Category filter"
             >
               <div className="absolute -top-5.5 right-0 text-[10px] uppercase tracking-wider font-bold text-primary opacity-70">

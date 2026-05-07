@@ -1,25 +1,26 @@
 "use client";
 
-import { motion, AnimatePresence } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
+
+import { useTuning } from "@/components/icon-page/tuning";
 import { IconData } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { useTuning } from "@/components/icon-page/tuning";
 
 interface IconGridProps {
   icons: IconData[];
   selectedIconId: string | null;
   onIconClick: (icon: IconData) => void;
+  isSearching?: boolean;
 }
 
-export function IconGrid({
-  icons,
-  selectedIconId,
-  onIconClick,
-}: IconGridProps) {
+export function IconGrid({ icons, selectedIconId, onIconClick, isSearching }: IconGridProps) {
   const { values, getFastTransition } = useTuning();
 
   return (
-    <motion.div layout className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 border-b border-border">
+    <motion.div
+      layout
+      className="grid grid-cols-3 border-b border-border sm:grid-cols-4 lg:grid-cols-5"
+    >
       <AnimatePresence mode="popLayout">
         {icons.map((icon, index) => {
           const Icon = icon.icon;
@@ -34,48 +35,83 @@ export function IconGrid({
               exit={{ opacity: 0 }}
               transition={{
                 opacity: getFastTransition(),
-                layout: { duration: values.mediumDuration, ease: [values.easeOutX1, values.easeOutY1, values.easeOutX2, values.easeOutY2] },
+                layout: {
+                  duration: values.mediumDuration,
+                  ease: [values.easeOutX1, values.easeOutY1, values.easeOutX2, values.easeOutY2],
+                },
                 delay: Math.min(index * values.iconGridStaggerDelay, values.staggerMaxDelay),
               }}
               className="w-full"
             >
-              <button
+              <motion.button
                 onClick={() => onIconClick(icon)}
+                initial="initial"
+                whileHover="hover"
+                whileTap={{ scale: 0.96 }}
                 className={cn(
-                  "group relative aspect-square cursor-pointer overflow-hidden transition-colors duration-150 ease-out w-full border-r border-b border-border flex items-center justify-center",
-                  isSelected ? "bg-accent" : "bg-transparent hover:bg-muted focus-visible:bg-muted outline-none",
+                  "group relative flex aspect-square w-full cursor-pointer items-center justify-center overflow-hidden border-r border-b border-border transition-colors duration-200 ease-out outline-none",
+                  isSelected
+                    ? "bg-accent"
+                    : "bg-transparent hover:bg-muted focus-visible:bg-muted",
                 )}
                 type="button"
                 aria-label={`${icon.name} icon`}
                 title={icon.name}
               >
-                <Icon
-                  className={cn(
-                    "w-5 h-5 transition-transform duration-150 ease-out",
-                    isSelected
-                      ? "text-primary"
-                      : "text-muted-foreground group-hover:text-foreground group-focus-visible:text-foreground",
+                <AnimatePresence>
+                  {isSearching && !isSelected && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.25, filter: "blur(4px)" }}
+                      animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+                      exit={{ opacity: 0, scale: 0.25, filter: "blur(4px)" }}
+                      transition={{
+                        type: "spring",
+                        duration: 0.3,
+                        bounce: 0,
+                      }}
+                      className="absolute inset-0 z-0 pointer-events-none bg-gradient-to-br from-brand/20 via-brand/5 to-transparent"
+                    />
                   )}
-                  style={{
-                    transform: `scale(1)`,
-                    transition: `transform ${values.fastDuration * 1000}ms ease-out`,
-                  }}
-                  onMouseEnter={(e) => {
-                    (e.target as SVGElement).style.transform = `scale(${values.iconGridHoverScale})`;
-                  }}
-                  onMouseLeave={(e) => {
-                    (e.target as SVGElement).style.transform = `scale(1)`;
-                  }}
-                  strokeWidth={1.5}
-                  aria-hidden="true"
-                />
+                </AnimatePresence>
 
-                <div className="absolute bottom-1 left-0 right-0 px-1 opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity duration-150 pointer-events-none">
-                  <span className="text-[8px] text-muted-foreground/60 truncate block font-medium uppercase tracking-[0.05em]">
+                <motion.div 
+                  className="relative z-10 flex items-center justify-center p-3"
+                  variants={{
+                    initial: { y: 0, scale: 1 },
+                    hover: { y: -12, scale: 0.92 },
+                  }}
+                  transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                >
+                  <Icon
+                    className={cn(
+                      "h-5 w-5 transition-colors duration-200",
+                      isSelected
+                        ? "text-primary"
+                        : isSearching 
+                          ? "text-foreground" 
+                          : "text-muted-foreground group-hover:text-foreground",
+                    )}
+                    strokeWidth={1.5}
+                    aria-hidden="true"
+                  />
+                </motion.div>
+
+                <motion.div
+                  className="pointer-events-none absolute bottom-1 left-0 right-0 px-1.5 flex justify-center text-center z-10"
+                  variants={{
+                    initial: { opacity: 0, y: 4, filter: "blur(4px)" },
+                    hover: { opacity: 1, y: 0, filter: "blur(0px)" },
+                  }}
+                  transition={{ duration: 0.2, ease: "easeOut" }}
+                >
+                  <span 
+                    className="text-[8.5px] font-bold tracking-[0.04em] text-muted-foreground/80 uppercase leading-[1.1] whitespace-normal"
+                    style={{ textWrap: 'balance' } as any}
+                  >
                     {icon.name}
                   </span>
-                </div>
-              </button>
+                </motion.div>
+              </motion.button>
             </motion.div>
           );
         })}

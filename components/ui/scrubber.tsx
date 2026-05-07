@@ -242,7 +242,7 @@ export const Scrubber: React.FC<ScrubberProps> = ({
         damping: values.springDamping,
       }}
       className={cn(
-        "group relative h-11 w-full touch-none overflow-hidden rounded-md border border-border/60 bg-muted/30",
+        "group relative h-11 w-full touch-none overflow-hidden rounded-md border border-border/60 bg-muted/30 transition-all",
         disabled ? "cursor-not-allowed opacity-50" : "cursor-grab active:cursor-grabbing",
         (isEditing || (showInput && typeof document !== "undefined" && document.activeElement === inputRef.current)) &&
           "border-brand/50 ring-2 ring-brand/30",
@@ -366,9 +366,9 @@ export const Scrubber: React.FC<ScrubberProps> = ({
         transition={{ type: "spring", stiffness: 400, damping: 25 }}
         style={{ left: thumbPos, x: "-50%" }}
       >
-        <div className="bg-slate-900 text-white text-[11px] font-bold px-2.5 py-1.5 rounded-lg shadow-xl relative backdrop-blur-md">
+        <div className="bg-slate-900 text-white text-[11px] font-bold px-2.5 py-1.5 rounded-lg shadow-xl relative backdrop-blur-md tabular-nums">
           {value}
-          <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-slate-900 rotate-45" />
+          <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-slate-900 rotate-45 rounded-[0.5px]" />
         </div>
       </motion.div>
     </motion.div>

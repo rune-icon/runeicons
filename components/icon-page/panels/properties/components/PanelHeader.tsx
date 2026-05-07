@@ -62,7 +62,7 @@ export function PanelHeader({ onExport, onImport, onReset }: PanelHeaderProps) {
   return (
     <TooltipProvider>
       <div className="flex items-center justify-between h-10">
-        <h2 className="text-lg font-bold text-foreground tracking-tight">Customize</h2>
+        <h2 className="text-lg font-bold text-foreground tracking-tight text-balance">Customize</h2>
         <div className="flex items-center gap-1.5">
           <AnimatePresence mode="wait">
             {isResetArmed ? (
@@ -71,9 +71,9 @@ export function PanelHeader({ onExport, onImport, onReset }: PanelHeaderProps) {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 20 }}
-                className="flex items-center gap-2 bg-muted p-1 pr-1.5 rounded-md border border-border shadow-sm"
+                className="flex items-center gap-2 bg-muted p-0.5 pr-1 rounded-lg border border-border shadow-sm"
               >
-                <span className="text-[10px] font-bold tracking-tight text-muted-foreground ml-2">
+                <span className="text-[10px] font-bold tracking-tight text-muted-foreground ml-2 tabular-nums">
                   RESET {countdown}S?
                 </span>
                 <div className="flex gap-1">
@@ -83,7 +83,7 @@ export function PanelHeader({ onExport, onImport, onReset }: PanelHeaderProps) {
                         variant="ghost"
                         size="icon"
                         onClick={handleResetClick}
-                        className="h-7 w-7 rounded-sm bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground transition-colors"
+                        className="h-7 w-7 rounded-md bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground transition-[background-color,color,scale] duration-150 active:scale-[0.96]"
                       >
                         <Check className="h-3.5 w-3.5" />
                       </Button>
@@ -96,7 +96,7 @@ export function PanelHeader({ onExport, onImport, onReset }: PanelHeaderProps) {
                         variant="ghost"
                         size="icon"
                         onClick={disarmReset}
-                        className="h-7 w-7 rounded-sm hover:bg-muted-foreground/10"
+                        className="h-7 w-7 rounded-md hover:bg-muted-foreground/10 transition-[background-color,color,scale] duration-150 active:scale-[0.96]"
                       >
                         <X className="h-3.5 w-3.5" />
                       </Button>
@@ -119,7 +119,7 @@ export function PanelHeader({ onExport, onImport, onReset }: PanelHeaderProps) {
                       variant="ghost"
                       size="icon"
                       onClick={onImport}
-                      className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-all duration-150 active:scale-95"
+                      className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-[scale,background-color,color] duration-150 active:scale-[0.96]"
                     >
                       <FileUp className="h-4 w-4" />
                     </Button>
@@ -133,7 +133,7 @@ export function PanelHeader({ onExport, onImport, onReset }: PanelHeaderProps) {
                       variant="ghost"
                       size="icon"
                       onClick={onExport}
-                      className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-all duration-150 active:scale-95"
+                      className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-[scale,background-color,color] duration-150 active:scale-[0.96]"
                     >
                       <FileDown className="h-4 w-4" />
                     </Button>
@@ -149,7 +149,7 @@ export function PanelHeader({ onExport, onImport, onReset }: PanelHeaderProps) {
                       variant="ghost"
                       size="icon"
                       onClick={handleResetClick}
-                      className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-all duration-150 active:scale-95"
+                      className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-[scale,background-color,color] duration-150 active:scale-[0.96]"
                     >
                       <RotateCcw className="h-4 w-4" />
                     </Button>

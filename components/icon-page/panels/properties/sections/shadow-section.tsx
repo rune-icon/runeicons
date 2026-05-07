@@ -19,7 +19,7 @@ export function ShadowSection({
   return (
     <div className="pt-2 px-4 pb-4">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-xs font-semibold text-foreground uppercase tracking-wider opacity-70">
+        <h3 className="text-xs font-semibold text-foreground uppercase tracking-wider opacity-70 text-balance">
           Shadow
         </h3>
         <div className="flex p-0.5 rounded-lg border border-border bg-muted/30">
@@ -32,7 +32,7 @@ export function ShadowSection({
               })
             }
             className={cn(
-              "h-7 px-3 text-[10px] font-bold uppercase tracking-tighter rounded-md transition-all duration-200 ease-out active:scale-[0.97]",
+              "h-7 px-3 text-[10px] font-bold uppercase tracking-tighter rounded-md transition-[scale,background-color,color,box-shadow,ring] duration-200 ease-out active:scale-[0.96]",
               !state.shadow.inner
                 ? "bg-background text-foreground shadow-[0_2px_8px_rgba(0,0,0,0.15)] ring-1 ring-border"
                 : "text-muted-foreground hover:text-foreground",
@@ -52,7 +52,7 @@ export function ShadowSection({
               })
             }
             className={cn(
-              "h-7 px-3 text-[10px] font-bold uppercase tracking-tighter rounded-md transition-all duration-200 ease-out active:scale-[0.97]",
+              "h-7 px-3 text-[10px] font-bold uppercase tracking-tighter rounded-md transition-[scale,background-color,color,box-shadow,ring] duration-200 ease-out active:scale-[0.96]",
               state.shadow.inner
                 ? "bg-background text-foreground shadow-sm ring-1 ring-border"
                 : "text-muted-foreground hover:text-foreground",

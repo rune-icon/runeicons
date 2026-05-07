@@ -34,9 +34,12 @@ export function HeaderPanel({ className }: HeaderPanelProps) {
       )}
     >
 
-      <div className="w-12 h-full border-r border-border flex items-center justify-center group cursor-pointer hover:bg-muted/50 transition-colors duration-150 ease-out">
-        <HeaderLogo className="w-8 h-8 rounded-md transition-transform duration-150 ease-out group-hover:scale-[1.02]" />
-      </div>
+      <Link 
+        href="/"
+        className="w-12 h-full border-r border-border flex items-center justify-center group cursor-pointer hover:bg-muted/50 transition-colors duration-150 ease-out"
+      >
+        <HeaderLogo className="w-8 h-8 transition-transform duration-150 ease-out group-hover:scale-[1.02]" />
+      </Link>
 
 
       <div className="w-[320px] h-full border-r border-border flex items-center px-5"></div>

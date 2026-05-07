@@ -54,18 +54,18 @@ export function ColorRow({ label, value, onChange, disabled }: ColorRowProps) {
 
   return (
     <div className="flex items-center justify-between group h-9 px-1">
-      <span className="text-sm font-medium text-muted-foreground/80 group-hover:text-foreground transition-colors duration-150 ease-out">
+      <span className="text-sm font-medium text-muted-foreground/80 group-hover:text-foreground transition-[color] duration-150 ease-out text-pretty">
         {label}
       </span>
       <div className="flex items-center gap-3">
-        <div className="flex items-center border-b border-transparent group-hover:border-border/50 transition-colors focus-within:border-primary">
+        <div className="flex items-center border-b border-transparent group-hover:border-border/50 transition-[border-color] focus-within:border-primary">
           <input
             type="text"
             value={inputValue}
             onChange={handleInputChange}
             onBlur={handleBlur}
             disabled={disabled}
-            className="w-16 bg-transparent text-[13px] tabular-nums text-muted-foreground/70 font-mono tracking-tight uppercase focus:outline-none focus:text-foreground transition-colors"
+            className="w-16 bg-transparent text-[13px] tabular-nums text-muted-foreground/70 font-mono tracking-tight uppercase focus:outline-none focus:text-foreground transition-[color]"
             spellCheck={false}
           />
         </div>
