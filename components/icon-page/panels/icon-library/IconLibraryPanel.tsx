@@ -5,13 +5,14 @@ import { useIconLibrary } from "./hooks/use-icon-library";
 import { IconLibraryHeader } from "./components/IconLibraryHeader";
 import { IconGrid } from "./components/IconGrid";
 import { EmptyState } from "./components/EmptyState";
-import { motion, AnimatePresence } from "motion/react";
+
 
 export function IconLibraryPanel({
   onIconSelect,
   selectedIconId,
   selectedCategory,
   onCategoryChange,
+  customIcons = [],
 }: IconLibraryPanelProps) {
   const {
     searchQuery,
@@ -20,7 +21,7 @@ export function IconLibraryPanel({
     handleIconClick,
     clearSearch,
     searchInputRef,
-  } = useIconLibrary(selectedCategory, onIconSelect);
+  } = useIconLibrary(selectedCategory, onIconSelect, customIcons);
 
   const isSearching = searchQuery.length > 0;
 
@@ -35,7 +36,10 @@ export function IconLibraryPanel({
           clearSearch={clearSearch}
           searchInputRef={searchInputRef}
           selectedCategory={selectedCategory}
-          onCategoryChange={onCategoryChange}
+          onCategoryChange={(cat) => {
+            clearSearch();
+            onCategoryChange(cat);
+          }}
         />
 
         <div

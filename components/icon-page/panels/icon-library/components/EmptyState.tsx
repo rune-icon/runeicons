@@ -1,5 +1,4 @@
-import * as m from "motion/react-m";
-import { AnimatePresence } from "motion/react";
+import { motion as m, AnimatePresence } from "motion/react";
 
 interface EmptyStateProps {
   isVisible: boolean;
@@ -19,7 +18,7 @@ export function EmptyState({ isVisible, onClearSearch }: EmptyStateProps) {
             duration: 0.3,
             bounce: 0,
           }}
-          className="col-span-4 text-center py-12"
+          className="col-span-full flex flex-col items-center justify-start mt-24 text-center"
           role="status"
           aria-live="polite"
         >

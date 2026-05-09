@@ -5,4 +5,5 @@ export interface IconLibraryPanelProps {
   selectedIconId?: string | null;
   selectedCategory: IconCategory;
   onCategoryChange: (category: IconCategory) => void;
+  customIcons?: Array<{ id: string; name: string; url: string }>;
 }
