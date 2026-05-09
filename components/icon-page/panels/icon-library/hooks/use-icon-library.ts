@@ -1,15 +1,15 @@
 import { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import { IconCategory, IconData } from "@/lib/types";
-import { SAMPLE_ICONS } from "../constants";
+import { REAL_ICONS } from "../icons-data";
 
 export function useIconLibrary(
   selectedCategory: IconCategory,
-  onIconSelect?: (icon: IconData) => void
+  onIconSelect?: (icon: IconData) => void,
+  customIcons: Array<{ id: string; name: string; url: string }> = []
 ) {
   const [searchQuery, setSearchQuery] = useState("");
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  // Implement Ctrl+K shortcut
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === "k") {
@@ -22,16 +22,25 @@ export function useIconLibrary(
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  // Filter icons based on search and category
-  const filteredIcons = useMemo(() => {
-    let icons = SAMPLE_ICONS;
+  const allIcons = useMemo(() => [
+    ...REAL_ICONS,
+    ...customIcons.map((ci) => ({
+      id: ci.id,
+      name: ci.name,
+      icon: null as any,
+      url: ci.url,
+      category: "custom" as const,
+      tags: ["custom", "upload"],
+    })),
+  ], [customIcons]);
 
-    // Filter by category
+  const filteredIcons = useMemo(() => {
+    let icons = allIcons;
+
     if (selectedCategory !== "all") {
       icons = icons.filter((icon) => icon.category === selectedCategory);
     }
 
-    // Filter by search query
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       icons = icons.filter(
@@ -42,7 +51,7 @@ export function useIconLibrary(
     }
 
     return icons;
-  }, [searchQuery, selectedCategory]);
+  }, [allIcons, searchQuery, selectedCategory]);
 
   const handleIconClick = useCallback(
     (icon: IconData) => {
