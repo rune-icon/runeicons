@@ -1,10 +1,23 @@
 import { CustomizationState } from "@/lib/types";
+import { buildConicSegments } from "@/lib/gradient-utils";
 
 interface SvgDefinitionsProps {
   state: CustomizationState;
 }
 
 export function SvgDefinitions({ state }: SvgDefinitionsProps) {
+  const spreadMethod = (state.gradient.spreadMethod ?? "pad") as "pad" | "reflect" | "repeat";
+  const gCx = ((state.gradient.cx ?? 50) / 100) * 24;
+  const gCy = ((state.gradient.cy ?? 50) / 100) * 24;
+  const gR  = ((state.gradient.r  ?? 50) / 100) * 24;
+
+  const sortedStops = [...state.gradient.stops].sort((a, b) => a.position - b.position);
+
+  const conicSegments =
+    state.gradient.type === "angular"
+      ? buildConicSegments(state.gradient.stops, state.gradient.angle, gCx, gCy, 17)
+      : [];
+
   return (
     <svg
       width="0"
@@ -16,97 +29,94 @@ export function SvgDefinitions({ state }: SvgDefinitionsProps) {
         {state.gradient.type === "linear" && (
           <linearGradient
             id="icon-gradient"
-            x1="0%"
-            y1="0%"
-            x2="100%"
-            y2="100%"
-            gradientTransform={`rotate(${state.gradient.angle})`}
+            x1={`${(12 - 12 * Math.sin((state.gradient.angle * Math.PI) / 180)).toFixed(3)}`}
+            y1={`${(12 + 12 * Math.cos((state.gradient.angle * Math.PI) / 180)).toFixed(3)}`}
+            x2={`${(12 + 12 * Math.sin((state.gradient.angle * Math.PI) / 180)).toFixed(3)}`}
+            y2={`${(12 - 12 * Math.cos((state.gradient.angle * Math.PI) / 180)).toFixed(3)}`}
+            gradientUnits="userSpaceOnUse"
+            spreadMethod={spreadMethod}
           >
-            {state.gradient.stops.map((stop, i) => (
+            {sortedStops.map((stop, i) => (
               <stop
                 key={`stop-${i}-${stop.position}`}
                 offset={`${Math.max(0, Math.min(100, stop.position))}%`}
-                style={{
-                  stopColor: stop.color || "#000000",
-                  stopOpacity: 1,
-                }}
+                stopColor={stop.color || "#000000"} stopOpacity={1}
               />
             ))}
           </linearGradient>
         )}
+
         {state.gradient.type === "radial" && (
-          <radialGradient id="icon-gradient" cx="50%" cy="50%" r="50%">
-            {state.gradient.stops.map((stop, i) => (
+          <radialGradient
+            id="icon-gradient"
+            cx={gCx}
+            cy={gCy}
+            r={gR}
+            gradientUnits="userSpaceOnUse"
+            spreadMethod={spreadMethod}
+          >
+            {sortedStops.map((stop, i) => (
               <stop
                 key={`stop-${i}-${stop.position}`}
                 offset={`${Math.max(0, Math.min(100, stop.position))}%`}
-                style={{
-                  stopColor: stop.color || "#000000",
-                  stopOpacity: 1,
-                }}
+                stopColor={stop.color || "#000000"} stopOpacity={1}
               />
             ))}
           </radialGradient>
         )}
+
+        {/* ── Angular / conic gradient (polygon-slice approximation) ── */}
+        {state.gradient.type === "angular" && (
+          <pattern id="icon-gradient" width="24" height="24" patternUnits="userSpaceOnUse">
+            {conicSegments.map((seg, i) => (
+              <polygon key={i} points={seg.points} fill={seg.color} />
+            ))}
+          </pattern>
+        )}
+
+        {/* ── Blur filter ───────────────────────────────────────────── */}
         <filter id="inner-blur" x="-50%" y="-50%" width="200%" height="200%">
           <feGaussianBlur in="SourceGraphic" stdDeviation={state.blur} result="blur" />
           <feComposite operator="in" in="blur" in2="SourceAlpha" />
         </filter>
 
+        {/* ── Inner shadow filter ───────────────────────────────────── */}
         <filter id="inner-shadow" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur
-            in="SourceAlpha"
-            stdDeviation={state.shadow.blur}
-            result="blur"
-          />
-          <feComposite
-            operator="out"
-            in="SourceAlpha"
-            in2="blur"
-            result="inverse"
-          />
-          <feFlood
-            floodColor="black"
-            floodOpacity={state.shadow.opacity / 100}
-            result="color"
-          />
+          <feGaussianBlur in="SourceAlpha" stdDeviation={state.shadow.blur} result="blur" />
+          <feComposite operator="out" in="SourceAlpha" in2="blur" result="inverse" />
+          <feFlood floodColor="black" floodOpacity={state.shadow.opacity / 100} result="color" />
           <feComposite operator="in" in="color" in2="inverse" result="shadow" />
           <feComposite operator="over" in="shadow" in2="SourceGraphic" />
         </filter>
 
-        <filter id="noise-filter" x="-20%" y="-20%" width="140%" height="140%">
-          <feTurbulence
-            type="fractalNoise"
-            baseFrequency="0.65"
-            numOctaves="4"
-            stitchTiles="stitch"
-            result="noise"
-          />
-          <feColorMatrix 
+        {/* ── Noise filter ──────────────────────────────────────────── */}
+        <filter id="noise-filter" x="-10%" y="-10%" width="120%" height="120%" colorInterpolationFilters="sRGB">
+          <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="4" stitchTiles="stitch" result="noise" />
+          <feColorMatrix
             in="noise"
-            type="matrix" 
-            values="0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0 0 0 0.4 0"
+            type="matrix"
+            values={`0.33 0.33 0.33 0 0  0.33 0.33 0.33 0 0  0.33 0.33 0.33 0 0  0 0 0 ${(state.noise.intensity / 100).toFixed(3)} 0`}
+            result="colorNoise"
           />
-          <feComposite operator="in" in2="SourceGraphic" />
+          <feComposite operator="in" in="colorNoise" in2="SourceGraphic" result="maskedNoise" />
+          <feMerge>
+            <feMergeNode in="SourceGraphic" />
+            <feMergeNode in="maskedNoise" />
+          </feMerge>
         </filter>
 
-        {/* Pixelate Filter */}
-        <filter id="pixelate" x="0%" y="0%" width="100%" height="100%">
+        {/* ── Pixelate filter  this is going to remove in next update───────────────────────────────────────── */}
+        {/* <filter id="pixelate" x="0%" y="0%" width="100%" height="100%">
           <feComponentTransfer>
             <feFuncR type="discrete" tableValues="0 0.25 0.5 0.75 1" />
             <feFuncG type="discrete" tableValues="0 0.25 0.5 0.75 1" />
             <feFuncB type="discrete" tableValues="0 0.25 0.5 0.75 1" />
           </feComponentTransfer>
-        </filter>
+        </filter> */}
 
-        {/* Dither Filter (Ordered Dithering pattern) */}
-        <filter id="dither-filter">
-          <feTurbulence
-            type="fractalNoise"
-            baseFrequency="0.8"
-            numOctaves="1"
-            result="noise"
-          />
+        {/* ── Dither filter ─────────────────────────────────────────── */}
+        {/* <filter id="dither-filter">
+          <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="1" result="noise" />
           <feColorMatrix
             in="noise"
             type="matrix"
@@ -114,7 +124,24 @@ export function SvgDefinitions({ state }: SvgDefinitionsProps) {
             result="alpha"
           />
           <feComposite operator="in" in="SourceGraphic" in2="alpha" />
-        </filter>
+        </filter> */}
+
+        {/* ── Texture filter ────────────────────────────────────────── */}
+        {state.texture.enabled && state.texture.selected !== "none" && (
+          <filter id="texture-filter" x="-50%" y="-50%" width="200%" height="200%" colorInterpolationFilters="sRGB">
+            <feImage 
+              href={`/textures/${state.texture.selected}.png`} 
+              result="tex" 
+              width="256" 
+              height="256"
+              preserveAspectRatio="xMidYMid slice"
+            />
+            <feTile in="tex" result="tiledTex" />
+            <feComposite operator="in" in="tiledTex" in2="SourceAlpha" result="maskedTex" />
+            <feBlend in="maskedTex" in2="SourceGraphic" mode="multiply" result="blended" />
+            <feComposite operator="arithmetic" k1="0" k2={state.texture.opacity / 100} k3={1 - state.texture.opacity / 200} k4="0" in="blended" in2="SourceGraphic" />
+          </filter>
+        )}
       </defs>
     </svg>
   );
