@@ -4,14 +4,13 @@ import { CustomizationState, IconData } from "@/lib/types";
 import { PreviewArea } from "./components/PreviewArea";
 import { SvgDefinitions } from "./components/SvgDefinitions";
 import { WorkspaceActionBar } from "./components/WorkspaceActionBar";
-import { AnimationPopBar } from "./components/AnimationPopBar";
 
 export interface WorkspacePanelProps {
   state: CustomizationState;
   trayIcons: IconData[];
   selectedIcon: IconData | null;
   onSelectIcon: (icon: IconData) => void;
-  onRemoveFromTray: (iconName: string) => void;
+  onRemoveFromTray: (iconId: string) => void;
   onReset: () => void;
   onUndo: () => void;
   onRedo: () => void;
@@ -53,11 +52,7 @@ export function WorkspacePanel({
           showGrid={showGrid}
         />
 
-        <div className="absolute left-[546px] top-[731px] z-20">
-          <AnimationPopBar />
-        </div>
-
-        <div className="absolute bottom-9.5 left-1/2 -translate-x-1/2 z-10">
+        <div className="absolute bottom-9.5 left-1/2 -translate-x-1/2 z-40">
           <WorkspaceActionBar
             onDownload={() => {}}
             onReset={onReset}
