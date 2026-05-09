@@ -7,6 +7,7 @@ export function useGitHubStars() {
   const [displayCount, setDisplayCount] = useState<string>("0");
 
   useEffect(() => {
+    let controls: any;
     const fetchStars = async () => {
       try {
         const response = await fetch("https://api.github.com/repos/rune-icon/runeicons");
@@ -14,7 +15,7 @@ export function useGitHubStars() {
           const data = await response.json();
           const stars = data.stargazers_count;
 
-          const controls = animate(0, stars, {
+          controls = animate(0, stars, {
             duration: 2,
             ease: "easeOut",
             onUpdate(value) {
@@ -26,7 +27,6 @@ export function useGitHubStars() {
               }
             },
           });
-          return () => controls.stop();
         }
       } catch (error) {
         console.error("Error fetching stars:", error);
@@ -34,6 +34,12 @@ export function useGitHubStars() {
     };
 
     fetchStars();
+
+    return () => {
+      if (controls) {
+        controls.stop();
+      }
+    };
   }, []);
 
   return displayCount;
