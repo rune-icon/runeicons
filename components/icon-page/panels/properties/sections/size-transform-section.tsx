@@ -1,5 +1,6 @@
 import { Scrubber } from "@/components/ui/scrubber";
 import { CustomizationState } from "@/lib/types";
+import { Section } from "../components/Section";
 
 interface SizeTransformSectionProps {
   state: CustomizationState;
@@ -11,32 +12,24 @@ export function SizeTransformSection({
   onChange,
 }: SizeTransformSectionProps) {
   return (
-    <div className="px-4 pb-4 space-y-4">
-      <h3 className="text-xs font-semibold text-foreground uppercase tracking-wider opacity-70 text-balance pt-2">
-        Transform
-      </h3>
-      <div className="flex flex-col gap-5">
+    <Section>
+      <div className="flex flex-col gap-2">
         <Scrubber
           label="Scale"
           value={state.scale}
           onChange={(val: number) => onChange({ scale: val })}
           min={1}
-          max={3}
+          max={5}
           step={1}
         />
         <Scrubber
           label="Blur"
           value={state.blur}
-          onChange={(val: number) => 
-            onChange({ 
-              blur: val,
-              blurEnabled: true
-            })
-          }
+          onChange={(val: number) => onChange({ blur: val })}
           min={0}
           max={50}
         />
       </div>
-    </div>
+    </Section>
   );
 }
