@@ -37,7 +37,6 @@ export function useHistory<T>(
   const historyIndexRef = useRef(0);
   const historyRef = useRef<T[]>([initialState]);
 
-  // Keep refs in sync with state
   useEffect(() => {
     historyIndexRef.current = historyIndex;
   }, [historyIndex]);
@@ -63,7 +62,6 @@ export function useHistory<T>(
     [maxHistory],
   );
 
-  // Stable callbacks using refs -- no dependencies on state, never recreated
   const handleUndo = useCallback(() => {
     if (historyIndexRef.current > 0) {
       isUndoRedoRef.current = true;
@@ -78,15 +76,19 @@ export function useHistory<T>(
     }
   }, []);
 
-  // Keyboard shortcuts: Ctrl+Z / Ctrl+Y -- stable, never re-attaches
   useEffect(() => {
     if (!enableKeyboardShortcuts) {
       return;
     }
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      const isZ = e.key.toLowerCase() === "z";
-      const isY = e.key.toLowerCase() === "y";
+      if (isEditableKeyboardTarget(e.target)) {
+        return;
+      }
+
+      const key = (e.key || "").toLowerCase();
+      const isZ = key === "z";
+      const isY = key === "y";
       const hasMod = e.metaKey || e.ctrlKey;
 
       if (hasMod && isZ) {

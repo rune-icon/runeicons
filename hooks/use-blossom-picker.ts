@@ -8,8 +8,6 @@ import {
 } from '../lib/color-utils';
 import { Ring } from '../lib/blossom-utils';
 
-
-
 interface UseBlossomModelOptions {
     value?: HexColor;
     defaultValue?: HexColor;
@@ -58,7 +56,7 @@ export function useBlossomColorPickerModel({
     }, []);
 
     return {
-        // State
+
         selectedColor,
         hue: hsb.hue,
         saturation: hsb.saturation,
@@ -68,8 +66,7 @@ export function useBlossomColorPickerModel({
         hoveredRing,
         isDraggingArc,
         dragPointerIdRef,
-        
-        // Actions
+
         setIsOpen,
         setHoveredPetalIndex,
         setHoveredRing,

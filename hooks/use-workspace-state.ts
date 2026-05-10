@@ -67,14 +67,12 @@ export function useWorkspaceState(
   >([]);
   const lastResolvedThemeRef = useRef<string | undefined>(undefined);
 
-  // History management (undo/redo + keyboard shortcuts)
   const { history, historyIndex, handleUndo, handleRedo, pushState, canUndo, canRedo } =
     useHistory<CustomizationState>(DEFAULT_STATE, {
       maxHistory: 50,
       enableKeyboardShortcuts,
     });
 
-  // 1. Initial Load from LocalStorage
   useEffect(() => {
     if (typeof window === "undefined" || hasLoadedFromStorage) return;
 
@@ -82,7 +80,7 @@ export function useWorkspaceState(
       const savedState = localStorage.getItem("rune_workspace_state");
       if (savedState) {
         const parsed = JSON.parse(savedState);
-        setState(parsed);
+        setState({ ...DEFAULT_STATE, ...parsed });
       }
     } catch (error) {
       console.error("Failed to load state from storage:", error);
@@ -91,7 +89,6 @@ export function useWorkspaceState(
     }
   }, [hasLoadedFromStorage]);
 
-  // 2. Save to LocalStorage (Debounced)
   useEffect(() => {
     if (!hasLoadedFromStorage) return;
 
@@ -101,27 +98,24 @@ export function useWorkspaceState(
       } catch (error) {
         console.error("Failed to save state to storage:", error);
       }
-    }, 1000); // 1s debounce
+    }, 1000);
 
     return () => clearTimeout(timeoutId);
   }, [state, hasLoadedFromStorage]);
 
-  // Sync state with history: apply historical state on undo/redo,
-  // push user changes to history. Uses a single effect to avoid the race.
   const lastHistoryIndexRef = useRef(historyIndex);
   const lastStateRef = useRef<CustomizationState>(state);
   useEffect(() => {
-    // History index changed (undo/redo was triggered) -- apply historical state
+
     if (historyIndex !== lastHistoryIndexRef.current) {
       lastHistoryIndexRef.current = historyIndex;
       const historicalState = history[historyIndex];
       lastStateRef.current = historicalState;
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+
       setState(historicalState);
       return;
     }
 
-    // State changed from user action -- push to history
     if (state !== lastStateRef.current) {
       pushState(state);
       lastStateRef.current = state;
@@ -132,8 +126,15 @@ export function useWorkspaceState(
     customIconsRef.current = state.customIcons;
   }, [state.customIcons]);
 
-  // Adaptive defaults for Dark Mode visibility (only if not loaded from storage)
+  const isMountedRef = useRef(false);
   useEffect(() => {
+    isMountedRef.current = true;
+    return () => { isMountedRef.current = false; };
+  }, []);
+
+  useEffect(() => {
+    if (!isMountedRef.current) return;
+
     if (resolvedTheme && !hasInitializedTheme && !localStorage.getItem("rune_workspace_state")) {
       const isDark = resolvedTheme === "dark";
       const adaptiveColor = isDark ? "#ffffff" : "#000000";
@@ -170,13 +171,12 @@ export function useWorkspaceState(
       return;
     }
 
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setState((prev: CustomizationState) => ({
       ...prev,
       colors: adaptiveState.colors,
       gradient: adaptiveState.gradient,
     }));
-  }, [resolvedTheme]);
+  }, [resolvedTheme, hasInitializedTheme]);
 
   const handleChange = useCallback((updates: Partial<CustomizationState>) => {
     setState((prev: CustomizationState) => ({ ...prev, ...updates }));
@@ -186,7 +186,6 @@ export function useWorkspaceState(
     setState(createAdaptiveState(resolvedTheme));
   }, [resolvedTheme]);
 
-  // Cleanup blob URLs on unmount
   useEffect(() => {
     return () => {
       customIconsRef.current.forEach((icon) => {

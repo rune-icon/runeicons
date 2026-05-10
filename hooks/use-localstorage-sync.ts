@@ -33,10 +33,10 @@ function resetAllStores() {
 
 export function useLocalStorageSyncEffect() {
   useEffect(() => {
-    // Cross-tab: fires when another tab modifies localStorage
+
     const handleStorage = (event: StorageEvent) => {
       if (event.key === null) {
-        // localStorage.clear() was called
+
         resetAllStores();
         return;
       }
@@ -48,7 +48,6 @@ export function useLocalStorageSyncEffect() {
       }
     };
 
-    // Same-tab: detect devtools clearing on tab re-focus
     const handleVisibility = () => {
       if (document.visibilityState !== "visible") return;
       for (const key of STORE_KEYS) {

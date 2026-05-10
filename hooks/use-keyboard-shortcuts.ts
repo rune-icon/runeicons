@@ -10,6 +10,14 @@ interface Options {
   onExport?: () => void;
   onReset?: () => void;
   onSelectTraySlot?: (index: number) => void;
+  onToggleGrid?: () => void;
+  onUndo?: () => void;
+  onRedo?: () => void;
+  onNextCategory?: () => void;
+  onPrevCategory?: () => void;
+  onNextType?: () => void;
+  onPrevType?: () => void;
+  onToggleTab?: () => void;
   trayIcons: IconData[];
   canCopy?: boolean;
 }
@@ -25,7 +33,7 @@ const isTyping = (e: KeyboardEvent) =>
   e.target instanceof HTMLSelectElement ||
   (e.target as HTMLElement)?.isContentEditable;
 
-const isMac = () => navigator.platform.toUpperCase().includes("MAC");
+const isMac = () => typeof window !== 'undefined' && navigator.platform.toUpperCase().includes("MAC");
 const mod = (e: KeyboardEvent) => (isMac() ? e.metaKey : e.ctrlKey);
 
 export function useKeyboardShortcuts({
@@ -33,6 +41,14 @@ export function useKeyboardShortcuts({
   onExport,
   onReset,
   onSelectTraySlot,
+  onToggleGrid,
+  onUndo,
+  onRedo,
+  onNextCategory,
+  onPrevCategory,
+  onNextType,
+  onPrevType,
+  onToggleTab,
   trayIcons,
   canCopy,
 }: Options): Return {
@@ -64,10 +80,62 @@ export function useKeyboardShortcuts({
       onExport?.();
       return true;
     },
+    z: (e) => {
+      if (!mod(e)) return false;
+      e.preventDefault();
+      if (e.shiftKey) {
+        onRedo?.();
+      } else {
+        onUndo?.();
+      }
+      return true;
+    },
+    y: (e) => {
+      if (!mod(e)) return false;
+      e.preventDefault();
+      onRedo?.();
+      return true;
+    },
+    g: (e) => {
+      if (isTyping(e)) return false;
+      e.preventDefault();
+      onToggleGrid?.();
+      return true;
+    },
+    t: (e) => {
+      if (isTyping(e)) return false;
+      e.preventDefault();
+      onToggleTab?.();
+      return true;
+    },
     r: (e) => {
       if (mod(e) || e.altKey) return false;
       e.preventDefault();
       armed ? (disarm(), onReset?.()) : arm();
+      return true;
+    },
+    "[": (e) => {
+      if (isTyping(e)) return false;
+      e.preventDefault();
+      onPrevCategory?.();
+      return true;
+    },
+    "]": (e) => {
+      if (isTyping(e)) return false;
+      e.preventDefault();
+      onNextCategory?.();
+      return true;
+    },
+    ArrowUp: (e) => {
+      if (isTyping(e) || !mod(e)) return false;
+      e.preventDefault();
+      onPrevType?.();
+      return true;
+    },
+    ArrowDown: (e) => {
+      if (isTyping(e) || !mod(e)) return false;
+      e.preventDefault();
+      onNextType?.();
       return true;
     },
     Escape: () => {
@@ -91,7 +159,7 @@ export function useKeyboardShortcuts({
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
-      if (isTyping(e)) {
+      if (isTyping(e) && e.key !== "Escape" && e.key !== "Enter") {
         if (e.key === "?" && !e.shiftKey) {
           e.preventDefault();
           setShowHelp(true);
@@ -99,7 +167,6 @@ export function useKeyboardShortcuts({
         return;
       }
 
-      // Tray slots 1-8
       if (/^[1-8]$/.test(e.key) && !mod(e) && !e.altKey) {
         const idx = parseInt(e.key) - 1;
         if (idx < trayIcons.length) {
@@ -111,7 +178,7 @@ export function useKeyboardShortcuts({
 
       shortcuts[e.key]?.(e);
     },
-    [trayIcons, onSelectTraySlot, canCopy, onCopySvg, onExport, onReset, armed, showHelp]
+    [trayIcons, onSelectTraySlot, canCopy, onCopySvg, onExport, onReset, onToggleGrid, onUndo, onRedo, onNextCategory, onPrevCategory, onNextType, onPrevType, onToggleTab, armed, showHelp]
   );
 
   useEffect(() => {
@@ -130,7 +197,16 @@ export const KEYBOARD_SHORTCUTS = [
       { key: "⌘E / Ctrl+E", desc: "Export" },
       { key: "⌘Z / Ctrl+Z", desc: "Undo" },
       { key: "⌘⇧Z / Ctrl+Shift+Z", desc: "Redo" },
+      { key: "G", desc: "Toggle Grid" },
+      { key: "T", desc: "Toggle Props/Motion" },
       { key: "R", desc: "Reset (press twice)" },
+    ],
+  },
+  {
+    category: "Navigation",
+    items: [
+      { key: "[ / ]", desc: "Prev / Next Category" },
+      { key: "⌘↑ / ⌘↓", desc: "Prev / Next Style" },
     ],
   },
   {
