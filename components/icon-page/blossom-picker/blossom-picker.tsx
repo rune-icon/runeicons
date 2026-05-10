@@ -9,6 +9,7 @@ import {
     colorsMatch, 
     rgbToHex 
 } from '@/lib/color-utils';
+import { cn } from '@/lib/utils';
 import { 
     Point, 
     getExpandedMetrics, 
@@ -24,6 +25,8 @@ import {
 import { BlossomScene } from './blossom-scene';
 import { useBlossomColorPickerModel } from '@/hooks/use-blossom-picker';
 import { BlossomColorPickerProps } from './types';
+
+type Ring = 'inner' | 'outer';
 
 const POP_EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -99,10 +102,15 @@ export const BlossomColorPicker = ({
         setAnchor({ x: left, y: top });
     }, [metrics.totalSize]);
 
+    const [focusedPetalIndex, setFocusedPetalIndex] = useState<number | null>(null);
+    const [focusedRing, setFocusedRing] = useState<Ring | null>(null);
+
     const closePicker = useCallback(() => {
         if (!isOpen) return;
         setIsOpen(false);
         clearHover();
+        setFocusedPetalIndex(null);
+        setFocusedRing(null);
         onDismiss?.(selectedColor);
     }, [isOpen, setIsOpen, clearHover, onDismiss, selectedColor]);
 
@@ -110,6 +118,8 @@ export const BlossomColorPicker = ({
         if (disabled) return;
         syncAnchor();
         setIsOpen(true);
+        setFocusedRing('outer');
+        setFocusedPetalIndex(0);
     }, [disabled, syncAnchor, setIsOpen]);
 
     const handleSelectColor = (color: HexColor) => {
@@ -134,7 +144,6 @@ export const BlossomColorPicker = ({
         setIsDraggingArc(true);
         dragPointerIdRef.current = e.pointerId;
         
-        // Initial update immediately on pointer down
         const rect = svgRef.current?.getBoundingClientRect();
         if (rect) {
             const localX = e.clientX - rect.left;
@@ -161,7 +170,29 @@ export const BlossomColorPicker = ({
         };
 
         const handleKeyDown = (event: KeyboardEvent) => {
-            if (event.key === 'Escape') closePicker();
+            if (event.key === 'Escape') {
+                closePicker();
+                buttonRef.current?.focus();
+            }
+
+            if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
+                const count = focusedRing === 'inner' ? resolvedLayout.innerPetalCount : resolvedLayout.outerPetalCount;
+                const delta = event.key === 'ArrowRight' ? 1 : -1;
+                setFocusedPetalIndex((prev) => {
+                    const current = prev ?? 0;
+                    return (current + delta + count) % count;
+                });
+            }
+
+            if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+                setFocusedRing((prev) => (prev === 'outer' ? 'inner' : 'outer'));
+                const nextCount = focusedRing === 'outer' ? resolvedLayout.innerPetalCount : resolvedLayout.outerPetalCount;
+                setFocusedPetalIndex((prev) => (prev ?? 0) % nextCount);
+            }
+
+            if (event.key === 'Enter' && focusedPetalIndex !== null && focusedRing !== null) {
+                handlePetalSelection(focusedPetalIndex, focusedRing);
+            }
         };
 
         const handleViewportChange = () => syncAnchor();
@@ -217,11 +248,11 @@ export const BlossomColorPicker = ({
     }, [isDraggingArc, metrics.center, setIsDraggingArc, updateLightness, dragPointerIdRef]);
 
     return (
-        <div className={className}>
+        <div className={cn("flex items-center", className)}>
             <motion.button
                 ref={buttonRef}
                 type="button"
-                className="blossom-picker-swatch"
+                className="blossom-picker-swatch group relative focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-full outline-none"
                 onClick={openPicker}
                 style={{
                     width: BLOSSOM_NUMBERS.collapsedSwatchSize,
@@ -229,12 +260,13 @@ export const BlossomColorPicker = ({
                     borderRadius: '50%',
                     backgroundColor: selectedColor,
                     border: 'none',
-                    boxShadow: `inset 0 0 0 1px hsl(var(--foreground) / ${BLOSSOM_NUMBERS.collapsedSwatchBorderOpacity}), 0 2px 4px hsl(var(--foreground) / 0.1)`,
+                    boxShadow: `0 0 0 1px hsl(var(--foreground) / 0.15), 0 2px 4px hsl(var(--foreground) / 0.08)`,
                     cursor: disabled ? 'default' : 'pointer',
                 }}
                 whileHover={disabled ? {} : { scale: 1.03 }}
                 whileTap={disabled ? {} : { scale: 0.97 }}
                 disabled={disabled}
+                aria-label="Pick color"
             />
 
             {anchor && portalTarget && createPortal(
@@ -268,7 +300,9 @@ export const BlossomColorPicker = ({
                                 lightness={lightness}
                                 hoveredPetalIndex={hoveredPetalIndex}
                                 hoveredRing={hoveredRing}
-                                isDraggingArc={isDraggingArc}
+                        focusedPetalIndex={focusedPetalIndex}
+                        focusedRing={focusedRing}
+                        isDraggingArc={isDraggingArc}
                                 layout={resolvedLayout}
                                 styleConfig={resolvedStyle}
                                 palette={palette}
