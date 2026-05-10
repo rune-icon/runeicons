@@ -58,7 +58,7 @@ export function ShadowSection({
         </div>
       }
     >
-      <div id="section-shadow-content" className="space-y-3">
+      <div id="section-shadow-content" className="space-y-1.5">
         <Scrubber
           label="Opacity"
           value={state.shadow.opacity}
