@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils";
 import { Scrubber } from "@/components/ui/scrubber";
 import { CustomizationState } from "@/lib/types";
 import { TEXTURES } from "@/lib/visual-effects";
+import { Section } from "../components/Section";
 
 interface TextureSectionProps {
   state: CustomizationState;
@@ -14,51 +15,66 @@ export function TextureSection({
   state,
   onChange,
 }: TextureSectionProps) {
+  const currentIndex = TEXTURES.findIndex(t => t.id === state.texture.selected);
+  const currentTex = TEXTURES[currentIndex];
+
   return (
-    <div className="pt-2 px-4 pb-4">
-      <div className="space-y-4">
-        <h3 className="text-xs font-semibold text-foreground uppercase tracking-wider opacity-70 text-balance">
-          Texture Overlay
-        </h3>
-        
-        <div className="grid grid-cols-3 gap-2">
-          {TEXTURES.map((tex) => (
-            <button
-               key={tex.id}
-               onClick={() => onChange({
-                 texture: { ...state.texture, selected: tex.id },
-               })}
-               className={cn(
-                 "group relative flex flex-col items-center gap-1.5 p-2 rounded-xl border transition-[scale,border-color,background-color,box-shadow] duration-200 ease-out active:scale-[0.96] overflow-hidden",
-                 state.texture.selected === tex.id
-                   ? "border-primary bg-primary/5 shadow-sm"
-                   : "border-border bg-muted/20 hover:border-border/80 hover:bg-muted/30"
-               )}
-             >
-              <div 
-                className="w-full aspect-square rounded-[4px] border border-border/50 bg-background overflow-hidden relative outline outline-1 -outline-offset-1 outline-black/10 dark:outline-white/10"
-                style={tex.id !== 'none' ? {
-                  backgroundImage: `url(${tex.path || `/placeholder.svg?height=100&width=100&query=${tex.id}-texture`}) `,
-                  backgroundSize: 'cover'
-                } : {}}
+    <Section>
+      <div className="space-y-4 pt-1">
+        <Scrubber
+          label={currentTex?.name || "None"}
+          min={0}
+          max={TEXTURES.length - 1}
+          step={1}
+          value={currentIndex}
+          onChange={(val) => {
+            const index = Math.round(val);
+            const tex = TEXTURES[index];
+            onChange({
+              texture: { ...state.texture, selected: tex.id },
+            });
+          }}
+          showInput={false}
+        />
+
+        <div className="flex justify-between px-1">
+          {TEXTURES.map((tex, index) => {
+            const isSelected = state.texture.selected === tex.id;
+            
+            return (
+              <button 
+                key={tex.id}
+                onClick={() => {
+                  onChange({
+                    texture: { ...state.texture, selected: tex.id },
+                  });
+                }}
+                className={cn(
+                  "flex flex-col items-center gap-2 transition-all group",
+                  isSelected ? "opacity-100" : "opacity-40 hover:opacity-70"
+                )}
               >
-                {tex.id === 'none' && (
-                  <div className="absolute inset-0 flex items-center justify-center text-muted-foreground/30">
-                    <span className="text-[10px] font-bold">X</span>
-                  </div>
-                )}
-                {state.texture.selected === tex.id && (
-                  <div className="absolute inset-0 ring-2 ring-primary ring-inset rounded-[4px]" />
-                )}
-              </div>
-              <span className={cn(
-                "text-[10px] font-bold tracking-tight transition-colors",
-                state.texture.selected === tex.id ? "text-primary" : "text-muted-foreground group-hover:text-foreground"
-              )}>
-                {tex.name}
-              </span>
-            </button>
-          ))}
+                <div 
+                  className={cn(
+                    "w-5 h-5 rounded-sm border flex items-center justify-center overflow-hidden bg-muted/10 transition-all",
+                    isSelected ? "border-foreground/40 ring-1 ring-foreground/10" : "border-border/40"
+                  )}
+                  style={tex.id !== 'none' ? {
+                    backgroundImage: `url(${tex.path || `/placeholder.svg?height=100&width=100&query=${tex.id}-texture`}) `,
+                    backgroundSize: 'cover'
+                  } : {}}
+                >
+                  {tex.id === 'none' && (
+                    <span className="text-[8px] font-black opacity-40">∅</span>
+                  )}
+                </div>
+                <div className={cn(
+                  "w-1.5 h-[1.5px] transition-all",
+                  isSelected ? "bg-foreground w-3" : "bg-border w-1.5"
+                )} />
+              </button>
+            );
+          })}
         </div>
 
         {state.texture.selected !== "none" && (
@@ -77,6 +93,6 @@ export function TextureSection({
           </div>
         )}
       </div>
-    </div>
+    </Section>
   );
 }
