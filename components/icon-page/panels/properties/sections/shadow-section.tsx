@@ -1,5 +1,3 @@
-import { Card } from "@/components/ui/card";
-import { ChevronDown, Eye, EyeOff } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Scrubber } from "@/components/ui/scrubber";
@@ -12,17 +10,17 @@ interface ShadowSectionProps {
   onToggle?: () => void;
 }
 
+import { Section } from "../components/Section";
+
 export function ShadowSection({
   state,
   onChange,
 }: ShadowSectionProps) {
   return (
-    <div className="pt-2 px-4 pb-4">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-xs font-semibold text-foreground uppercase tracking-wider opacity-70 text-balance">
-          Shadow
-        </h3>
-        <div className="flex p-0.5 rounded-lg border border-border bg-muted/30">
+    <Section 
+      title="Shadow"
+      headerAction={
+        <div className="flex p-0.5 rounded-md border border-border/50 bg-muted/20">
           <Button
             variant="ghost"
             size="sm"
@@ -32,14 +30,11 @@ export function ShadowSection({
               })
             }
             className={cn(
-              "h-7 px-3 text-[10px] font-bold uppercase tracking-tighter rounded-md transition-[scale,background-color,color,box-shadow,ring] duration-200 ease-out active:scale-[0.96]",
+              "h-6 px-3 text-[9px] uppercase tracking-tighter rounded-sm transition-all duration-150 active:scale-[0.98]",
               !state.shadow.inner
-                ? "bg-background text-foreground shadow-[0_2px_8px_rgba(0,0,0,0.15)] ring-1 ring-border"
-                : "text-muted-foreground hover:text-foreground",
+                ? "bg-background text-foreground shadow-sm border border-border/60"
+                : "text-muted-foreground hover:text-foreground hover:bg-background/40",
             )}
-            style={!state.shadow.inner ? { 
-              boxShadow: `0 4px 12px rgba(0,0,0,0.1)` 
-            } : {}}
           >
             Outer
           </Button>
@@ -52,21 +47,18 @@ export function ShadowSection({
               })
             }
             className={cn(
-              "h-7 px-3 text-[10px] font-bold uppercase tracking-tighter rounded-md transition-[scale,background-color,color,box-shadow,ring] duration-200 ease-out active:scale-[0.96]",
+              "h-6 px-3 text-[9px] uppercase tracking-tighter rounded-sm transition-all duration-150 active:scale-[0.98]",
               state.shadow.inner
-                ? "bg-background text-foreground shadow-sm ring-1 ring-border"
-                : "text-muted-foreground hover:text-foreground",
+                ? "bg-background text-foreground shadow-sm border border-border/60"
+                : "text-muted-foreground hover:text-foreground hover:bg-background/40",
             )}
-            style={state.shadow.inner ? { 
-              boxShadow: `inset 0 4px 12px rgba(0,0,0,0.1)` 
-            } : {}}
           >
             Inner
           </Button>
         </div>
-      </div>
-      
-      <div id="section-shadow-content" className="space-y-5">
+      }
+    >
+      <div id="section-shadow-content" className="space-y-3">
         <Scrubber
           label="Opacity"
           value={state.shadow.opacity}
@@ -91,9 +83,9 @@ export function ShadowSection({
           max={50}
         />
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-2">
           <Scrubber
-            label="Offset X"
+            label="X"
             value={state.shadow.offsetX}
             onChange={(val: number) =>
               onChange({
@@ -105,7 +97,7 @@ export function ShadowSection({
           />
 
           <Scrubber
-            label="Offset Y"
+            label="Y"
             value={state.shadow.offsetY}
             onChange={(val: number) =>
               onChange({
@@ -117,6 +109,6 @@ export function ShadowSection({
           />
         </div>
       </div>
-    </div>
+    </Section>
   );
 }

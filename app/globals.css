@@ -1,9 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-
 @custom-variant dark (&:is(.dark *));
-
-/* @custom-variant dark (&:is(.dark *)); */
 @variant dark (&:where(.dark, .dark *));
 
 :root {
@@ -65,10 +62,11 @@
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
   --font-sans:
-    var(--font-inter), var(--font-geist-sans), ui-sans-serif, system-ui;
+    var(--font-inter), var(--font-geist-sans), "Segoe UI", ui-sans-serif, system-ui;
   --font-mono:
     var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco,
     Consolas, "Liberation Mono", "Courier New", monospace;
+  --font-tight: var(--font-inter-tight), "Segoe UI", sans-serif;
   --font-gemunu: var(--font-gemunu-libre), sans-serif;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -159,7 +157,6 @@
     @apply bg-background text-foreground;
   }
 
-  /* Custom scrollbar - slim, clean, low opacity */
   ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -175,7 +172,6 @@
     background: rgba(0, 0, 0, 0.3);
   }
 
-  /* Dark mode scrollbar */
   .dark ::-webkit-scrollbar-thumb {
     background: rgba(255, 255, 255, 0.12);
   }
@@ -183,7 +179,6 @@
     background: rgba(255, 255, 255, 0.25);
   }
 
-  /* Firefox */
   * {
     scrollbar-width: thin;
     scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
@@ -208,11 +203,11 @@
 
 .bg-workspace-pattern {
   background-color: var(--background);
-  background-image: url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 12 12' xmlns='http://www.w3.org/2000/svg'%3E%3Cline x1='0' y1='0' x2='12' y2='12' stroke='rgba(0,0,0,0.03)' stroke-width='1' stroke-dasharray='2,2'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg width='160' height='160' viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='rgba(0,0,0,0.02)' font-family='monospace' font-size='8'%3E%3Ctext x='10' y='20'%3ERUNE_SYSTEM%3C/text%3E%3Ctext x='80' y='60'%3ECORE.TSX%3C/text%3E%3Ctext x='20' y='100'%3EUTILS.LIB%3C/text%3E%3Ctext x='90' y='140'%3EUI.LAYOUT%3C/text%3E%3C/g%3E%3C/svg%3E");
 }
 
 .dark .bg-workspace-pattern {
-  background-image: url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 12 12' xmlns='http://www.w3.org/2000/svg'%3E%3Cline x1='0' y1='0' x2='12' y2='12' stroke='rgba(255, 255, 255, 0.05)' stroke-width='1' stroke-dasharray='2,2'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg width='160' height='160' viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='rgba(255,255,255,0.03)' font-family='monospace' font-size='8'%3E%3Ctext x='10' y='20'%3ERUNE_SYSTEM%3C/text%3E%3Ctext x='80' y='60'%3ECORE.TSX%3C/text%3E%3Ctext x='20' y='100'%3EUTILS.LIB%3C/text%3E%3Ctext x='90' y='140'%3EUI.LAYOUT%3C/text%3E%3C/g%3E%3C/svg%3E");
 }
 
 .noise-track-custom {
@@ -238,11 +233,18 @@
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 
-/* Hide scrollbars globally for all elements */
 * {
-  scrollbar-width: none !important; /* Firefox */
-  -ms-overflow-style: none !important; /* IE and Edge */
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
 }
 *::-webkit-scrollbar {
-  display: none !important; /* Chrome, Safari, Opera */
+  display: none !important;
+}
+
+.bg-pattern-vertical-dashes {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Cg stroke='rgba(0,0,0,0.1)' stroke-width='1' stroke-linecap='round'%3E%3Cline x1='0' y1='0' x2='20' y2='20' stroke-dasharray='4,4'/%3E%3Cline x1='20' y1='0' x2='0' y2='20' stroke-dasharray='4,4'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 20px 20px;
+}
+.dark .bg-pattern-vertical-dashes {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Cg stroke='rgba(255,255,255,0.1)' stroke-width='1' stroke-linecap='round'%3E%3Cline x1='0' y1='0' x2='20' y2='20' stroke-dasharray='4,4'/%3E%3Cline x1='20' y1='0' x2='0' y2='20' stroke-dasharray='4,4'/%3E%3C/g%3E%3C/svg%3E");
 }
