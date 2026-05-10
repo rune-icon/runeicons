@@ -85,7 +85,6 @@ function ShapeProvider({
     transitionShape(() => setShapeState(next));
   }, []);
 
-  // Global keyboard shortcut: R to cycle radius
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key !== "r" && e.key !== "R") return;

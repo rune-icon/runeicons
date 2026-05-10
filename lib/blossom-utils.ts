@@ -1,7 +1,5 @@
 import { clamp } from './color-utils';
 
-
-
 export interface Point {
     x: number;
     y: number;
@@ -26,8 +24,6 @@ export interface BlossomStyleConfig {
 
 export type Ring = 'inner' | 'outer';
 
-
-
 export function polarToCartesian(center: Point, radius: number, angleDegrees: number): Point {
     const radians = (angleDegrees * Math.PI) / 180;
     return {
@@ -43,8 +39,6 @@ export function describeArc(center: Point, radius: number, startAngle: number, e
 
     return `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${largeArcFlag} 0 ${end.x} ${end.y}`;
 }
-
-
 
 export function getRingPetalCount(ring: Ring, layout: BlossomLayoutConfig): number {
     return ring === 'inner' ? layout.innerPetalCount : layout.outerPetalCount;
@@ -63,8 +57,6 @@ export function getPetalPosition(index: number, ring: Ring, center: Point, layou
     const angle = getPetalAngle(index, ring, layout);
     return polarToCartesian(center, getRingRadius(ring, layout), angle);
 }
-
-
 
 export function getExpandedMetrics(
     layout: BlossomLayoutConfig,
@@ -91,8 +83,6 @@ export function getExpandedMetrics(
         center,
     };
 }
-
-
 
 export function clampPortalPosition(value: number, viewport: number, popupSize: number, viewportPadding: number): number {
     return clamp(value, viewportPadding, viewport - popupSize - viewportPadding);
