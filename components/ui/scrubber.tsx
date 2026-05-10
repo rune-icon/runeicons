@@ -292,7 +292,7 @@ export const Scrubber: React.FC<ScrubberProps> = ({
       }}
       style={{ width: rubberBandWidth, x: rubberBandX }}
       className={cn(
-        "group relative h-[34px] w-full touch-none overflow-hidden rounded-sm border border-border/40 bg-muted/10 transition-all",
+        "group relative h-[34px] w-full touch-none overflow-hidden rounded-sm border border-border/40 bg-muted/10 transition-all shadow-[inset_0_2px_4px_rgba(0,0,0,0.15)]",
         disabled ? "cursor-not-allowed opacity-50" : "cursor-grab active:cursor-grabbing",
         (isEditing ||
           (showInput &&
@@ -344,9 +344,9 @@ export const Scrubber: React.FC<ScrubberProps> = ({
         />
       </motion.div>
 
-      <div className="pointer-events-none absolute inset-0 z-10 flex items-center px-2 text-[10px] font-tight uppercase tracking-widest text-foreground/80 select-none">
+      <div className="pointer-events-none absolute inset-0 z-10 flex items-center px-2 text-[10px] uppercase tracking-widest text-foreground/70 select-none">
         <div className="flex w-full items-center justify-between">
-          <span ref={labelRef}>
+          <span ref={labelRef} className="ml-1">
             {label}
           </span>
           <div
@@ -401,8 +401,8 @@ export const Scrubber: React.FC<ScrubberProps> = ({
             style={{ maskImage: maskImage, WebkitMaskImage: maskImage }}
             className="absolute inset-0 flex items-center"
           >
-            <div className="flex w-full justify-between px-2 text-[9px] uppercase tracking-widest">
-              <span ref={labelRef} className="text-foreground">
+            <div className="flex w-full justify-between px-2 text-[10px] uppercase tracking-widest">
+              <span ref={labelRef} className="text-foreground/70 ml-1">
                 {label}
               </span>
               {!isEditing && (
