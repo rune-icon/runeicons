@@ -2,6 +2,8 @@ import type React from "react";
 
 export type EditorSupportedTag = "path" | "circle" | "rect";
 
+export type EditorVariant = "normal" | "duotone" | "fill" | "pixelated";
+
 export interface EditorIconPath {
   id: string;
   d: string;
@@ -33,6 +35,7 @@ export interface EditorAssetSummary {
   viewBox: string;
   defs?: string;
   paths: EditorIconPath[];
+  variant: EditorVariant;
 }
 
 export interface EditorIconAsset extends EditorAssetSummary {

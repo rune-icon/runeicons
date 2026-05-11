@@ -1,46 +1,64 @@
 "use client";
 
 import { useCallback, useDeferredValue, useMemo, useState } from "react";
-import type { EditorAssetSummary } from "@/lib/editor/types";
+import type { EditorAssetSummary, EditorVariant } from "@/lib/editor/types";
+import type { CustomizationState } from "@/lib/types";
 import {
   useEditorSelectionStore,
   selectAssetInStore,
   removeFromTrayInStore,
 } from "@/stores/editor-selection";
 
-export function useEditorLibrary(assets: EditorAssetSummary[]) {
+const SUPPORTED_VARIANTS: ReadonlySet<EditorVariant> = new Set([
+  "normal",
+  "duotone",
+  "fill",
+  "pixelated",
+]);
+
+export function useEditorLibrary(
+  assets: EditorAssetSummary[],
+  iconType: CustomizationState["iconType"],
+) {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("all");
 
   const selectedAssetId = useEditorSelectionStore((s) => s.selectedAssetId);
   const trayAssetIds = useEditorSelectionStore((s) => s.trayAssetIds);
 
+  const variantAssets = useMemo(() => {
+    if (!SUPPORTED_VARIANTS.has(iconType as EditorVariant)) {
+      return [];
+    }
+    return assets.filter((asset) => asset.variant === iconType);
+  }, [assets, iconType]);
+
   const assetMap = useMemo(
-    () => new Map(assets.map((asset) => [asset.id, asset])),
-    [assets],
+    () => new Map(variantAssets.map((asset) => [asset.id, asset])),
+    [variantAssets],
   );
 
   const effectiveSelectedAssetId = useMemo(() => {
     if (selectedAssetId && assetMap.has(selectedAssetId)) {
       return selectedAssetId;
     }
-    return assets[0]?.id ?? null;
-  }, [assetMap, assets, selectedAssetId]);
+    return variantAssets[0]?.id ?? null;
+  }, [assetMap, variantAssets, selectedAssetId]);
 
   const categories = useMemo(() => {
     const unique = new Map<string, string>([["all", "All"]]);
-    for (const asset of assets) {
+    for (const asset of variantAssets) {
       unique.set(asset.category, asset.categoryLabel);
     }
     return [...unique.entries()].map(([value, label]) => ({ value, label }));
-  }, [assets]);
+  }, [variantAssets]);
 
   const deferredSearchQuery = useDeferredValue(searchQuery);
   const deferredActiveCategory = useDeferredValue(activeCategory);
 
   const filteredAssets = useMemo(() => {
     const query = deferredSearchQuery.trim().toLowerCase();
-    return assets.filter((asset) => {
+    return variantAssets.filter((asset) => {
       const categoryMatches =
         deferredActiveCategory === "all" ||
         asset.category === deferredActiveCategory;
@@ -51,7 +69,7 @@ export function useEditorLibrary(assets: EditorAssetSummary[]) {
         asset.filePath.toLowerCase().includes(query);
       return categoryMatches && searchMatches;
     });
-  }, [deferredActiveCategory, assets, deferredSearchQuery]);
+  }, [deferredActiveCategory, variantAssets, deferredSearchQuery]);
 
   const trayAssets = useMemo(
     () =>
@@ -67,9 +85,9 @@ export function useEditorLibrary(assets: EditorAssetSummary[]) {
 
   const removeAssetFromTray = useCallback(
     (assetId: string) => {
-      removeFromTrayInStore(assetId, assets[0]?.id ?? null);
+      removeFromTrayInStore(assetId, variantAssets[0]?.id ?? null);
     },
-    [assets],
+    [variantAssets],
   );
 
   return {
