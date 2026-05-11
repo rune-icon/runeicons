@@ -6,11 +6,28 @@ import {
   Globe,
   X,
 } from "lucide-react";
-import { AnimatePresence } from "motion/react";
+import { AnimatePresence, useReducedMotion } from "motion/react";
 import * as m from "motion/react-m";
 
-import Image from "next/image";
 import XIcon from "./icons/XIcon";
+
+const SPRING = {
+  type: "spring" as const,
+  stiffness: 380,
+  damping: 32,
+  mass: 0.9,
+};
+const EASE_OUT = [0.215, 0.61, 0.355, 1] as const;
+const SWIFT = [0.19, 1, 0.22, 1] as const;
+const TIMING = {
+  panelOpacity: 0.22,
+  nav: 0.2,
+  navDelay: 0.2,
+  info: 0.16,
+  drawer: 0.55,
+};
+const DRAWER_DISMISS_DISTANCE = 120;
+const DRAWER_DISMISS_VELOCITY = 600;
 
 interface DetailViewProps {
   user: {
@@ -22,17 +39,8 @@ interface DetailViewProps {
     status?: string;
     socials?: { type: string; url: string }[];
   };
-  prevUser?: {
-    id: number;
-    name: string;
-    img: string;
-  };
-  nextUser?: {
-    id: number;
-    name: string;
-    img: string;
-  };
   direction: 1 | -1;
+  isMobile?: boolean;
   onClose: () => void;
   onNext: () => void;
   onPrev: () => void;
@@ -40,260 +48,237 @@ interface DetailViewProps {
 
 const DetailView = ({
   user,
-  prevUser,
-  nextUser,
-
+  isMobile = false,
   onClose,
   onNext,
   onPrev,
 }: DetailViewProps) => {
-  return (
-    <>
-      {/* Backdrop */}
+  const reduceMotion = useReducedMotion();
+
+  if (isMobile) {
+    return (
       <m.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.3 }}
-        className="fixed inset-0 z-40 bg-black/80 backdrop-blur-sm"
-        role="button"
-        tabIndex={0}
-        onClick={onClose}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
+        data-detail-keep
+        className="fixed right-0 bottom-0 left-0 z-50 flex h-[60vh] flex-col rounded-t-3xl border-t border-white/10 bg-[#0A0A0A]/95 backdrop-blur-2xl"
+        initial={{ y: reduceMotion ? 0 : "100%" }}
+        animate={{ y: 0 }}
+        exit={{ y: reduceMotion ? 0 : "100%" }}
+        transition={
+          reduceMotion
+            ? { duration: 0 }
+            : { duration: TIMING.drawer, ease: SWIFT }
+        }
+        drag={reduceMotion ? false : "y"}
+        dragConstraints={{ top: 0, bottom: 0 }}
+        dragElastic={{ top: 0, bottom: 0.4 }}
+        onDragEnd={(_, info) => {
+          if (
+            info.offset.y > DRAWER_DISMISS_DISTANCE ||
+            info.velocity.y > DRAWER_DISMISS_VELOCITY
+          ) {
             onClose();
           }
         }}
-      />
+      >
+        <div className="mx-auto mt-3 mb-2 h-1 w-12 shrink-0 rounded-full bg-white/20" />
 
-      {/* Container - Full viewport */}
-      <div className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center">
-        <div className="pointer-events-auto relative flex h-full w-full gap-0">
-          {/* Close Button */}
+        <div className="flex shrink-0 items-center justify-between px-6 pt-1 pb-2">
+          <div className="flex items-center gap-1 rounded-full border border-white/10 bg-white/5 p-1">
+            <button
+              onClick={onPrev}
+              aria-label="Previous member"
+              className="cursor-pointer rounded-full p-2 text-white/70 transition-all hover:bg-white/10 hover:text-white active:scale-95"
+            >
+              <ChevronLeft size={18} />
+            </button>
+            <button
+              onClick={onNext}
+              aria-label="Next member"
+              className="cursor-pointer rounded-full p-2 text-white/70 transition-all hover:bg-white/10 hover:text-white active:scale-95"
+            >
+              <ChevronRight size={18} />
+            </button>
+          </div>
           <button
             onClick={onClose}
-            className="absolute top-8 right-8 z-50 cursor-pointer rounded-full border border-white/5 bg-white/5 p-3 text-white/50 transition-colors hover:bg-white/10 hover:text-white"
+            aria-label="Close detail view"
+            className="cursor-pointer rounded-full border border-white/5 bg-white/5 p-2 text-white/50 transition-colors hover:bg-white/10 hover:text-white"
           >
-            <X size={24} />
+            <X size={20} />
           </button>
+        </div>
 
-          {/* Left Panel - Carousel */}
-          <m.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="group relative z-20 flex h-full w-[70%] items-center justify-center overflow-hidden bg-[#0A0A0A]/90 backdrop-blur-xl"
-            onClick={onClose}
-            style={{ borderRadius: 0 } as any}
-            transition={{
-              duration: 0.4,
-            }}
-          >
-            {/* Noise Overlay */}
-            <div className="pointer-events-none absolute inset-0 bg-white opacity-[0.02]" />
+        <div className="flex-1 overflow-y-auto px-6 pt-4 pb-8">
+          <AnimatePresence mode="wait" initial={false}>
+            <m.div
+              key={`info-mobile-${user.id}`}
+              initial={{ opacity: 0, y: reduceMotion ? 0 : 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: reduceMotion ? 0 : -4 }}
+              transition={{ duration: TIMING.info, ease: EASE_OUT }}
+            >
+              <h2 className="mb-4 font-['Syne'] text-3xl font-bold text-white">
+                {user.name}
+              </h2>
+              <p className="mb-6 font-['Outfit'] text-base leading-relaxed text-[#888888]">
+                {user.description}
+              </p>
 
-            {/* Carousel Container */}
-            <div className="perspective-1000 relative flex h-[500px] w-full items-center justify-center">
-              {/* Prev User (Left) */}
-              {prevUser && (
-                <m.div
-                  key={prevUser.id}
-                  layoutId={`avatar-${prevUser.id}`}
-                  className="absolute z-10 cursor-pointer opacity-40 blur-[1px] grayscale transition-all hover:opacity-80 hover:grayscale-0"
-                  initial={false}
-                  animate={{ x: -350, scale: 0.7, opacity: 0.4 }}
-                  transition={{
-                    x: { type: "spring", stiffness: 300, damping: 30 },
-                    scale: { duration: 0.4, delay: 0.1 }, // Staggered scale
-                    opacity: { duration: 0.4 },
-                  }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onPrev();
-                  }}
-                >
-                  <div className="flex size-56 items-center justify-center overflow-hidden rounded-full border border-white/10 bg-white/5">
-                    {prevUser.img ? (
-                      <Image
-                        src={prevUser.img}
-                        alt={prevUser.name}
-                        className="size-full object-cover"
-                        fill
-                        sizes="224px"
-                      />
-                    ) : (
-                      <span className="text-4xl select-none">👻</span>
-                    )}
-                  </div>
-                </m.div>
-              )}
-
-              {/* Next User (Right) */}
-              {nextUser && (
-                <m.div
-                  key={nextUser.id}
-                  layoutId={`avatar-${nextUser.id}`}
-                  className="absolute z-10 cursor-pointer opacity-40 blur-[1px] grayscale transition-all hover:opacity-80 hover:grayscale-0"
-                  initial={false}
-                  animate={{ x: 350, scale: 0.7, opacity: 0.4 }}
-                  transition={{
-                    x: { type: "spring", stiffness: 300, damping: 30 },
-                    scale: { duration: 0.4, delay: 0.1 }, // Staggered scale
-                    opacity: { duration: 0.4 },
-                  }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onNext();
-                  }}
-                >
-                  <div className="flex size-56 items-center justify-center overflow-hidden rounded-full border border-white/10 bg-white/5">
-                    {nextUser.img ? (
-                      <Image
-                        src={nextUser.img}
-                        alt={nextUser.name}
-                        className="size-full object-cover"
-                        fill
-                        sizes="224px"
-                      />
-                    ) : (
-                      <span className="text-4xl select-none">👻</span>
-                    )}
-                  </div>
-                </m.div>
-              )}
-
-              <m.div
-                key={user.id}
-                layoutId={`card-${user.id}`}
-                className="absolute z-20"
-                layout
-                initial={false}
-                animate={{ x: 0, scale: 1.2, opacity: 1 }}
-                transition={{
-                  type: "spring",
-                  stiffness: 300,
-                  damping: 30,
-                  layout: { duration: 0.4 },
-                }}
-              >
-                {/* Glow */}
-                <div className="bg-primary/20 absolute inset-0 rounded-full blur-3xl" />
-                <div className="relative flex size-64 items-center justify-center overflow-hidden rounded-full border border-white/20 bg-linear-to-tr from-cyan-400/20 to-blue-500/20 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
-                  {user.img ? (
-                    <Image
-                      src={user.img}
-                      alt={user.name}
-                      className="size-full object-cover"
-                      fill
-                      sizes="256px"
-                    />
-                  ) : (
-                    <span className="text-7xl select-none">👻</span>
-                  )}
+              <div className="mb-6 grid grid-cols-2 gap-4 text-sm">
+                <div className="flex flex-col gap-1">
+                  <span className="text-xs font-medium tracking-wider text-[#444444] uppercase">
+                    Industry
+                  </span>
+                  <span className="text-[#EEEEEE]">{user.industry}</span>
                 </div>
-              </m.div>
+                <div className="flex flex-col gap-1">
+                  <span className="text-xs font-medium tracking-wider text-[#444444] uppercase">
+                    Status
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`size-2 rounded-full ${user.status === "Active" ? "bg-[#D4FF00]" : "bg-gray-500"}`}
+                    ></span>
+                    <span className="text-[#EEEEEE]">{user.status}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                {user.socials?.map((social) => (
+                  <a
+                    key={social.url}
+                    href={social.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="rounded-full border border-white/5 bg-white/5 p-3 text-[#888888] transition-colors hover:border-white/20 hover:bg-white/10 hover:text-white"
+                  >
+                    {social.type === "globe" && <Globe size={20} />}
+                    {social.type === "twitter" && <XIcon size={20} />}
+                    {social.type === "discord" && <Discord size={20} />}
+                  </a>
+                ))}
+              </div>
+            </m.div>
+          </AnimatePresence>
+        </div>
+      </m.div>
+    );
+  }
+
+  const rightPanelTransition = reduceMotion
+    ? { duration: TIMING.panelOpacity, ease: EASE_OUT }
+    : {
+        x: SPRING,
+        opacity: { duration: TIMING.panelOpacity, ease: EASE_OUT },
+      };
+
+  return (
+    <>
+      <m.button
+        data-detail-keep
+        onClick={onClose}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: TIMING.panelOpacity, ease: EASE_OUT }}
+        className="fixed top-8 right-8 z-60 cursor-pointer rounded-full border border-white/5 bg-white/5 p-3 text-white/50 backdrop-blur-md transition-colors hover:bg-white/10 hover:text-white"
+        aria-label="Close detail view"
+      >
+        <X size={24} />
+      </m.button>
+
+      <m.div
+        data-detail-keep
+        className="fixed bottom-8 left-[35%] z-60 flex -translate-x-1/2 items-center gap-2 rounded-full border border-white/10 bg-[#0A0A0A]/80 px-2 py-2 backdrop-blur-md"
+        initial={{ opacity: 0, y: reduceMotion ? 0 : 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: reduceMotion ? 0 : 8 }}
+        transition={{
+          duration: TIMING.nav,
+          delay: TIMING.navDelay,
+          ease: EASE_OUT,
+        }}
+      >
+        <button
+          onClick={onPrev}
+          aria-label="Previous member"
+          className="group cursor-pointer rounded-full p-3 text-white/70 transition-all hover:bg-white/10 hover:text-white active:scale-95"
+        >
+          <ChevronLeft size={20} />
+        </button>
+        <div className="h-6 w-px bg-white/10" />
+        <button
+          onClick={onNext}
+          aria-label="Next member"
+          className="cursor-pointer rounded-full p-3 text-white/70 transition-all hover:bg-white/10 hover:text-white active:scale-95"
+        >
+          <ChevronRight size={20} />
+        </button>
+      </m.div>
+
+      <m.div
+        data-detail-keep
+        initial={{ x: reduceMotion ? 0 : 24, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        exit={{ x: reduceMotion ? 0 : 24, opacity: 0 }}
+        transition={rightPanelTransition}
+        className="fixed top-0 right-0 bottom-0 z-50 flex w-[30%] flex-col justify-center border-l border-white/10 bg-[#0A0A0A]/55 p-12 backdrop-blur-2xl"
+      >
+        <AnimatePresence mode="wait" initial={false}>
+          <m.div
+            key={`info-${user.id}`}
+            initial={{ opacity: 0, y: reduceMotion ? 0 : 4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: reduceMotion ? 0 : -4 }}
+            transition={{ duration: TIMING.info, ease: EASE_OUT }}
+          >
+            <h2 className="mb-6 font-['Syne'] text-4xl font-bold text-white">
+              {user.name}
+            </h2>
+
+            <p className="mb-8 font-['Outfit'] text-base leading-relaxed text-[#888888]">
+              {user.description}
+            </p>
+
+            <div className="mb-10 grid grid-cols-1 gap-y-6 text-sm">
+              <div className="flex flex-col gap-1">
+                <span className="text-xs font-medium tracking-wider text-[#444444] uppercase">
+                  Industry
+                </span>
+                <span className="text-[#EEEEEE]">{user.industry}</span>
+              </div>
+              <div className="flex flex-col gap-1">
+                <span className="text-xs font-medium tracking-wider text-[#444444] uppercase">
+                  Status
+                </span>
+                <div className="flex items-center gap-2">
+                  <span
+                    className={`size-2 rounded-full ${user.status === "Active" ? "bg-[#D4FF00]" : "bg-gray-500"}`}
+                  ></span>
+                  <span className="text-[#EEEEEE]">{user.status}</span>
+                </div>
+              </div>
             </div>
 
-            {/* Navigation Buttons - Centered Bottom of Left Panel */}
-            <m.div
-              className="absolute bottom-8 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 rounded-full border border-white/10 bg-[#0A0A0A]/80 px-2 py-2 backdrop-blur-md"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.8 }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <button
-                onClick={onPrev}
-                className="group cursor-pointer rounded-full p-3 text-white/70 transition-all hover:bg-white/10 hover:text-white active:scale-95"
-              >
-                <ChevronLeft
-                  size={20}
-                  // className="group-hover:text-white text-white/70"
-                />
-              </button>
-              <div className="h-6 w-px bg-white/10" />
-              <button
-                onClick={onNext}
-                className="cursor-pointer rounded-full p-3 text-white/70 transition-all hover:bg-white/10 hover:text-white active:scale-95"
-              >
-                <ChevronRight size={20} />
-              </button>
-            </m.div>
+            <div className="mb-20 flex items-center gap-4">
+              {user.socials?.map((social) => (
+                <a
+                  key={social.url}
+                  href={social.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="rounded-full border border-white/5 bg-white/5 p-3 text-[#888888] transition-colors hover:border-white/20 hover:bg-white/10 hover:text-white"
+                >
+                  {social.type === "globe" && <Globe size={20} />}
+                  {social.type === "twitter" && <XIcon size={20} />}
+                  {social.type === "discord" && <Discord size={20} />}
+                </a>
+              ))}
+            </div>
           </m.div>
-
-          {/* Right Panel - Details */}
-          <m.div
-            initial={{ x: 100, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{ x: 100, opacity: 0 }}
-            transition={{
-              type: "tween",
-              ease: "easeInOut",
-              duration: 0.5,
-              delay: 0.2, // increased delay slightly to let card expand first
-            }}
-            className="relative flex h-full w-[30%] flex-col justify-center border-l border-white/10 bg-[#0A0A0A]/95 p-12 backdrop-blur-xl"
-          >
-            <AnimatePresence mode="wait" initial={false}>
-              <m.div
-                key={`info-${user.id}`}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
-              >
-                <h2 className="mb-6 font-['Syne'] text-4xl font-bold text-white">
-                  {user.name}
-                </h2>
-
-                <p className="mb-8 font-['Outfit'] text-base leading-relaxed text-[#888888]">
-                  {user.description}
-                </p>
-
-                {/* Metadata Grid */}
-                <div className="mb-10 grid grid-cols-1 gap-y-6 text-sm">
-                  <div className="flex flex-col gap-1">
-                    <span className="text-xs font-medium tracking-wider text-[#444444] uppercase">
-                      Industry
-                    </span>
-                    <span className="text-[#EEEEEE]">{user.industry}</span>
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    <span className="text-xs font-medium tracking-wider text-[#444444] uppercase">
-                      Status
-                    </span>
-                    <div className="flex items-center gap-2">
-                      <span
-                        className={`size-2 rounded-full ${user.status === "Active" ? "bg-[#D4FF00]" : "bg-gray-500"}`}
-                      ></span>
-                      <span className="text-[#EEEEEE]">{user.status}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Socials */}
-                <div className="mb-20 flex items-center gap-4">
-                  {user.socials?.map((social) => (
-                    <a
-                      key={social.url}
-                      href={social.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="rounded-full border border-white/5 bg-white/5 p-3 text-[#888888] transition-colors hover:border-white/20 hover:bg-white/10 hover:text-white"
-                    >
-                      {social.type === "globe" && <Globe size={20} />}
-                      {/* {social.type === "twitter" && <XIcon size={20} />} */}
-                      {social.type === "twitter" && <XIcon size={20} />}
-                      {social.type === "discord" && <Discord size={20} />}
-                    </a>
-                  ))}
-                </div>
-              </m.div>
-            </AnimatePresence>
-          </m.div>
-        </div>
-      </div>
+        </AnimatePresence>
+      </m.div>
     </>
   );
 };
