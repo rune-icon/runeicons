@@ -27,9 +27,13 @@ export function EditorShell({ assets }: EditorShellProps) {
   const hasInitRef = useRef(false);
   if (!hasInitRef.current) {
     hasInitRef.current = true;
+    const initialAssets = assets.filter(
+      (asset) => asset.variant === state.iconType,
+    );
+    const seedAssets = initialAssets.length > 0 ? initialAssets : assets;
     useEditorSelectionStore.setState({
-      selectedAssetId: assets[0]?.id ?? null,
-      trayAssetIds: assets.slice(0, MAX_TRAY_ITEMS).map((a) => a.id),
+      selectedAssetId: seedAssets[0]?.id ?? null,
+      trayAssetIds: seedAssets.slice(0, MAX_TRAY_ITEMS).map((a) => a.id),
     });
   }
 
@@ -50,7 +54,7 @@ export function EditorShell({ assets }: EditorShellProps) {
         </aside>
 
         <aside className="w-[320px] shrink-0" aria-label="Editor asset library">
-          <EditorLibrarySidebar assets={assets} />
+          <EditorLibrarySidebar assets={assets} iconType={state.iconType} />
         </aside>
 
         <EditorWorkspaceSection
