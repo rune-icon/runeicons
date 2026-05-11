@@ -4,7 +4,7 @@ import path from "node:path";
 import { parseEditorAsset } from "@/lib/editor/svg";
 import type { EditorAssetSummary, EditorIconAsset } from "@/lib/editor/types";
 
-const EDITOR_ASSET_ROOT = path.join(process.cwd(), "public", "regular");
+const EDITOR_ASSET_ROOT = path.join(process.cwd(), "public", "normal");
 
 async function collectSvgFiles(directory: string): Promise<string[]> {
   const entries = await readdir(directory, { withFileTypes: true });
