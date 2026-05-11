@@ -4,7 +4,15 @@ import type {
   EditorIconAsset,
   EditorIconPath,
   EditorSupportedTag,
+  EditorVariant,
 } from "@/lib/editor/types";
+
+const KNOWN_VARIANTS: readonly EditorVariant[] = [
+  "normal",
+  "duotone",
+  "fill",
+  "pixelated",
+];
 import type { CustomizationState } from "@/lib/types";
 import { normalizeEditorPathData } from "./path-data";
 
@@ -249,6 +257,11 @@ export function parseEditorAsset(
   const pathParts = relativePath.split("/");
   const category = pathParts[pathParts.length - 2] ?? "misc";
   const baseName = pathParts[pathParts.length - 1]?.replace(/\.svg$/i, "") ?? "Icon";
+  const detectedVariant = pathParts[0] as EditorVariant | undefined;
+  const variant: EditorVariant =
+    detectedVariant && KNOWN_VARIANTS.includes(detectedVariant)
+      ? detectedVariant
+      : "normal";
   const name = slugToLabel(baseName);
   const categoryLabel = slugToLabel(category);
   const slug = `${category}/${baseName}`;
@@ -317,6 +330,7 @@ export function parseEditorAsset(
     rawSvg: sanitizedSvg,
     paths: mergeConsecutivePaths(paths),
     unsupportedElements: [...unsupportedElements],
+    variant,
   };
 }
 
