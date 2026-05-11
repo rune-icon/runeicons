@@ -33,15 +33,11 @@ function getScale(mobile = false) {
   return Math.min(1, (window.innerWidth - 20) / 1000);
 }
 
-function getRepulsion(heroIdx: number, charIdx: number, mobile = false) {
+function getRepulsion(heroIdx: number, charIdx: number) {
   const dir = Math.sign(charIdx - heroIdx);
   const dist = Math.abs(charIdx - heroIdx);
-  const base = mobile ? 80 : 320;
-  const step = mobile ? 40 : 200;
-  const pushX = dir * (base + dist * step);
-  const py1 = mobile ? 14 : 20;
-  const py2 = mobile ? 7 : 10;
-  const pushY = (dist === 1 ? py1 : dist === 2 ? py2 : 0) * (heroIdx % 2 === 0 ? 1 : -1);
+  const pushX = dir * (320 + dist * 200);
+  const pushY = (dist === 1 ? 20 : dist === 2 ? 10 : 0) * (heroIdx % 2 === 0 ? 1 : -1);
   return { x: pushX, y: pushY };
 }
 
@@ -158,7 +154,7 @@ export default function AboutContent() {
             inner.style.filter = "grayscale(1) brightness(0.4)";
           }
         } else {
-          const rep = getRepulsion(heroIdx, i, false);
+          const rep = getRepulsion(heroIdx, i);
           el.style.transform = `translateX(${heroX + rep.x * s}px) translateY(${heroY + rep.y * s}px)`;
           el.style.zIndex = String(Z_IDX[i]);
           if (inner) {
