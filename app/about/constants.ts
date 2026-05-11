@@ -1,7 +1,7 @@
 const UserDetails = [
   {
     id: 1,
-    name: "Abhinav Kale",
+    name: "Abhinav",
     description:
       "Full-stack developer with a passion for building scalable web applications. Expert in React, Node.js, and cloud architecture.",
     industry: "WEB3",
@@ -10,11 +10,12 @@ const UserDetails = [
       { type: "globe", url: "https://abhi.at/" },
       { type: "twitter", url: "https://x.com/Abhinavstwt" },
     ],
-    img: "/about/AbhinavImg.jpg",
+    img: "/about/abhinav-v4.webp",
+    accentColor: "#EF4444",
   },
   {
     id: 2,
-    name: "Vansh Nagar",
+    name: "Vansh",
     description:
       "Creative designer focused on UI/UX and motion graphics. Bringing static interfaces to life with fluid animations.",
     industry: "Design",
@@ -23,7 +24,8 @@ const UserDetails = [
       { type: "globe", url: "https://vanshnagar.me/" },
       { type: "twitter", url: "https://x.com/vansh1029" },
     ],
-    img: "/about/vanshImg.jpg",
+    img: "/about/vansh-v4.webp",
+    accentColor: "#3B82F6",
   },
   {
     id: 3,
@@ -36,20 +38,8 @@ const UserDetails = [
       { type: "globe", url: "https://nexvyn.com" },
       { type: "twitter", url: "https://x.com/nexvyn" },
     ],
-    img: "/about/NexyImg.jpg",
-  },
-  {
-    id: 4,
-    name: "Mohit Mhetre",
-    description:
-      "Frontend architect specializing in performance optimization and design systems. Turning complex requirements into elegant code.",
-    industry: "Design",
-    status: "Active",
-    socials: [
-      { type: "globe", url: "https://example.com" },
-      { type: "twitter", url: "https://x.com/mohitmehtre" },
-    ],
-    img: "/about/mohitImg.jpg",
+    img: "/about/Nexvyn-v4.webp",
+    accentColor: "#22C55E",
   },
   {
     id: 5,
@@ -62,7 +52,8 @@ const UserDetails = [
       { type: "globe", url: "https://ambitionlessdev.in" },
       { type: "twitter", url: "https://x.com/ambitionlessGuy" },
     ],
-    img: "/about/PranavImg.jpg",
+    img: "/about/pranav-v4.webp",
+    accentColor: "#A855F7",
   },
 ];
 

@@ -2,8 +2,56 @@
 import { useEffect, useRef, useState } from "react";
 
 import Image from "next/image";
-import { AnimatePresence, useAnimation } from "motion/react";
+import { AnimatePresence, useAnimation, useReducedMotion } from "motion/react";
 import * as m from "motion/react-m";
+
+const EASE_OUT = [0.215, 0.61, 0.355, 1] as const;
+const TOOLTIP_TIMING = { duration: 0.16, ease: EASE_OUT };
+const SNAPBACK = {
+  type: "spring" as const,
+  stiffness: 600,
+  damping: 20,
+  mass: 0.9,
+};
+const CLICK_GUARD_MS = 150;
+
+const FLOAT = [
+  {
+    y: [0, -10, -4, -13, 0],
+    rotate: [-0.7, 0.85, -0.3, 1.25, -0.7],
+    times: [0, 0.3, 0.6, 0.8, 1],
+    duration: 7.5,
+    delay: 0,
+  },
+  {
+    y: [-3, -13, -1, -15, -3],
+    rotate: [0.4, -0.8, 0.85, -0.3, 0.4],
+    times: [0, 0.25, 0.55, 0.8, 1],
+    duration: 8,
+    delay: -2.5,
+  },
+  {
+    y: [-5, -14, -2, -11, -5],
+    rotate: [0.75, -0.4, 0.35, -0.8, 0.75],
+    times: [0, 0.2, 0.55, 0.75, 1],
+    duration: 7,
+    delay: -4.2,
+  },
+  {
+    y: [-1, -12, -3, -14, -1],
+    rotate: [-0.3, 0.75, -0.7, 0.4, -0.3],
+    times: [0, 0.35, 0.65, 0.85, 1],
+    duration: 8.5,
+    delay: -1.3,
+  },
+  {
+    y: [-3, -15, -2, -13, -3],
+    rotate: [0.55, -0.9, 0.5, -0.65, 0.55],
+    times: [0, 0.28, 0.58, 0.82, 1],
+    duration: 7.5,
+    delay: -3.4,
+  },
+];
 
 interface CardProps {
   user: {
@@ -14,59 +62,52 @@ interface CardProps {
     status?: string;
     socials?: { type: string; url: string }[];
     img: string;
+    accentColor?: string;
+    needsOutline?: boolean;
   };
+  index?: number;
+  size?: number;
   onClick: () => void;
-  onPlayAudio: (sound: string) => void;
+  onPlayAudio?: (sound: string) => void;
+  isDetailOpen?: boolean;
+  isFocused?: boolean;
 }
 
-const Card = ({ user, onClick, onPlayAudio }: CardProps) => {
-  const isDragging = useRef(false);
-  const controls = useAnimation();
+const Card = ({
+  user,
+  index = 0,
+  size = 192,
+  onClick,
+  onPlayAudio,
+  isDetailOpen = false,
+}: CardProps) => {
   const [isHovered, setIsHovered] = useState(false);
-
-  // Levitating Effect
-  const startLevitating = async () => {
-    const randomDuration = Math.random() * 2 + 3; // 3 to 5 seconds
-    const randomDelay = Math.random() * 2; // 0 to 2s using delay
-    const randomY = Math.random() * 5 + 10; // 10 to 15px move
-
-    await controls.start({
-      y: [0, -randomY, 0],
-      rotate: 0, // Enforce no rotation
-      transition: {
-        y: {
-          repeat: Infinity,
-          duration: randomDuration,
-          ease: "easeInOut",
-          delay: randomDelay,
-        },
-        rotate: { duration: 0 }, // Instant reset if any
-      },
-    });
-  };
+  const reduceMotion = useReducedMotion();
+  const dragControls = useAnimation();
+  const isDragging = useRef(false);
+  const isMounted = useRef(true);
 
   useEffect(() => {
-    startLevitating();
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+    };
   }, []);
+
+  const float = FLOAT[index % FLOAT.length];
+  const showTooltip = isHovered && !isDetailOpen;
+  const entranceDelay = 0.08 + index * 0.12;
 
   return (
     <m.div
-      layoutId={`card-${user.id}`}
-      className="relative flex size-32 cursor-pointer items-center justify-center rounded-md border bg-[#0A0A0A] md:size-32 lg:size-48"
-      drag
-      dragMomentum={false}
-      dragElastic={0.35}
-      animate={controls}
-      initial={{ y: 0, rotate: 0 }}
-      whileHover="hover"
-      onHoverStart={() => setIsHovered(true)}
-      onHoverEnd={() => setIsHovered(false)}
       role="button"
       tabIndex={0}
-      onClick={() => {
-        if (!isDragging.current) {
-          onClick();
-        }
+      drag={isDetailOpen ? false : true}
+      dragMomentum={false}
+      dragElastic={0.35}
+      animate={dragControls}
+      onTap={() => {
+        if (!isDragging.current) onClick();
       }}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
@@ -74,84 +115,119 @@ const Card = ({ user, onClick, onPlayAudio }: CardProps) => {
           onClick();
         }
       }}
-      variants={{
-        initial: {
-          scale: 1,
-          zIndex: 0,
-          borderColor: "rgba(255, 255, 255, 0.1)",
-          backgroundColor: "rgba(10, 10, 10, 1)",
-          rotate: 0, // Ensure no rotation in variants
-        },
-        hover: {
-          scale: 1.2,
-          zIndex: 50,
-          borderColor: "#1346E7",
-          backgroundColor: "rgba(10, 10, 10, 1)",
-          transition: { duration: 0.2, ease: "easeOut" },
-          cursor: "pointer",
-          rotate: 0, // Ensure no rotation on hover
-          // opacity: 1,
-        },
+      onMouseEnter={() => {
+        if (!isDetailOpen && !isDragging.current) setIsHovered(true);
       }}
+      onMouseLeave={() => setIsHovered(false)}
       onDragStart={() => {
-        setIsHovered(false); // Hide tooltip on drag
+        setIsHovered(false);
         isDragging.current = true;
-        controls.stop(); // Stop levitation when dragging starts
-        controls.start({
-          cursor: "grabbing",
-          rotate: 0,
-        });
-        onPlayAudio("tap");
+        onPlayAudio?.("tap");
       }}
       onDragEnd={async () => {
-        onPlayAudio("release");
-        setTimeout(() => {
-          isDragging.current = false;
-        }, 150);
-
-        // Reset to center first
-        await controls.start({
+        onPlayAudio?.("release");
+        await dragControls.start({
           x: 0,
           y: 0,
           rotate: 0,
           scale: 1,
-          zIndex: 0,
-          transition: { type: "spring", stiffness: 600, damping: 20 },
-          cursor: "pointer",
+          transition: SNAPBACK,
         });
-
-        // Resume levitation
-        startLevitating();
+        setTimeout(() => {
+          if (isMounted.current) isDragging.current = false;
+        }, CLICK_GUARD_MS);
+      }}
+      style={{
+        position: "relative",
+        display: "block",
+        cursor: isDetailOpen ? "pointer" : "grab",
+        outline: "none",
+        WebkitTapHighlightColor: "transparent",
       }}
     >
-      <Image
-        src={user.img}
-        alt={user.name}
-        className="opacity-100 pointer-events-none absolute inset-0 size-full rounded-md object-cover transition-all duration-300"
-        fill
-        sizes="300px"
-      />
-
-      {/* Noise Overlay */}
-      <div className="pointer-events-none absolute inset-0 bg-black/40" />
-      <div className="pointer-events-none absolute inset-0 bg-white opacity-[0.03]" />
-
       <AnimatePresence>
-        {isHovered && (
-          <m.div
-            key="tooltip"
-            className="pointer-events-none absolute -top-12 left-1/2 z-50 -translate-x-1/2 rounded-full border border-white/10 bg-black/90 px-3 py-1.5 whitespace-nowrap"
-            initial={{ opacity: 0, y: 10, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 10, scale: 0.9 }}
-            transition={{ type: "spring", stiffness: 300, damping: 20 }}
+        {showTooltip && (
+          <m.span
+            key="tip"
+            className="pointer-events-none absolute left-1/2 z-10 rounded-full border border-white/10 bg-[#0d0d0d] px-3 py-1.5 text-sm font-medium whitespace-nowrap text-white/90"
+            style={{
+              bottom: "calc(100% + 8px)",
+              translateX: "-50%",
+            }}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 6 }}
+            transition={TOOLTIP_TIMING}
           >
-            <h1 className="font-sans text-sm font-medium text-white/90 select-none">
-              {user.name}
-            </h1>
-          </m.div>
+            {user.name}
+          </m.span>
         )}
       </AnimatePresence>
+
+      <m.div
+        className="block"
+        style={{ willChange: "transform" }}
+        initial={
+          reduceMotion
+            ? { opacity: 1, scale: 1, y: 0 }
+            : { opacity: 0, scale: 0.65, y: 50 }
+        }
+        animate={
+          reduceMotion || isDetailOpen
+            ? { opacity: 1, scale: 1, y: 0, rotate: 0 }
+            : {
+                opacity: 1,
+                scale: 1,
+                y: float.y,
+                rotate: float.rotate,
+              }
+        }
+        transition={
+          reduceMotion || isDetailOpen
+            ? { duration: 0.4, ease: EASE_OUT }
+            : {
+                opacity: { duration: 0.85, delay: entranceDelay, ease: EASE_OUT },
+                scale: { duration: 0.85, delay: entranceDelay, ease: EASE_OUT },
+                y: {
+                  duration: float.duration,
+                  delay: float.delay,
+                  times: float.times,
+                  ease: "easeInOut",
+                  repeat: Infinity,
+                },
+                rotate: {
+                  duration: float.duration,
+                  delay: float.delay,
+                  times: float.times,
+                  ease: "easeInOut",
+                  repeat: Infinity,
+                },
+              }
+        }
+      >
+        <m.div
+          style={{ width: size, height: size }}
+          animate={{ scale: isHovered && !isDetailOpen ? 1.04 : 1 }}
+          transition={{ duration: 0.2, ease: EASE_OUT }}
+        >
+          <Image
+            src={user.img}
+            alt={user.name}
+            width={size}
+            height={size}
+            className="pointer-events-none block size-full object-cover"
+            style={
+              user.needsOutline && user.accentColor
+                ? {
+                    filter: `drop-shadow(0 0 3px ${user.accentColor}) drop-shadow(0 0 8px ${user.accentColor})`,
+                  }
+                : undefined
+            }
+            draggable={false}
+            priority
+          />
+        </m.div>
+      </m.div>
     </m.div>
   );
 };
