@@ -20,9 +20,9 @@ const productLinks = [
 
 const collaboratorsLinks = [
   { title: "Nexvyn", href: "#" },
-  { title: "Vansh Nagar", href: "#" },
-  { title: "Abhinav Kale", href: "#" },
-  { title: "Mohit Mehtre", href: "#" },
+  { title: "Vansh", href: "#" },
+  { title: "Abhinav", href: "#" },
+  { title: "Mohit", href: "#" },
   { title: "Pranav", href: "#" },
 ];
 

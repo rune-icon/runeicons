@@ -20,7 +20,7 @@ const DevCarousal = () => {
     {
       src: "https://avatars.githubusercontent.com/u/189650812?v=4",
       alt: "Illustrations by ©AarzooAly",
-      title: "Vansh Nagar",
+      title: "Vansh",
     },
     {
       src: "https://avatars.githubusercontent.com/u/100619913?v=4",
@@ -30,7 +30,7 @@ const DevCarousal = () => {
     {
       src: "https://avatars.githubusercontent.com/u/72981345?v=4",
       alt: "Illustrations by ©AarzooAly",
-      title: "Mohit Mehtre",
+      title: "Mohit",
     },
     {
       src: "https://avatars.githubusercontent.com/u/106543236?v=4",
@@ -40,12 +40,12 @@ const DevCarousal = () => {
     {
       src: "https://avatars.githubusercontent.com/u/133649888?v=4",
       alt: "Illustrations by ©AarzooAly",
-      title: "Abhinav Kale",
+      title: "Abhinav",
     },
     {
       src: "https://avatars.githubusercontent.com/u/189650812?v=4",
       alt: "Illustrations by ©AarzooAly",
-      title: "Vansh Nagar",
+      title: "Vansh",
     },
     {
       src: "https://avatars.githubusercontent.com/u/100619913?v=4",
@@ -55,7 +55,7 @@ const DevCarousal = () => {
     {
       src: "https://avatars.githubusercontent.com/u/72981345?v=4",
       alt: "Illustrations by ©AarzooAly",
-      title: "Mohit Mehtre",
+      title: "Mohit",
     },
     {
       src: "https://avatars.githubusercontent.com/u/106543236?v=4",
@@ -65,7 +65,7 @@ const DevCarousal = () => {
     {
       src: "https://avatars.githubusercontent.com/u/133649888?v=4",
       alt: "Illustrations by ©AarzooAly",
-      title: "Abhinav Kale",
+      title: "Abhinav",
     },
   ];
   return (

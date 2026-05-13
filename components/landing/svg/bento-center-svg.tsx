@@ -1,64 +1,62 @@
 "use client";
-import { useEffect, useRef } from "react";
 
-import gsap from "gsap";
+import { useReducedMotion } from "motion/react";
+import * as m from "motion/react-m";
+
+/* ─────────────────────────────────────────────────────────
+ * ANIMATION STORYBOARD — Bento Center Cubes
+ *
+ *    0ms   waiting for viewport (whileInView, amount 0.35)
+ *  600ms   stage 1 — explosion + line extension (sync)
+ *           - top cube     y: +141 → 0           (slides up)
+ *           - bottom cube  y: -141 → 0           (slides down)
+ *           - 6 connectors y2: anchor → free      (extend FROM middle
+ *                                                 cube outward; anchor
+ *                                                 end pinned at middle)
+ * 1750ms   done
+ *
+ * Easing: cubic-bezier(0.23, 1, 0.32, 1)  (matches fynt EASE_OUT)
+ * Reference: fynt apps/web/components/landing-page/hero/HeroAnimation.tsx
+ *
+ * Why animate y2 instead of scaleY: vertical SVG <line> elements have
+ * a 0-width bbox which makes transform-box: fill-box + transform-origin
+ * unreliable. Animating the SVG y2 attribute extends the line from a
+ * pinned anchor point (x1, y1) outward, with the dashed pattern intact
+ * at every frame — the true "explosion view" effect.
+ * ───────────────────────────────────────────────────────── */
+
+const STACKED = { top: 141, bottom: -141 } as const;
+
+const lineVariants = (anchor: number, free: number) => ({
+  initial: { y2: anchor },
+  animate: { y2: free },
+});
+
+const boxVariants = (yStart: number) => ({
+  initial: { y: yStart },
+  animate: { y: 0 },
+});
 
 const BentoCenterSvg = () => {
-  const svgRef = useRef<SVGSVGElement>(null);
+  const reduced = useReducedMotion();
 
-  useEffect(() => {
-    const svg = svgRef.current;
-    if (!svg) return;
-
-    const bottomBox = svg.querySelector(".bottom-box");
-    const topBox = svg.querySelector(".top-box");
-    const lines = svg.querySelectorAll(".lines");
-
-    // Set initial state
-    gsap.set(bottomBox, { y: -141 });
-    gsap.set(topBox, { y: 141 });
-    gsap.set(lines, { opacity: 0 });
-
-    let hasAnimated = false;
-    let tl: gsap.core.Timeline | null = null;
-
-    const playAnimation = () => {
-      if (hasAnimated) return;
-      hasAnimated = true;
-
-      // Timeline for sequencing
-      tl = gsap.timeline();
-      tl.to(bottomBox, { y: 0, duration: 1.4, ease: "power4.out" })
-        .to(topBox, { y: 0, duration: 1.4, ease: "power4.out" }, "<")
-        .to(lines, { opacity: 1, duration: 0.7, ease: "power2.out" }, "+=0.1");
-    };
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry.isIntersecting) return;
-        playAnimation();
-        observer.disconnect();
-      },
-      { threshold: 0.35 },
-    );
-
-    observer.observe(svg);
-
-    return () => {
-      observer.disconnect();
-      tl?.kill();
-    };
-  }, []);
+  const transition = {
+    duration: reduced ? 0 : 1.15,
+    delay: reduced ? 0 : 0.6,
+    ease: [0.23, 1, 0.32, 1] as [number, number, number, number],
+  };
 
   return (
-    <svg
-      ref={svgRef}
+    <m.svg
       className="w-full invert dark:invert-0"
       viewBox="0 0 176 403"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      initial="initial"
+      whileInView="animate"
+      viewport={{ once: true, amount: 0.35 }}
     >
-      <g style={{ transform: "translateY(-141px)" }} className="bottom-box">
+      <m.g variants={boxVariants(STACKED.bottom)} transition={transition}>
         <path
           d="M14.1738 340L72.6309 373.75L73.4961 374.25V399.75L13.7412 365.25V339.75L14.1738 340Z"
           fill="black"
@@ -597,28 +595,31 @@ const BentoCenterSvg = () => {
             strokeLinejoin="round"
           />
         </g>
-      </g>
-      <line
-        className="lines"
+      </m.g>
+      <m.line
+        variants={lineVariants(234, 370)}
+        transition={transition}
         x1="86.5"
-        y1="370"
+        y1="234"
         x2="86.5"
-        y2="234"
         stroke="url(#paint0_linear_221_840)"
         strokeDasharray="2 2"
       />
-      <path
-        className="lines"
-        d="M19.5 332.5L19.5 196"
+      <m.line
+        variants={lineVariants(196, 332.5)}
+        transition={transition}
+        x1="19.5"
+        y1="196"
+        x2="19.5"
         stroke="url(#paint1_linear_221_840)"
         strokeDasharray="2 2"
       />
-      <line
-        className="lines"
+      <m.line
+        variants={lineVariants(196, 332)}
+        transition={transition}
         x1="153.5"
-        y1="332"
+        y1="196"
         x2="153.5"
-        y2="196"
         stroke="url(#paint2_linear_221_840)"
         strokeDasharray="2 2"
       />
@@ -1033,34 +1034,34 @@ const BentoCenterSvg = () => {
           />
         </g>
       </g>
-      <line
-        className="lines"
+      <m.line
+        variants={lineVariants(229, 87)}
+        transition={transition}
         x1="88.5"
         y1="229"
         x2="88.5"
-        y2="87"
         stroke="url(#paint3_linear_221_840)"
         strokeDasharray="2 2"
       />
-      <line
-        className="lines"
+      <m.line
+        variants={lineVariants(192, 50)}
+        transition={transition}
         x1="21.5"
         y1="192"
         x2="21.5"
-        y2="50"
         stroke="url(#paint4_linear_221_840)"
         strokeDasharray="2 2"
       />
-      <line
-        className="lines"
+      <m.line
+        variants={lineVariants(191, 49)}
+        transition={transition}
         x1="155.5"
         y1="191"
         x2="155.5"
-        y2="49"
         stroke="url(#paint5_linear_221_840)"
         strokeDasharray="2 2"
       />
-      <g style={{ transform: "translateY(141px)" }} className="top-box">
+      <m.g variants={boxVariants(STACKED.top)} transition={transition}>
         <path
           d="M16.1738 58L74.6309 91.75L75.4961 92.25V117.75L15.7412 83.25V57.75L16.1738 58Z"
           fill="black"
@@ -1590,7 +1591,7 @@ const BentoCenterSvg = () => {
             strokeLinejoin="round"
           />
         </g>
-      </g>
+      </m.g>
       <defs>
         <linearGradient
           id="paint0_linear_221_840"
@@ -1691,7 +1692,7 @@ const BentoCenterSvg = () => {
           />
         </clipPath>
       </defs>
-    </svg>
+    </m.svg>
   );
 };
 
