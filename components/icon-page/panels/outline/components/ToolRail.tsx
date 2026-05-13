@@ -28,9 +28,9 @@ export function ToolRail({ activeType = "normal", onTypeChange, onHelpClick }: T
   const [showFeedback, setShowFeedback] = useState(false);
 
   return (
-    <aside className="bg-workspace-pattern relative z-10 flex h-full flex-col justify-between border-r border-border p-2">
-      <div className="pointer-events-none absolute inset-0 bg-background/95" />
-      <div className="bg-pattern-vertical-dashes pointer-events-none absolute inset-0 opacity-[0.6]" />
+    <aside className="relative z-10 flex h-full flex-col justify-between border-r border-border bg-background p-2">
+      <div className="bg-pattern-vertical-dashes pointer-events-none absolute inset-0 opacity-100" />
+
       <div className="relative z-10 flex h-full flex-col">
         <IconTypeList activeType={activeType} onTypeChange={onTypeChange} compact />
         <div className="mt-auto flex justify-center pt-4 relative">

@@ -35,7 +35,7 @@ export function HeaderPanel({ className }: HeaderPanelProps) {
         className,
       )}
     >
-      <div className="bg-pattern-vertical-dashes pointer-events-none absolute inset-0 z-0 opacity-[0.8]" />
+      <div className="bg-pattern-vertical-dashes pointer-events-none absolute inset-0" />
       <div className="relative z-10 flex h-full w-full">
         <Link
           href="/"

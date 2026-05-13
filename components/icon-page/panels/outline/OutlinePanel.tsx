@@ -27,9 +27,9 @@ export function OutlinePanel({
   onRemoveFromTray,
 }: OutlinePanelProps) {
   return (
-    <div className="bg-workspace-pattern relative flex h-full flex-col border-r border-border">
-      <div className="pointer-events-none absolute inset-0 bg-background/80" />
-      <div className="bg-pattern-vertical-dashes pointer-events-none absolute inset-0 z-0 opacity-[0.8]" />
+    <div className="relative flex h-full flex-col border-r border-border bg-background">
+      <div className="bg-pattern-vertical-dashes pointer-events-none absolute inset-0 opacity-100" />
+
       
       <div className="relative z-10 flex h-full flex-col">
         <div className="border-b border-border px-3 pt-3 pb-2">
