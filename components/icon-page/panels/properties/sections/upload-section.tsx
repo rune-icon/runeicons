@@ -1,15 +1,12 @@
 "use client";
 
 import { useState, useCallback, useRef } from "react";
-import { Card } from "@/components/ui/card";
 import {
-  ChevronDown,
   AlertCircle,
   Loader2,
   Upload,
   X,
-  Trash2,
-  AlertTriangle,
+  Trash2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -19,6 +16,7 @@ import { useTuning } from "@/components/icon-page/tuning";
 
 interface UploadSectionProps {
   state: CustomizationState;
+  onIconSelect?: (icon: any) => void;
   isCollapsed?: boolean;
   onToggle?: () => void;
   isDragging: boolean;
@@ -33,8 +31,11 @@ interface UploadSectionProps {
   maxIcons: number;
 }
 
+import { Section } from "../components/Section";
+
 export function UploadSection({
   state,
+  onIconSelect,
   isDragging,
   uploadError,
   setUploadError,
@@ -75,15 +76,14 @@ export function UploadSection({
   }, [armedDeleteId, disarmDelete, armDelete, deleteIcon]);
 
   return (
-    <div className="pt-2 px-4 pb-4">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-xs font-semibold text-foreground uppercase tracking-wider opacity-70">
-          Upload & Custom Icons
-        </h3>
+    <Section 
+      title="Uploads" 
+      headerAction={
         <span className="text-[10px] font-bold text-muted-foreground bg-muted/50 px-2 py-0.5 rounded-full">
           {state.customIcons.length}/{maxIcons}
         </span>
-      </div>
+      }
+    >
 
       <div id="section-upload-content" className="space-y-4">
         {uploadError && (
@@ -96,7 +96,7 @@ export function UploadSection({
             <p className="text-xs text-destructive leading-relaxed">{uploadError}</p>
             <button
               onClick={() => setUploadError(null)}
-              className="ml-auto text-destructive hover:text-destructive/80"
+              className="ml-auto text-destructive hover:text-destructive/80 focus-visible:ring-2 focus-visible:ring-destructive focus-visible:ring-offset-2 rounded-sm outline-none"
               aria-label="Dismiss error"
             >
               <X className="h-3 w-3" />
@@ -109,9 +109,10 @@ export function UploadSection({
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
           className={cn(
-            "border-2 border-dashed rounded-xl p-6 text-center transition-all duration-200",
+            "border-2 border-dashed rounded-xl p-6 text-center transition-all duration-200 focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2",
             isDragging ? "border-primary bg-primary/5 scale-[0.99] shadow-inner" : "border-border hover:border-border/80",
             isUploading && "opacity-50 pointer-events-none",
+            state.customIcons.length >= maxIcons && "opacity-50 cursor-not-allowed grayscale pointer-events-none"
           )}
           role="region"
           aria-label="File upload area"
@@ -136,14 +137,14 @@ export function UploadSection({
               <p className="text-[10px] font-bold text-muted-foreground/60 mb-4 px-6">
                 SVG or PNG (MAX 5MB)
               </p>
-              <label>
+              <label className="cursor-pointer">
                 <input
                   type="file"
                   accept="image/svg+xml,image/png"
                   multiple
                   onChange={handleFileUpload}
-                  className="hidden"
-                  aria-label="Upload custom icon files"
+                  className="sr-only"
+                  aria-label="Upload SVG icon"
                   disabled={state.customIcons.length >= maxIcons}
                 />
                 <Button
@@ -162,21 +163,44 @@ export function UploadSection({
 
         {state.customIcons.length > 0 && (
           <div className="pt-2">
-            <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-3 block opacity-70">
+            <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-3 block opacity-70 text-balance">
               Custom Icons
             </label>
-            <div
+            <motion.div
               className="space-y-2"
               role="list"
               aria-label="Uploaded custom icons"
+              initial="hidden"
+              animate="visible"
+              variants={{
+                hidden: { opacity: 0 },
+                visible: {
+                  opacity: 1,
+                  transition: {
+                    staggerChildren: 0.1
+                  }
+                }
+              }}
             >
               {state.customIcons.map((icon) => (
-                <div
+                <motion.div
                   key={icon.id}
-                  className="flex items-center gap-3 p-2 rounded-xl border border-border bg-muted/10 hover:bg-muted/30 transition-all duration-200 group"
+                  variants={{
+                    hidden: { opacity: 0, y: 12, filter: "blur(4px)" },
+                    visible: { opacity: 1, y: 0, filter: "blur(0px)" }
+                  }}
+                  className="flex items-center gap-3 p-2 rounded-xl border border-border bg-muted/10 hover:bg-muted/30 transition-[background-color,border-color,scale] duration-200 group cursor-pointer active:scale-[0.98] focus-within:ring-2 focus-within:ring-primary"
                   role="listitem"
+                  onClick={() => onIconSelect?.({
+                    id: icon.id,
+                    name: icon.name,
+                    icon: null,
+                    url: icon.url,
+                    category: "custom",
+                    tags: ["custom", "upload"]
+                  })}
                 >
-                  <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-background border border-border shadow-sm p-1.5 overflow-hidden">
+                  <div className="w-10 h-10 flex items-center justify-center rounded-[4px] bg-background border border-border shadow-sm p-1.5 overflow-hidden outline outline-1 -outline-offset-1 outline-black/10 dark:outline-white/10">
                     <img
                       src={icon.url || "/placeholder.svg"}
                       alt={icon.name}
@@ -199,29 +223,31 @@ export function UploadSection({
                       size="icon"
                       onClick={() => handleDeleteClick(icon.id, icon.name)}
                       className={cn(
-                        "h-8 w-8 transition-all duration-200 rounded-lg",
+                        "h-8 w-8 transition-[scale,background-color,color,opacity] duration-200 rounded-lg active:scale-[0.96] outline-none focus-visible:ring-2",
                         armedDeleteId === icon.id
-                          ? "bg-destructive/10 text-destructive hover:bg-destructive/20"
-                          : "text-muted-foreground hover:text-foreground opacity-0 group-hover:opacity-100"
+                          ? "bg-destructive text-white ring-destructive/30"
+                          : "text-muted-foreground hover:text-destructive hover:bg-destructive/10 focus-visible:ring-destructive opacity-0 group-hover:opacity-100"
                       )}
-                      aria-label="Delete"
+                      aria-label={armedDeleteId === icon.id ? `Confirm delete ${icon.name}` : `Delete ${icon.name}`}
                     >
                       <AnimatePresence mode="wait">
                         {armedDeleteId === icon.id ? (
                           <motion.div
                             key="alert"
-                            initial={{ scale: 0.8, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            exit={{ scale: 0.8, opacity: 0 }}
+                            initial={{ scale: 0.8, opacity: 0, filter: "blur(4px)" }}
+                            animate={{ scale: 1, opacity: 1, filter: "blur(0px)" }}
+                            exit={{ scale: 0.25, opacity: 0, filter: "blur(4px)" }}
+                            transition={{ type: "spring", duration: 0.3, bounce: 0 }}
                           >
                             <Trash2 className="h-4 w-4" />
                           </motion.div>
                         ) : (
                           <motion.div
                             key="trash"
-                            initial={{ scale: 0.8, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            exit={{ scale: 0.8, opacity: 0 }}
+                            initial={{ scale: 0.8, opacity: 0, filter: "blur(4px)" }}
+                            animate={{ scale: 1, opacity: 1, filter: "blur(0px)" }}
+                            exit={{ scale: 0.25, opacity: 0, filter: "blur(4px)" }}
+                            transition={{ type: "spring", duration: 0.3, bounce: 0 }}
                           >
                             <Trash2 className="h-4 w-4" />
                           </motion.div>
@@ -229,12 +255,12 @@ export function UploadSection({
                       </AnimatePresence>
                     </Button>
                   </motion.div>
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           </div>
         )}
       </div>
-    </div>
+    </Section>
   );
 }

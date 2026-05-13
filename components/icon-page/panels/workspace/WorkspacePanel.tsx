@@ -10,7 +10,7 @@ export interface WorkspacePanelProps {
   trayIcons: IconData[];
   selectedIcon: IconData | null;
   onSelectIcon: (icon: IconData) => void;
-  onRemoveFromTray: (iconName: string) => void;
+  onRemoveFromTray: (iconId: string) => void;
   onReset: () => void;
   onUndo: () => void;
   onRedo: () => void;
@@ -52,7 +52,7 @@ export function WorkspacePanel({
           showGrid={showGrid}
         />
 
-        <div className="absolute bottom-9.5 left-1/2 -translate-x-1/2 z-10">
+        <div className="absolute bottom-9.5 left-1/2 -translate-x-1/2 z-40">
           <WorkspaceActionBar
             onDownload={() => {}}
             onReset={onReset}

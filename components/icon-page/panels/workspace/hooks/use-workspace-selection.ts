@@ -1,17 +1,16 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
-import { IconCategory, IconData } from "@/lib/types";
+import { IconCategory, IconData, CustomizationState } from "@/lib/types";
 import { DEFAULT_TRAY_ICONS } from "@/constants/workspace";
-import { SAMPLE_ICONS } from "../../icon-library/constants";
+import { REAL_ICONS } from "../../icon-library/icons-data";
 
-export function useWorkspaceSelection() {
+export function useWorkspaceSelection(customIcons: CustomizationState["customIcons"] = []) {
   const [activeCategory, setActiveCategory] = useState<IconCategory>("all");
   const [selectedIcon, setSelectedIcon] = useState<IconData | null>(null);
   const [trayIcons, setTrayIcons] = useState<IconData[]>(DEFAULT_TRAY_ICONS);
   const [hasLoaded, setHasLoaded] = useState(false);
 
-  // 1. Load from LocalStorage
   useEffect(() => {
     if (typeof window === "undefined" || hasLoaded) return;
 
@@ -19,15 +18,27 @@ export function useWorkspaceSelection() {
       const savedIconId = localStorage.getItem("rune_selected_icon_id");
       const savedTrayIds = localStorage.getItem("rune_tray_icon_ids");
 
+      const allIcons = [
+        ...REAL_ICONS,
+        ...customIcons.map((ci) => ({
+          id: ci.id,
+          name: ci.name,
+          icon: null as any,
+          url: ci.url,
+          category: "custom" as const,
+          tags: ["custom", "upload"],
+        })),
+      ];
+
       if (savedIconId) {
-        const icon = SAMPLE_ICONS.find((i: IconData) => i.id === savedIconId);
+        const icon = allIcons.find((i: any) => i.id === savedIconId);
         if (icon) setSelectedIcon(icon);
       }
 
       if (savedTrayIds) {
         const ids = JSON.parse(savedTrayIds) as string[];
         const icons = ids
-          .map((id) => SAMPLE_ICONS.find((i: IconData) => i.id === id))
+          .map((id) => allIcons.find((i: any) => i.id === id))
           .filter(Boolean) as IconData[];
         if (icons.length > 0) setTrayIcons(icons);
       }
@@ -36,9 +47,8 @@ export function useWorkspaceSelection() {
     } finally {
       setHasLoaded(true);
     }
-  }, [hasLoaded]);
+  }, [hasLoaded, customIcons]);
 
-  // 2. Save to LocalStorage
   useEffect(() => {
     if (!hasLoaded) return;
 
@@ -57,17 +67,21 @@ export function useWorkspaceSelection() {
 
   const handleIconSelect = useCallback((icon: IconData) => {
     setSelectedIcon(icon);
-    // Automatically add to tray if not already there and space available
     setTrayIcons((prev) => {
-      if (prev.find((i) => i.name === icon.name)) return prev;
-      if (prev.length >= 5) return [icon, ...prev.slice(0, 4)];
+      if (prev.find((i) => i.id === icon.id)) return prev;
+      if (prev.length >= 8) return [icon, ...prev.slice(0, 7)];
       return [icon, ...prev];
     });
   }, []);
 
-  const handleRemoveFromTray = (iconName: string) => {
-    setTrayIcons((prev) => prev.filter((i) => i.name !== iconName));
+  const handleRemoveFromTray = (iconId: string) => {
+    setTrayIcons((prev) => prev.filter((i) => i.id !== iconId));
   };
+
+  const handleRemoveById = useCallback((id: string) => {
+    setTrayIcons((prev) => prev.filter((i) => i.id !== id));
+    setSelectedIcon((prev) => (prev?.id === id ? null : prev));
+  }, []);
 
   return {
     activeCategory,
@@ -77,5 +91,6 @@ export function useWorkspaceSelection() {
     trayIcons,
     handleIconSelect,
     handleRemoveFromTray,
+    handleRemoveById,
   };
 }

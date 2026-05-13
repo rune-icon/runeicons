@@ -3,12 +3,13 @@ import DOMPurify from "dompurify";
 import { toast } from "sonner";
 import { CustomizationState } from "@/lib/types";
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const MAX_FILE_SIZE = 5 * 1024 * 1024;
 const MAX_CUSTOM_ICONS = 10;
 
 export function useCustomIconUpload(
   state: CustomizationState,
-  onChange: (updates: Partial<CustomizationState>) => void
+  onChange: (updates: Partial<CustomizationState>) => void,
+  onDeleteIcon?: (id: string) => void
 ) {
   const [isDragging, setIsDragging] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
@@ -139,11 +140,13 @@ export function useCustomIconUpload(
         URL.revokeObjectURL(icon.url);
       }
 
+      onDeleteIcon?.(id);
+
       onChange({
         customIcons: state.customIcons.filter((icon) => icon.id !== id),
       });
     },
-    [state.customIcons, onChange],
+    [state.customIcons, onChange, onDeleteIcon],
   );
 
   return {

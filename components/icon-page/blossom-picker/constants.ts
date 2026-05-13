@@ -29,7 +29,7 @@ export const BLOSSOM_NUMBERS = {
     arcThumbDragScale: 1.1,
     arcGradientSteps: 11,
     petalHoverScale: 1.1,
-    collapsedSwatchSize: 32,
+    collapsedSwatchSize: 20,
     collapsedSwatchBorderOpacity: 0.3,
     centerBorderOpacity: 0.1,
     outerRingFillOpacity: 0.15,

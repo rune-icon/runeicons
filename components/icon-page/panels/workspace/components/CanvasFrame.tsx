@@ -1,6 +1,8 @@
 import React, { ReactNode } from "react";
+
+import { AnimatePresence, motion } from "motion/react";
+
 import { WorkspaceGround } from "./WorkspaceGround";
-import { motion, AnimatePresence } from "motion/react";
 
 interface CanvasFrameProps {
   children: ReactNode;
@@ -10,7 +12,7 @@ interface CanvasFrameProps {
 
 export function CanvasFrame({ children, trayNode, showGrid }: CanvasFrameProps) {
   return (
-    <div className="flex-1 flex flex-col relative overflow-hidden">
+    <div className="relative flex flex-1 flex-col overflow-hidden">
       <AnimatePresence>
         {showGrid && (
           <motion.div
@@ -24,9 +26,8 @@ export function CanvasFrame({ children, trayNode, showGrid }: CanvasFrameProps) 
           </motion.div>
         )}
       </AnimatePresence>
-
-      <div className="flex-1 flex items-center justify-center cursor-default relative z-10">
-        <div className="w-full aspect-[11/8] flex flex-col relative bg-transparent shadow-none">
+      <div className="relative z-10 flex flex-1 -translate-y-10 cursor-default items-center justify-center">
+        <div className="relative flex aspect-[11/8] w-full flex-col bg-transparent shadow-none">
           {children}
           {trayNode}
         </div>

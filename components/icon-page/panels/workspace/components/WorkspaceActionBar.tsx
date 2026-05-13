@@ -1,21 +1,29 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
-import { Button } from "@/components/ui/button";
+import { useCallback, useRef, useState } from "react";
+
 import {
-  Download,
-  RotateCcw,
-  Code,
-  Undo,
-  Redo,
-  ChevronDown,
-  FileCode,
-  Box,
-  Layers,
+  Braces,
   Check,
-  X,
+  ChevronDown,
+  Code,
+  Download,
+  FileCode,
+  FileJson,
   Grid3X3,
+  Image,
+  Layers,
+  Redo,
+  RotateCcw,
+  Sparkles,
+  Undo,
+  X,
+  Zap,
 } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
+import { toast } from "sonner";
+
+import { useTuning } from "@/components/icon-page/tuning";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,24 +31,21 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { toast } from "sonner";
-import { cn } from "@/lib/utils";
-import { IconData, CustomizationState } from "@/lib/types";
-import { generateStandaloneSvg } from "@/lib/svg-export-utils";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
   generateReactSnippet,
-  generateFramerMotionSnippet,
-  generateTailwindSnippet,
-  generateFigmaSvgSnippet,
 } from "@/lib/code-snippets";
-import { useTuning } from "@/components/icon-page/tuning";
-import { motion, AnimatePresence } from "motion/react";
+import {
+  buildComponentName,
+  generateFramerComponent,
+  generateGsapComponent,
+  generateJsxComponent,
+  generatePng,
+  generateStandaloneSvg,
+  generateTsxComponent,
+} from "@/lib/svg-export-utils";
+import { CustomizationState, IconData } from "@/lib/types";
+import { cn } from "@/lib/utils";
 
 export interface WorkspaceActionBarProps {
   onDownload?: () => void;
@@ -73,6 +78,18 @@ export function WorkspaceActionBar({
   onChange,
   className,
 }: WorkspaceActionBarProps) {
+  const [isPending, setIsPending] = useState(false);
+  const isAnimated = state?.motion?.enabled === true;
+
+  const withPending = async (fn: () => Promise<void>) => {
+    if (isPending) return;
+    setIsPending(true);
+    try {
+      await fn();
+    } finally {
+      setIsPending(false);
+    }
+  };
   useTuning();
   const [isResetArmed, setIsResetArmed] = useState(false);
   const [timeLeft, setTimeLeft] = useState(5);
@@ -95,8 +112,7 @@ export function WorkspaceActionBar({
   const armReset = useCallback(() => {
     setIsResetArmed(true);
     setTimeLeft(5);
-    
-    // Countdown interval
+
     countdownIntervalRef.current = setInterval(() => {
       setTimeLeft((prev) => {
         if (prev <= 1) {
@@ -107,7 +123,6 @@ export function WorkspaceActionBar({
       });
     }, 1000);
 
-    // Safety auto-close timeout
     resetTimeoutRef.current = setTimeout(() => {
       disarmReset();
     }, 5000);
@@ -134,10 +149,10 @@ export function WorkspaceActionBar({
     }
   };
 
-  const getSvgContent = () => {
+  const getSvgContent = async (): Promise<string> => {
     if (!selectedIcon || !state) return "";
     try {
-      return generateStandaloneSvg(selectedIcon, state);
+      return await generateStandaloneSvg(selectedIcon, state);
     } catch (error) {
       console.error("Failed to generate SVG:", error);
       toast.error("Enhanced export failed. Falling back to basic copy.");
@@ -148,8 +163,8 @@ export function WorkspaceActionBar({
     }
   };
 
-  const downloadSvg = () => {
-    const svg = getSvgContent();
+  const downloadSvg = async () => {
+    const svg = await getSvgContent();
     if (!svg) return;
     const blob = new Blob([svg], { type: "image/svg+xml" });
     const url = URL.createObjectURL(blob);
@@ -164,296 +179,452 @@ export function WorkspaceActionBar({
     onDownload?.();
   };
 
+  const downloadFile = (content: string, filename: string, mimeType: string) => {
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  };
+
+  const downloadPng = async () => {
+    if (!selectedIcon || !state) return;
+    await withPending(async () => {
+      try {
+        const blob = await generatePng(selectedIcon, state);
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `${selectedIcon.name.toLowerCase().replace(/\s+/g, "-")}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        toast.success("PNG downloaded");
+      } catch {
+        toast.error("Failed to generate PNG");
+      }
+    });
+  };
+
+  const getComponentFilename = (ext: string) =>
+    selectedIcon ? `${buildComponentName(selectedIcon.name)}.${ext}` : `icon.${ext}`;
+
   return (
     <TooltipProvider delayDuration={400}>
       <div
         className={cn(
-          "flex items-center gap-3 px-1 py-1 bg-background/90 backdrop-blur-xl border border-border rounded-xl shadow-[0_1px_2px_rgba(0,0,0,0.1),0_12px_24px_-12px_rgba(0,0,0,0.2)] dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1),0_1px_2px_rgba(0,0,0,0.4),0_12px_24px_-12px_rgba(0,0,0,0.5)] transition-shadow duration-200",
+          "flex h-[46px] items-stretch gap-1.5 rounded-[14px] p-1 border border-black/5 dark:border-white/10 shadow-[inset_0_2px_4px_rgba(0,0,0,0.15)]",
+          "bg-[#f5f5f5] dark:bg-[#1a1a1a]",
           className,
         )}
       >
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-10 px-4 border-border bg-background text-foreground hover:bg-muted flex items-center gap-2 group min-w-[100px] justify-between"
-              aria-label="Change Dimension"
-            >
-              <span className="text-sm font-medium">{state?.width}px</span>
-              <ChevronDown className="h-3 w-3 opacity-50 group-hover:opacity-100 transition-opacity" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            align="start"
-            className="w-24 p-1 bg-card border-border text-foreground"
-          >
-            {[16, 20, 24, 28, 32, 48, 64, 96, 128].map((size) => (
-              <DropdownMenuItem
-                key={size}
-                className="flex items-center justify-between px-3 py-2 text-sm focus:bg-muted focus:text-foreground cursor-pointer"
-                onClick={() => onChange?.({ width: size, height: size })}
+        <div className="flex items-center gap-1 rounded-[10px] bg-[#1d1d1f] p-[3px] shadow-[inset_0_1px_1px_rgba(0,0,0,0.4),0_0_0_1px_rgba(0,0,0,0.5)]">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                onClick={onUndo}
+                disabled={!canUndo}
+                className="flex h-9 w-9 items-center justify-center rounded-[7px] text-[#c9c9cb] transition-all hover:bg-white/5 hover:text-white active:translate-y-[0.5px] disabled:cursor-not-allowed disabled:text-[#4f4f51]"
               >
-                <span>{size}px</span>
-                {state?.width === size && state?.height === size && (
-                  <Check className="h-3.5 w-3.5 ml-2" />
-                )}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-
-        <div className="h-6 w-px bg-border" />
-
-        <div className="flex items-center -space-x-px">
-          <Button
-            onClick={() => {
-              const svg = getSvgContent();
-              if (svg) {
-                copyToClipboard(svg, "SVG");
-              } else {
-                toast.error("Select an icon first");
-              }
-            }}
-            className="relative bg-foreground text-background hover:bg-foreground/90 h-10 px-5 rounded-l-lg rounded-r-none font-medium transition-transform duration-150 ease-out hover:z-10 group overflow-hidden border-r border-background/20"
-            aria-label="Copy SVG to clipboard"
-          >
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-500 ease-out" />
-            <Download className="h-4 w-4 mr-2 group-hover:scale-110 transition-transform duration-200 ease-out" />
-            <span className="relative z-10">Export SVG</span>
-          </Button>
-
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                className="bg-foreground text-background hover:bg-foreground/90 h-10 px-2 rounded-r-lg rounded-l-none border-l border-background/10 transition-colors"
-                aria-label="More Export Options"
-              >
-                <ChevronDown className="h-4 w-4 opacity-70 group-hover:opacity-100 transition-opacity" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              align="end"
-              className="w-56 p-1 bg-card border-border text-foreground"
-            >
-              <DropdownMenuItem
-                className="flex items-center gap-3 px-3 py-2 text-sm focus:bg-muted focus:text-foreground cursor-pointer"
-                onClick={() => {
-                  const svg = getSvgContent();
-                  if (svg) {
-                    copyToClipboard(svg, "SVG");
-                  } else {
-                    toast.error("Select an icon first");
-                  }
-                }}
-              >
-                <FileCode className="h-4 w-4" />
-                <div className="flex-1 flex items-center justify-between">
-                  <span>Copy as SVG</span>
-                  <span className="text-[10px] opacity-50 font-mono">SVG</span>
-                </div>
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className="flex items-center gap-3 px-3 py-2 text-sm focus:bg-muted focus:text-foreground cursor-pointer"
-                onClick={() => {
-                  if (selectedIcon && state) {
-                    copyToClipboard(generateReactSnippet(selectedIcon, state), "React Component");
-                  }
-                }}
-              >
-                <Layers className="h-4 w-4" />
-                <span>Copy as React</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className="flex items-center gap-3 px-3 py-2 text-sm focus:bg-muted focus:text-foreground cursor-pointer"
-                onClick={() => {
-                  if (selectedIcon && state) {
-                    copyToClipboard(generateFigmaSvgSnippet(selectedIcon, state), "Figma SVG");
-                  }
-                }}
-              >
-                <Box className="h-4 w-4" />
-                <span>Copy for Figma</span>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator className="bg-border" />
-              <DropdownMenuItem
-                className="flex items-center gap-3 px-3 py-2 text-sm focus:bg-foreground focus:text-background bg-foreground text-background font-medium cursor-pointer"
-                onClick={downloadSvg}
-              >
-                <Download className="h-4 w-4" />
-                <span>Download as SVG</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-
-
-        <div className="flex items-center gap-2">
-          <AnimatePresence mode="popLayout">
-            {isResetArmed && (
-              <motion.div
-                initial={{ opacity: 0, x: 20, scale: 0.9 }}
-                animate={{ opacity: 1, x: 0, scale: 1 }}
-                exit={{ opacity: 0, x: 20, scale: 0.9 }}
-                className="flex items-center gap-0 bg-muted/50 rounded-lg p-0.5 border border-border overflow-hidden"
-              >
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={handleConfirmReset}
-                  className="h-8 w-8 text-foreground hover:bg-primary/20 bg-primary/10 rounded-md transition-colors"
-                  aria-label="Confirm Reset"
-                >
-                  <Check className="h-3.5 w-3.5" />
-                </Button>
-                <div className="px-2 text-[10px] font-mono font-bold text-muted-foreground w-6 text-center">
-                  {timeLeft}
-                </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={disarmReset}
-                  className="h-8 w-8 text-muted-foreground hover:text-foreground rounded-md transition-colors"
-                  aria-label="Cancel Reset"
-                >
-                  <X className="h-3.5 w-3.5" />
-                </Button>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                <Undo className="h-3.5 w-3.5" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="top">
+              <p>Undo <span className="ml-1 opacity-50 text-[10px]">⌘Z</span></p>
+            </TooltipContent>
+          </Tooltip>
 
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleResetClick}
-                disabled={isResetArmed}
-                className={cn(
-                  "h-10 w-10 transition-all duration-150 ease-out active:scale-[0.97] text-muted-foreground hover:text-foreground hover:bg-muted",
-                  isResetArmed && "opacity-0 scale-75 pointer-events-none"
-                )}
-                aria-label="Reset all customizations"
+              <button
+                onClick={onRedo}
+                disabled={!canRedo}
+                className="flex h-9 w-9 items-center justify-center rounded-[7px] text-[#c9c9cb] transition-all hover:bg-white/5 hover:text-white active:translate-y-[0.5px] disabled:cursor-not-allowed disabled:text-[#4f4f51]"
               >
-                <RotateCcw className="h-4 w-4" />
-              </Button>
+                <Redo className="h-3.5 w-3.5" />
+              </button>
             </TooltipTrigger>
             <TooltipContent side="top">
-              <p>Reset all customizations</p>
+              <p>Redo <span className="ml-1 opacity-50 text-[10px]">⌘Y</span></p>
+            </TooltipContent>
+          </Tooltip>
+ 
+          <div className="relative">
+            <Tooltip open={isResetArmed ? false : undefined}>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={handleResetClick}
+                  className={cn(
+                    "flex h-9 w-9 items-center justify-center rounded-[7px] transition-all active:translate-y-[0.5px]",
+                    isResetArmed
+                      ? "bg-white text-black"
+                      : "text-[#c9c9cb] hover:bg-white/5 hover:text-white"
+                  )}
+                >
+                  <RotateCcw className="h-3.5 w-3.5" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="top"><p>Reset</p></TooltipContent>
+            </Tooltip>
+
+            <AnimatePresence>
+              {isResetArmed && (
+                <motion.div
+                  initial={{ opacity: 0, y: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, y: -80, scale: 1 }}
+                  exit={{ opacity: 0, y: 0, scale: 0.95 }}
+                  className="absolute left-1/2 -translate-x-1/2 flex items-center gap-1 rounded-[9px] bg-[#2c2c2e] p-1 shadow-[0_20px_50px_rgba(0,0,0,0.5),0_0_0_1px_rgba(255,255,255,0.1)] z-[100] whitespace-nowrap"
+                >
+                  <button
+                    onClick={handleConfirmReset}
+                    className="flex h-7 px-3 items-center gap-2 rounded-[6px] bg-white text-black hover:bg-white/90 transition-all font-bold text-[10px] shadow-sm"
+                  >
+                    <Check className="h-3.5 w-3.5" />
+                    <span>Reset</span>
+                    <span className="font-mono text-[9px] tabular-nums text-[#10b981] font-bold">{timeLeft}s</span>
+                  </button>
+                  <button
+                    onClick={disarmReset}
+                    className="flex h-7 w-7 items-center justify-center rounded-[6px] text-white/50 hover:bg-white/5 hover:text-white transition-all"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                  <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-[#2c2c2e] border-r border-b border-white/10 rotate-45 z-[-1]" />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
+
+        <div className="flex items-center rounded-[10px] bg-[#1d1d1f] p-[3px] shadow-[inset_0_1px_1px_rgba(0,0,0,0.4),0_0_0_1px_rgba(0,0,0,0.5)]">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="group flex h-full min-w-[64px] items-center justify-center gap-1.5 rounded-[7px] px-2 text-[#c9c9cb] transition-all hover:bg-white/5 hover:text-white focus:outline-none">
+                <span className="font-mono text-[11px] font-bold tracking-tighter">{state?.width}px</span>
+                <ChevronDown className="h-4 w-4 opacity-50 transition-opacity group-hover:opacity-100" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="center"
+              className="w-[85px] border-white/10 bg-[#2c2c2e] p-1 text-white shadow-xl"
+            >
+              {[16, 20, 24, 28, 32, 48, 64, 96, 128].map((size) => (
+                <DropdownMenuItem
+                  key={size}
+                  className="flex cursor-pointer items-center justify-between rounded-md px-2 py-1 text-[11px] font-medium transition-colors focus:bg-white/10 focus:text-white"
+                  onClick={() => onChange?.({ width: size, height: size })}
+                >
+                  <span>{size}px</span>
+                  {state?.width === size && <Check className="h-2.5 w-2.5 text-white/50" />}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                onClick={onGridToggle}
+                className={cn(
+                  "flex h-full w-9 items-center justify-center rounded-[7px] transition-all active:translate-y-[0.5px]",
+                  showGrid
+                    ? "bg-[#1d1d1f] text-white shadow-[inset_0_0_0_1.5px_rgba(255,255,255,0.95),0_1px_2px_rgba(0,0,0,0.4)]"
+                    : "text-[#c9c9cb] hover:bg-white/5 hover:text-white",
+                )}
+              >
+                <Grid3X3 className="h-3.5 w-3.5" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="top">
+              <p>{showGrid ? "Hide Grid" : "Show Grid"}</p>
             </TooltipContent>
           </Tooltip>
         </div>
 
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-10 w-10 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors duration-150 ease-out active:scale-[0.97]"
-              aria-label="Animation and Code Options"
-            >
-              <Code className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            align="end"
-            className="w-56 p-1 bg-card border-border text-foreground"
+        <div className="flex items-center rounded-[10px] bg-[#1d1d1f] p-[3px] shadow-[inset_0_1px_1px_rgba(0,0,0,0.4),0_0_0_1px_rgba(0,0,0,0.5)]">
+          <button
+            disabled={isPending}
+            onClick={isAnimated ? async () => {
+              if (!selectedIcon || !state) return;
+              await withPending(async () => {
+                try {
+                  const code = await generateJsxComponent(selectedIcon, state);
+                  downloadFile(code, getComponentFilename("jsx"), "text/javascript");
+                  toast.success("JSX component downloaded");
+                } catch {
+                  toast.error("Failed to generate JSX component");
+                }
+              });
+            } : downloadSvg}
+            className="group relative flex h-full flex-1 items-center justify-center gap-2 overflow-hidden rounded-[7px] bg-white px-4 text-center transition-all hover:bg-white/90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40 dark:bg-white dark:text-black"
           >
-            <DropdownMenuItem
-              className="flex items-center gap-3 px-3 py-2 text-sm focus:bg-muted focus:text-foreground cursor-pointer"
-              onClick={() => {
-                if (selectedIcon && state && onCode) {
-                  onCode(generateReactSnippet(selectedIcon, state));
-                }
-              }}
-            >
-              <Code className="h-4 w-4" />
-              <span>View React Code</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              className="flex items-center gap-3 px-3 py-2 text-sm focus:bg-muted focus:text-foreground cursor-pointer"
-              onClick={() => {
-                if (selectedIcon && state) {
-                  copyToClipboard(generateFramerMotionSnippet(selectedIcon, state), "Animation Code");
-                }
-              }}
-            >
-              <Layers className="h-4 w-4" />
-              <span>Copy Animation (Framer)</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              className="flex items-center gap-3 px-3 py-2 text-sm focus:bg-muted focus:text-foreground cursor-pointer"
-              onClick={() => {
-                if (state) {
-                  copyToClipboard(generateTailwindSnippet(state), "CSS Animation");
-                }
-              }}
-            >
-              <FileCode className="h-4 w-4" />
-              <span>Copy CSS Props</span>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+            <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-black/5 to-transparent transition-transform duration-500 ease-out group-hover:translate-x-full" />
+            <Download className="h-3.5 w-3.5" />
+            <span className="text-[10px] font-bold tracking-tight">
+              {isPending ? "Exporting..." : isAnimated ? "Export JSX" : "Export SVG"}
+            </span>
+          </button>
 
-        <div className="h-6 w-px bg-border hidden" />
-
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={onUndo}
-              disabled={!canUndo}
-              className="h-10 w-10 text-muted-foreground hover:text-foreground hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed transition-colors duration-150 ease-out active:scale-[0.97]"
-              aria-label="Undo"
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="group flex h-full w-8 items-center justify-center rounded-[7px] bg-white text-black transition-all hover:bg-white/90 active:scale-[0.98] dark:bg-white dark:text-black">
+                <ChevronDown className="h-4 w-4 opacity-70 transition-opacity group-hover:opacity-100" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="end"
+              className="w-[146px] border-white/10 bg-[#2c2c2e] p-1 text-white shadow-2xl"
             >
-              <Undo className="h-4 w-4" />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent side="top">
-            <p>Undo <span className="opacity-50 text-[10px] ml-1">Ctrl+Z</span></p>
-          </TooltipContent>
-        </Tooltip>
-
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={onRedo}
-              disabled={!canRedo}
-              className="h-10 w-10 text-muted-foreground hover:text-foreground hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed transition-colors duration-150 ease-out active:scale-[0.97]"
-              aria-label="Redo"
-            >
-              <Redo className="h-4 w-4" />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent side="top">
-            <p>Redo <span className="opacity-50 text-[10px] ml-1">Ctrl+Shift+Z</span></p>
-          </TooltipContent>
-        </Tooltip>
-
-        <div className="h-6 w-px bg-border" />
-
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              variant={showGrid ? "secondary" : "ghost"}
-              size="icon"
-              onClick={onGridToggle}
-              className={cn(
-                "h-10 w-10 transition-colors duration-150 ease-out active:scale-[0.97]",
-                showGrid ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-foreground hover:bg-muted"
+              {isAnimated ? (
+                <>
+                  <DropdownMenuItem
+                    disabled={isPending}
+                    className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-[11px] font-medium transition-colors focus:bg-white/10 focus:text-white"
+                    onClick={async () => {
+                      if (!selectedIcon || !state) return;
+                      await withPending(async () => {
+                        try {
+                          const code = await generateJsxComponent(selectedIcon, state);
+                          await copyToClipboard(code, "JSX Component");
+                        } catch {
+                          toast.error("Failed to generate JSX component");
+                        }
+                      });
+                    }}
+                  >
+                    <FileCode className="h-4 w-4 text-white/40" />
+                    <div className="flex flex-1 items-center justify-between">
+                      <span>Copy JSX Component</span>
+                      <span className="font-mono text-[9px] opacity-40">JSX</span>
+                    </div>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    disabled={isPending}
+                    className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-[11px] font-medium transition-colors focus:bg-white/10 focus:text-white"
+                    onClick={async () => {
+                      if (!selectedIcon || !state) return;
+                      await withPending(async () => {
+                        try {
+                          const code = await generateTsxComponent(selectedIcon, state);
+                          await copyToClipboard(code, "TSX Component");
+                        } catch {
+                          toast.error("Failed to generate TSX component");
+                        }
+                      });
+                    }}
+                  >
+                    <FileCode className="h-4 w-4 text-white/40" />
+                    <div className="flex flex-1 items-center justify-between">
+                      <span>Copy TSX Component</span>
+                      <span className="font-mono text-[9px] opacity-40">TSX</span>
+                    </div>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    disabled={isPending}
+                    className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-[11px] font-medium transition-colors focus:bg-white/10 focus:text-white"
+                    onClick={async () => {
+                      const svg = await getSvgContent();
+                      if (svg) copyToClipboard(svg, "SVG (animated)");
+                    }}
+                  >
+                    <FileCode className="h-4 w-4 text-white/40" />
+                    <div className="flex flex-1 items-center justify-between">
+                      <span>Copy as SVG</span>
+                      <span className="font-mono text-[9px] opacity-40">SVG</span>
+                    </div>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator className="bg-white/5" />
+                  <DropdownMenuItem
+                    disabled={isPending}
+                    className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-[11px] font-medium transition-colors focus:bg-white/10 focus:text-white"
+                    onClick={async () => {
+                      if (!selectedIcon || !state) return;
+                      await withPending(async () => {
+                        try {
+                          const code = await generateJsxComponent(selectedIcon, state);
+                          downloadFile(code, getComponentFilename("jsx"), "text/javascript");
+                          toast.success("JSX component downloaded");
+                        } catch {
+                          toast.error("Failed to generate JSX component");
+                        }
+                      });
+                    }}
+                  >
+                    <FileCode className="h-4 w-4 text-white/40" />
+                    <span>Download as JSX</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    disabled={isPending}
+                    className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-[11px] font-medium transition-colors focus:bg-white/10 focus:text-white"
+                    onClick={async () => {
+                      if (!selectedIcon || !state) return;
+                      await withPending(async () => {
+                        try {
+                          const code = await generateTsxComponent(selectedIcon, state);
+                          downloadFile(code, getComponentFilename("tsx"), "text/typescript");
+                          toast.success("TSX component downloaded");
+                        } catch {
+                          toast.error("Failed to generate TSX component");
+                        }
+                      });
+                    }}
+                  >
+                    <FileCode className="h-4 w-4 text-white/40" />
+                    <span>Download as TSX</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    disabled={isPending}
+                    className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-[11px] font-medium transition-colors focus:bg-white/10 focus:text-white"
+                    onClick={downloadSvg}
+                  >
+                    <FileCode className="h-4 w-4 text-white/40" />
+                    <span>Download as SVG (animated)</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator className="my-0.5 bg-white/5" />
+                  <DropdownMenuItem
+                    disabled={isPending}
+                    className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-[11px] font-medium transition-colors focus:bg-white/10 focus:text-white"
+                    onClick={async () => {
+                      if (!selectedIcon || !state) return;
+                      await withPending(async () => {
+                        try {
+                          const code = await generateGsapComponent(selectedIcon, state);
+                          downloadFile(code, getComponentFilename("jsx"), "text/javascript");
+                          toast.success("GSAP component downloaded");
+                        } catch {
+                          toast.error("Failed to generate GSAP component");
+                        }
+                      });
+                    }}
+                  >
+                    <Zap className="h-4 w-4 text-amber-400/60" />
+                    <div className="flex flex-1 items-center justify-between">
+                      <span>Download as GSAP</span>
+                      <span className="font-mono text-[9px] opacity-40">JSX</span>
+                    </div>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    disabled={isPending}
+                    className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-[11px] font-medium transition-colors focus:bg-white/10 focus:text-white"
+                    onClick={async () => {
+                      if (!selectedIcon || !state) return;
+                      await withPending(async () => {
+                        try {
+                          const code = await generateFramerComponent(selectedIcon, state);
+                          downloadFile(code, getComponentFilename("jsx"), "text/javascript");
+                          toast.success("Framer Motion component downloaded");
+                        } catch {
+                          toast.error("Failed to generate Framer Motion component");
+                        }
+                      });
+                    }}
+                  >
+                    <Sparkles className="h-4 w-4 text-purple-400/60" />
+                    <div className="flex flex-1 items-center justify-between">
+                      <span>Download as Framer Motion</span>
+                      <span className="font-mono text-[9px] opacity-40">JSX</span>
+                    </div>
+                  </DropdownMenuItem>
+                </>
+              ) : (
+                <>
+                  <DropdownMenuItem
+                    disabled={isPending}
+                    className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-[11px] font-medium transition-colors focus:bg-white/10 focus:text-white"
+                    onClick={async () => {
+                      const svg = await getSvgContent();
+                      if (svg) {
+                        copyToClipboard(svg, "SVG");
+                      } else {
+                        toast.error("Select an icon first");
+                      }
+                    }}
+                  >
+                    <FileCode className="h-4 w-4 text-white/40" />
+                    <div className="flex flex-1 items-center justify-between">
+                      <span>Copy as SVG</span>
+                      <span className="font-mono text-[9px] opacity-40">SVG</span>
+                    </div>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    disabled={isPending}
+                    className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-[11px] font-medium transition-colors focus:bg-white/10 focus:text-white"
+                    onClick={() => {
+                      if (selectedIcon && state) {
+                        generateReactSnippet(selectedIcon, state).then(code =>
+                          copyToClipboard(code, "React Component")
+                        );
+                      }
+                    }}
+                  >
+                    <Braces className="h-4 w-4 text-white/40" />
+                    <span>Copy as React</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator className="my-0.5 bg-white/5" />
+                  <DropdownMenuItem
+                    disabled={isPending}
+                    className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-[11px] font-medium transition-colors focus:bg-white/10 focus:text-white"
+                    onClick={downloadSvg}
+                  >
+                    <Download className="h-4 w-4 text-white/40" />
+                    <span>Download as SVG</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    disabled={isPending}
+                    className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-[11px] font-medium transition-colors focus:bg-white/10 focus:text-white"
+                    onClick={async () => {
+                      if (!selectedIcon || !state) return;
+                      await withPending(async () => {
+                        try {
+                          const code = await generateJsxComponent(selectedIcon, state);
+                          downloadFile(code, getComponentFilename("jsx"), "text/javascript");
+                          toast.success("JSX component downloaded");
+                        } catch {
+                          toast.error("Failed to generate JSX component");
+                        }
+                      });
+                    }}
+                  >
+                    <FileCode className="h-4 w-4 text-white/40" />
+                    <span>Download as JSX</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    disabled={isPending}
+                    className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-[11px] font-medium transition-colors focus:bg-white/10 focus:text-white"
+                    onClick={async () => {
+                      if (!selectedIcon || !state) return;
+                      await withPending(async () => {
+                        try {
+                          const code = await generateTsxComponent(selectedIcon, state);
+                          downloadFile(code, getComponentFilename("tsx"), "text/typescript");
+                          toast.success("TSX component downloaded");
+                        } catch {
+                          toast.error("Failed to generate TSX component");
+                        }
+                      });
+                    }}
+                  >
+                    <FileCode className="h-4 w-4 text-white/40" />
+                    <span>Download as TSX</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    disabled={isPending}
+                    className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-[11px] font-medium transition-colors focus:bg-white/10 focus:text-white"
+                    onClick={downloadPng}
+                  >
+                    <Image className="h-4 w-4 text-white/40" />
+                    <span>Download as PNG</span>
+                  </DropdownMenuItem>
+                </>
               )}
-              aria-label={showGrid ? "Hide Grid" : "Show Grid"}
-            >
-              <Grid3X3 className="h-4 w-4" />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent side="top">
-            <p>{showGrid ? "Hide Grid" : "Show Grid"}</p>
-          </TooltipContent>
-        </Tooltip>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
     </TooltipProvider>
   );

@@ -25,6 +25,8 @@ interface BlossomSceneProps {
     lightness: number;
     hoveredPetalIndex: number | null;
     hoveredRing: Ring | null;
+    focusedPetalIndex: number | null;
+    focusedRing: Ring | null;
     isDraggingArc: boolean;
     layout: BlossomLayoutConfig;
     styleConfig: BlossomStyleConfig;
@@ -59,6 +61,8 @@ export function BlossomScene({
     lightness,
     hoveredPetalIndex,
     hoveredRing,
+    focusedPetalIndex,
+    focusedRing,
     isDraggingArc,
     layout,
     styleConfig,
@@ -158,6 +162,7 @@ export function BlossomScene({
                             size={ring === 'inner' ? styleConfig.innerPetalSize : styleConfig.petalSize}
                             layout={layout}
                             isHovered={isHovered}
+                            isFocused={focusedRing === ring && focusedPetalIndex === index}
                             onClick={() => onPetalClick(index, ring)}
                             onMouseEnter={() => onPetalHover(index, ring)}
                             onMouseLeave={() => onPetalHover(null, null)}

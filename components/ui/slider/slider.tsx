@@ -378,6 +378,7 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
           disabled && "opacity-50 pointer-events-none",
           className
         )}
+        style={{ userSelect: "none", WebkitUserSelect: "none" }}
         {...props}
       >
         {(valuePosition === "top" || valuePosition === "left") && showValue && (
@@ -437,22 +438,10 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
             onPointerDown={handlePointerDown}
             onPointerMove={handlePointerMove}
             onPointerUp={handlePointerUp}
+            style={{ userSelect: "none", WebkitUserSelect: "none" }}
           >
             <div className="absolute inset-0" />
-            <AnimatePresence>
-              {hoverPreview && valuePosition !== "tooltip" && (
-                <m.div
-                  className="absolute -translate-x-1/2 pointer-events-none z-20"
-                  initial={{ opacity: 0, y: 4 }}
-                  animate={{ opacity: 1, y: 0, left: hoverPreview.cursorX }}
-                  exit={{ opacity: 0, y: 4 }}
-                  transition={springs.fast}
-                  style={{ top: -20 }}
-                >
-                  <span className={cn("text-[12px] text-background bg-foreground px-2 py-1", shape.bg)}>{formatValue(hoverPreview.snappedValue)}</span>
-                </m.div>
-              )}
-            </AnimatePresence>
+
 
             <m.div
               className={cn(

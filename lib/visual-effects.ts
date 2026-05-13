@@ -4,7 +4,6 @@ export interface Texture {
   path?: string;
 }
 
-// there is folder for the textures in public folder **Nexvyn todo for myself**
 export const TEXTURES: Texture[] = [
   { id: "none", name: "None" },
   { id: "paper", name: "Paper", path: "/textures/paper.png" },

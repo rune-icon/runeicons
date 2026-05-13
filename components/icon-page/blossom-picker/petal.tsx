@@ -13,6 +13,7 @@ interface PetalProps {
     size: number;
     layout: BlossomLayoutConfig;
     isHovered: boolean;
+    isFocused: boolean;
     onClick: () => void;
     onMouseEnter: () => void;
     onMouseLeave: () => void;
@@ -34,6 +35,7 @@ export function Petal({
     size,
     layout,
     isHovered,
+    isFocused,
     onClick,
     onMouseEnter,
     onMouseLeave,
@@ -46,17 +48,17 @@ export function Petal({
             cy={center.y}
             r={size / 2}
             fill={color}
-            stroke={adjustBorderColor(
+            stroke={isFocused ? "#ffffff" : adjustBorderColor(
                 color, 
                 BLOSSOM_NUMBERS.borderSaturationMultiplier, 
                 BLOSSOM_NUMBERS.borderBrightnessMultiplier
             )}
-            strokeWidth={BLOSSOM_NUMBERS.borderWidth}
+            strokeWidth={isFocused ? BLOSSOM_NUMBERS.borderWidth + 1.5 : BLOSSOM_NUMBERS.borderWidth}
             initial={{ x: 0, y: 0, scale: 0.9, opacity: 0 }}
             animate={{
                 x: x - center.x,
                 y: y - center.y,
-                scale: isHovered ? BLOSSOM_NUMBERS.petalHoverScale : 1,
+                scale: (isHovered || isFocused) ? BLOSSOM_NUMBERS.petalHoverScale : 1,
                 opacity: 1,
             }}
             exit={{ x: 0, y: 0, scale: 0.9, opacity: 0 }}

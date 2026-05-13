@@ -2,10 +2,14 @@
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
-import { motion, useMotionTemplate, useMotionValue, useSpring, useTransform } from "motion/react";
+import { animate, motion, useMotionTemplate, useMotionValue, useSpring, useTransform } from "motion/react";
 
 import { useTuning } from "@/components/icon-page/tuning";
 import { cn } from "@/lib/utils";
+
+const DEAD_ZONE = 32;
+const MAX_CURSOR_RANGE = 200;
+const MAX_STRETCH = 8;
 
 interface ScrubberProps {
   label: string;
@@ -39,6 +43,7 @@ export const Scrubber: React.FC<ScrubberProps> = ({
   const [isEditing, setIsEditing] = useState(false);
   const [inputValue, setInputValue] = useState((controlledValue ?? initialValue).toString());
   const [isDragging, setIsDragging] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -79,6 +84,17 @@ export const Scrubber: React.FC<ScrubberProps> = ({
       `linear-gradient(to right, black 0%, black calc(${v}% - 10px), transparent calc(${v}% + 10px), transparent 100%)`,
   );
 
+  // Rubber band motion values
+  const rubberStretchPx = useMotionValue(0);
+  const rubberBandWidth = useTransform(
+    rubberStretchPx,
+    (stretch) => `calc(100% + ${Math.abs(stretch)}px)`
+  );
+  const rubberBandX = useTransform(
+    rubberStretchPx,
+    (stretch) => (stretch < 0 ? stretch : 0)
+  );
+
   useEffect(() => {
     const checkOverlap = () => {
       if (containerRef.current && labelRef.current && valueRef.current) {
@@ -114,7 +130,6 @@ export const Scrubber: React.FC<ScrubberProps> = ({
       inputRef.current &&
       document.activeElement === inputRef.current
     ) {
-      // already focused or we don't want to auto-focus if it's always showInput
     }
     if (isEditing && inputRef.current) {
       inputRef.current.focus();
@@ -178,9 +193,33 @@ export const Scrubber: React.FC<ScrubberProps> = ({
     }
   };
 
+  const computeRubberStretch = (clientX: number, sign: number) => {
+    if (!containerRef.current) return 0;
+    const rect = containerRef.current.getBoundingClientRect();
+    const distancePast = sign < 0 ? rect.left - clientX : clientX - rect.right;
+    const overflow = Math.max(0, distancePast - DEAD_ZONE);
+    return (
+      sign *
+      MAX_STRETCH *
+      Math.sqrt(Math.min(overflow / MAX_CURSOR_RANGE, 1.0))
+    );
+  };
+
   const updateValue = (clientX: number, isDragging: boolean = false) => {
     if (!containerRef.current || disabled) return;
     const rect = containerRef.current.getBoundingClientRect();
+
+    // Rubber band stretch logic
+    if (isDragging) {
+      if (clientX < rect.left) {
+        rubberStretchPx.set(computeRubberStretch(clientX, -1));
+      } else if (clientX > rect.right) {
+        rubberStretchPx.set(computeRubberStretch(clientX, 1));
+      } else {
+        rubberStretchPx.set(0);
+      }
+    }
+
     const pos = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
     const rawValue = pos * (max - min) + min;
     const newValue = snapToStep(rawValue);
@@ -199,7 +238,6 @@ export const Scrubber: React.FC<ScrubberProps> = ({
 
   const handlePointerDown = (e: React.PointerEvent) => {
     if (!containerRef.current || isEditing || disabled) return;
-    // Don't start dragging if we clicked the input in showInput mode
     if (showInput && e.target === inputRef.current) return;
 
     e.currentTarget.setPointerCapture(e.pointerId);
@@ -219,6 +257,15 @@ export const Scrubber: React.FC<ScrubberProps> = ({
     if (!isDragging) return;
     e.currentTarget.releasePointerCapture(e.pointerId);
     setIsDragging(false);
+
+    // Spring rubber band back
+    if (rubberStretchPx.get() !== 0) {
+      animate(rubberStretchPx, 0, {
+        type: "spring",
+        stiffness: 400,
+        damping: 30,
+      });
+    }
   };
 
   const handlePointerCancel = (e: React.PointerEvent) => {
@@ -234,6 +281,8 @@ export const Scrubber: React.FC<ScrubberProps> = ({
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
       onPointerCancel={handlePointerCancel}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       onKeyDown={handleSliderKeyDown}
       animate={{ transform: "scale(1)" }}
       transition={{
@@ -241,11 +290,16 @@ export const Scrubber: React.FC<ScrubberProps> = ({
         stiffness: values.springStiffness,
         damping: values.springDamping,
       }}
+      style={{ width: rubberBandWidth, x: rubberBandX }}
       className={cn(
-        "group relative h-11 w-full touch-none overflow-hidden rounded-md border border-border/60 bg-muted/30",
+        "group relative h-[34px] w-full touch-none overflow-hidden rounded-sm border border-border/40 bg-muted/10 transition-all shadow-[inset_0_2px_4px_rgba(0,0,0,0.15)]",
         disabled ? "cursor-not-allowed opacity-50" : "cursor-grab active:cursor-grabbing",
-        (isEditing || (showInput && typeof document !== "undefined" && document.activeElement === inputRef.current)) &&
-          "border-brand/50 ring-2 ring-brand/30",
+        (isEditing ||
+          (showInput &&
+            typeof document !== "undefined" &&
+            document.activeElement === inputRef.current)) &&
+          "border-brand/40 ring-1 ring-brand/20",
+        isHovered && !disabled && "border-border/60 bg-muted/20",
       )}
       role="slider"
       aria-valuemin={min}
@@ -256,27 +310,45 @@ export const Scrubber: React.FC<ScrubberProps> = ({
       tabIndex={disabled ? -1 : 0}
     >
       <motion.div
-        animate={{ backgroundColor: trackClassName ? undefined : "hsl(var(--muted) / 0.4)" }}
-        transition={{ ease: [0.23, 1, 0.32, 1], duration: 0.2 }}
         className={cn(
-          "pointer-events-none absolute inset-0 overflow-hidden rounded-md",
+          "pointer-events-none absolute inset-0 overflow-hidden",
           trackClassName,
         )}
       >
+        {/* Hashmarks */}
+        <div className="pointer-events-none absolute inset-0 flex items-center">
+          <div className="flex w-full justify-between px-[10px] opacity-[0.06]">
+            {(() => {
+              const discreteSteps = Math.min(20, Math.floor((max - min) / step));
+              const count = discreteSteps > 1 ? discreteSteps + 1 : 11;
+              return Array.from({ length: count }).map((_, i) => (
+                <div
+                  key={i}
+                  className="w-[1px] bg-foreground/50"
+                  style={{
+                    height: i % 5 === 0 || count <= 11 ? "5px" : "3px",
+                  }}
+                />
+              ));
+            })()}
+          </div>
+        </div>
         <motion.div
           style={{ transform: progressTransform, transformOrigin: "left" }}
           animate={{
             backgroundColor: fillClassName ? undefined : "var(--brand)",
-            opacity: isDragging ? 0.35 : 0.25,
+            opacity: isDragging ? 0.2 : 0.12,
           }}
-          transition={{ ease: [0.23, 1, 0.32, 1], duration: 0.2 }}
-          className={cn("absolute top-0 right-0 bottom-0 left-0 z-0 rounded-md", fillClassName)}
+          transition={{ duration: 0.1 }}
+          className={cn("absolute top-0 right-0 bottom-0 left-0 z-0", fillClassName)}
         />
       </motion.div>
 
-      <div className="pointer-events-none absolute inset-0 z-10 flex items-center px-4 text-sm font-semibold text-foreground select-none">
+      <div className="pointer-events-none absolute inset-0 z-10 flex items-center px-2 text-[10px] uppercase tracking-widest text-foreground/70 select-none">
         <div className="flex w-full items-center justify-between">
-          <span ref={labelRef} className="opacity-90">{label}</span>
+          <span ref={labelRef} className="ml-1">
+            {label}
+          </span>
           <div
             ref={valueRef}
             className="pointer-events-auto flex items-center gap-1"
@@ -312,11 +384,11 @@ export const Scrubber: React.FC<ScrubberProps> = ({
               onKeyDown={handleInputKeyDown}
               onFocus={() => setIsEditing(true)}
               className={cn(
-                "w-9 bg-transparent text-right text-base font-bold tabular-nums transition-all outline-none",
+                "w-10 bg-transparent text-right text-[11px] font-mono tabular-nums transition-all outline-none",
                 "[appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none",
-                "cursor-ew-resize rounded-md border border-transparent px-1 py-0.5",
-                "hover:border-border/10 hover:bg-muted/40",
-                "focus:cursor-text focus:border-brand/30 focus:bg-background/40 focus:shadow-[0_0_0_2px_rgba(var(--brand-rgb),0.1)]",
+                "cursor-ew-resize border border-transparent px-1 py-0.5",
+                "hover:bg-muted/20",
+                "focus:cursor-text focus:bg-background/20",
               )}
             />
           </div>
@@ -329,10 +401,14 @@ export const Scrubber: React.FC<ScrubberProps> = ({
             style={{ maskImage: maskImage, WebkitMaskImage: maskImage }}
             className="absolute inset-0 flex items-center"
           >
-            <div className="flex w-full justify-between px-4 text-sm font-semibold">
-              <span ref={labelRef} className="text-white/95">{label}</span>
+            <div className="flex w-full justify-between px-2 text-[10px] uppercase tracking-widest">
+              <span ref={labelRef} className="text-foreground/70 ml-1">
+                {label}
+              </span>
               {!isEditing && (
-                <span ref={valueRef} className="px-1.5 py-0.5 text-base font-bold tabular-nums">{value}</span>
+                <span ref={valueRef} className="font-mono ">
+                  {value}
+                </span>
               )}
             </div>
           </motion.div>
@@ -340,35 +416,40 @@ export const Scrubber: React.FC<ScrubberProps> = ({
       )}
 
       <motion.div
-        className="absolute top-0 h-full w-10 z-20 pointer-events-none"
+        className="pointer-events-none absolute top-0 z-20 h-full w-4"
         style={{ left: thumbPos, x: "-50%" }}
       >
-        <div className="flex h-full items-center justify-center absolute inset-0">
+        <div className="absolute inset-0 flex h-full items-center justify-center">
           <motion.div
             animate={{
-              backgroundColor: isDragging ? "var(--brand)" : "var(--foreground)",
-              opacity: isOverlapping ? 0.15 : 1,
+              backgroundColor: "var(--brand)",
+              width: isDragging ? 3 : 2,
+              height: isDragging ? 16 : 14,
+              opacity: isOverlapping ? 0.05 : 1,
             }}
-            transition={{ type: "spring", stiffness: 300, damping: 25 }}
-            className="h-5 w-1 rounded-full shadow-sm"
+            transition={{
+              type: "spring",
+              stiffness: 600,
+              damping: 35,
+            }}
+            className="rounded-full shadow-[0_1px_2px_rgba(0,0,0,0.1)]"
           />
         </div>
       </motion.div>
 
       <motion.div
-        className="absolute top-0 z-30 pointer-events-none flex items-center justify-center"
+        className="pointer-events-none absolute top-0 z-30 flex items-center justify-center"
         initial={false}
         animate={{
-          y: isDragging ? -42 : -20,
+          y: isDragging ? -32 : -15,
           opacity: isDragging ? 1 : 0,
-          scale: isDragging ? 1 : 0.8,
         }}
-        transition={{ type: "spring", stiffness: 400, damping: 25 }}
+        transition={{ duration: 0.1 }}
         style={{ left: thumbPos, x: "-50%" }}
       >
-        <div className="bg-slate-900 text-white text-[11px] font-bold px-2.5 py-1.5 rounded-lg shadow-xl relative backdrop-blur-md">
+        <div className="relative rounded-sm bg-brand px-2 py-1 text-[9px] font-tight text-background tabular-nums shadow-lg">
           {value}
-          <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-slate-900 rotate-45" />
+          <div className="absolute -bottom-0.5 left-1/2 h-1.5 w-1.5 -translate-x-1/2 rotate-45 bg-brand" />
         </div>
       </motion.div>
     </motion.div>

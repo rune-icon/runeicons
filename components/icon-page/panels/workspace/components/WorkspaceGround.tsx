@@ -11,7 +11,7 @@ export const WorkspaceGround: React.FC<{ className?: string }> = ({ className })
         className
       )}
     >
-      <div className="w-full h-full flex items-center justify-center">
+      <div className="w-full h-full flex items-center justify-center -translate-y-10">
         <svg
           width="1100"
           height="800"

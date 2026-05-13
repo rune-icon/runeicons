@@ -7,7 +7,7 @@ import { ToolRail } from "@/components/icon-page/panels/outline";
 import { PropertiesPanel } from "@/components/icon-page/panels/properties";
 import { WorkspacePanel } from "./WorkspacePanel";
 import { useWorkspaceSelection } from "./hooks/use-workspace-selection";
-import { KeyboardShortcutsModal } from "@/components/icon-page/keyboard-shortcuts-modal";
+import { KeyboardShortcutsModal } from "@/components/icon-page/panels/outline/components/keyboard-shortcuts-modal";
 import { generateStandaloneSvg } from "@/lib/svg-export-utils";
 import { toast } from "sonner";
 import { useState } from "react";
@@ -30,11 +30,11 @@ export function WorkspaceShell() {
     trayIcons,
     handleIconSelect,
     handleRemoveFromTray,
-  } = useWorkspaceSelection();
+    handleRemoveById,
+  } = useWorkspaceSelection(state.customIcons);
 
   const [showGrid, setShowGrid] = useState(true);
 
-  // Export handler
   const handleExport = () => {
     const configJSON = JSON.stringify(state, null, 2);
     const blob = new Blob([configJSON], { type: "application/json" });
@@ -47,14 +47,13 @@ export function WorkspaceShell() {
     toast.success("Configuration exported");
   };
 
-  // Copy SVG handler
   const handleCopySvg = async () => {
     if (!selectedIcon) {
       toast.error("Select an icon first");
       return;
     }
     try {
-      const svg = generateStandaloneSvg(selectedIcon, state);
+      const svg = await generateStandaloneSvg(selectedIcon, state);
       await navigator.clipboard.writeText(svg);
       toast.success("SVG copied to clipboard");
     } catch {
@@ -62,11 +61,47 @@ export function WorkspaceShell() {
     }
   };
 
-  // Keyboard shortcuts
+
+
   const { showHelp, setShowHelp } = useKeyboardShortcuts({
     onCopySvg: handleCopySvg,
     onExport: handleExport,
     onReset: handleReset,
+    onUndo: handleUndo,
+    onRedo: handleRedo,
+    onToggleGrid: () => setShowGrid((prev) => !prev),
+    onNextCategory: () => {
+      const categories: any[] = [
+        "all", "action", "brand", "accessibility", "commerce", "communication",
+        "dev", "layout", "location", "media", "navigation", "feedback",
+        "system", "time", "users", "weather", "custom",
+      ];
+      const currentIndex = categories.indexOf(activeCategory);
+      const nextIndex = (currentIndex + 1) % categories.length;
+      setActiveCategory(categories[nextIndex]);
+    },
+    onPrevCategory: () => {
+      const categories: any[] = [
+        "all", "action", "brand", "accessibility", "commerce", "communication",
+        "dev", "layout", "location", "media", "navigation", "feedback",
+        "system", "time", "users", "weather", "custom",
+      ];
+      const currentIndex = categories.indexOf(activeCategory);
+      const prevIndex = (currentIndex - 1 + categories.length) % categories.length;
+      setActiveCategory(categories[prevIndex]);
+    },
+    onNextType: () => {
+      const types: any[] = ["normal", "duotone", "fill", "pixelated", "glass", "isometric", "dither"];
+      const currentIndex = types.indexOf(state.iconType);
+      const nextIndex = (currentIndex + 1) % types.length;
+      handleChange({ iconType: types[nextIndex] });
+    },
+    onPrevType: () => {
+      const types: any[] = ["normal", "duotone", "fill", "pixelated", "glass", "isometric", "dither"];
+      const currentIndex = types.indexOf(state.iconType);
+      const prevIndex = (currentIndex - 1 + types.length) % types.length;
+      handleChange({ iconType: types[prevIndex] });
+    },
     onSelectTraySlot: (index) => {
       if (trayIcons[index]) {
         handleIconSelect(trayIcons[index]);
@@ -79,10 +114,11 @@ export function WorkspaceShell() {
 
   return (
     <div className="flex flex-1 overflow-hidden">
-      <aside className="w-12 shrink-0" aria-label="Tool rail">
+      <aside className="relative z-[100] w-12 shrink-0" aria-label="Tool rail">
         <ToolRail
           activeType={state.iconType}
           onTypeChange={(type) => handleChange({ iconType: type })}
+          onHelpClick={() => setShowHelp(true)}
         />
       </aside>
 
@@ -92,6 +128,7 @@ export function WorkspaceShell() {
           selectedIconId={selectedIcon?.id ?? null}
           selectedCategory={activeCategory}
           onCategoryChange={setActiveCategory}
+          customIcons={state.customIcons}
         />
       </aside>
 
@@ -112,16 +149,19 @@ export function WorkspaceShell() {
       />
 
       <aside
-        className="w-[380px] shrink-0 border-l border-border bg-workspace-pattern overflow-y-auto relative"
+        className="w-[341px] shrink-0 border-l border-border bg-workspace-pattern overflow-y-auto relative"
         aria-label="Customization controls"
       >
         <div className="absolute inset-0 bg-background/80 pointer-events-none" />
         <div className="relative z-10">
           <PropertiesPanel
             state={state}
+            selectedIcon={selectedIcon}
+            onIconSelect={handleIconSelect}
+            onDeleteIcon={handleRemoveById}
             onChange={handleChange}
             onReset={handleReset}
-          />
+            />
         </div>
       </aside>
 

@@ -1,5 +1,4 @@
-import * as m from "motion/react-m";
-import { AnimatePresence } from "motion/react";
+import { motion as m, AnimatePresence } from "motion/react";
 
 interface EmptyStateProps {
   isVisible: boolean;
@@ -11,11 +10,15 @@ export function EmptyState({ isVisible, onClearSearch }: EmptyStateProps) {
     <AnimatePresence>
       {isVisible && (
         <m.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.3 }}
-          className="col-span-4 text-center py-12"
+          initial={{ opacity: 0, scale: 0.25, filter: "blur(4px)" }}
+          animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+          exit={{ opacity: 0, scale: 0.25, filter: "blur(4px)" }}
+          transition={{
+            type: "spring",
+            duration: 0.3,
+            bounce: 0,
+          }}
+          className="col-span-full flex flex-col items-center justify-start mt-24 text-center"
           role="status"
           aria-live="polite"
         >

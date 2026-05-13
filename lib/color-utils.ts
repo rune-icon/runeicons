@@ -20,11 +20,9 @@ export interface HSLColor {
     l: number;
 }
 
-
 export function clamp(value: number, min: number, max: number): number {
     return Math.min(max, Math.max(min, value));
 }
-
 
 export function normalizeHexColor(value: string, defaultColor: HexColor = '#007aff'): HexColor {
     const trimmed = value.trim().toLowerCase();
@@ -39,12 +37,10 @@ export function normalizeHexColor(value: string, defaultColor: HexColor = '#007a
     return `#${expanded}` as HexColor;
 }
 
-
 export function rgbToHex({ r, g, b }: RGBColor): HexColor {
     const parts = [r, g, b].map((channel) => clamp(Math.round(channel), 0, 255).toString(16).padStart(2, '0'));
     return `#${parts.join('')}` as HexColor;
 }
-
 
 export function hexToRgb(value: string): RGBColor {
     const normalized = normalizeHexColor(value).slice(1);
@@ -54,7 +50,6 @@ export function hexToRgb(value: string): RGBColor {
         b: parseInt(normalized.slice(4, 6), 16),
     };
 }
-
 
 export function rgbToHsb({ r, g, b }: RGBColor): HSBColor {
     const red = r / 255;
@@ -89,11 +84,9 @@ export function rgbToHsb({ r, g, b }: RGBColor): HSBColor {
     };
 }
 
-
 export function hexToHsb(value: string): HSBColor {
     return rgbToHsb(hexToRgb(value));
 }
-
 
 export function hsbToRgb({ hue, saturation, brightness }: HSBColor): RGBColor {
     const normalizedHue = ((hue % 360) + 360) % 360;
@@ -136,11 +129,9 @@ export function hsbToRgb({ hue, saturation, brightness }: HSBColor): RGBColor {
     };
 }
 
-
 export function hsbToHex(hsb: HSBColor): HexColor {
     return rgbToHex(hsbToRgb(hsb));
 }
-
 
 export function adjustBorderColor(
     color: HexColor,
@@ -154,7 +145,6 @@ export function adjustBorderColor(
         brightness: clamp(hsb.brightness * brightnessMultiplier, 0, 100),
     });
 }
-
 
 export function colorsMatch(left: string, right: string, tolerance = 0.01): boolean {
     const a = hexToHsb(left);
@@ -170,7 +160,6 @@ export function colorsMatch(left: string, right: string, tolerance = 0.01): bool
     );
 }
 
-
 export function hslToRgb(h: number, s: number, l: number): RGBColor {
     const sNorm = s / 100;
     const lNorm = l / 100;
@@ -184,11 +173,9 @@ export function hslToRgb(h: number, s: number, l: number): RGBColor {
     };
 }
 
-
 export function hslToHex(h: number, s: number, l: number): HexColor {
     return rgbToHex(hslToRgb(h, s, l));
 }
-
 
 export function rgbToHsl({ r, g, b }: RGBColor): HSLColor {
     const rNorm = r / 255;
@@ -217,7 +204,6 @@ export function rgbToHsl({ r, g, b }: RGBColor): HSLColor {
         l: Math.round(l * 100),
     };
 }
-
 
 export function hexToHsl(hex: string): HSLColor {
     return rgbToHsl(hexToRgb(hex));

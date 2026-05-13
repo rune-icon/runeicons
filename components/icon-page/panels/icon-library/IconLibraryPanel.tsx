@@ -6,11 +6,13 @@ import { IconLibraryHeader } from "./components/IconLibraryHeader";
 import { IconGrid } from "./components/IconGrid";
 import { EmptyState } from "./components/EmptyState";
 
+
 export function IconLibraryPanel({
   onIconSelect,
   selectedIconId,
   selectedCategory,
   onCategoryChange,
+  customIcons = [],
 }: IconLibraryPanelProps) {
   const {
     searchQuery,
@@ -19,11 +21,14 @@ export function IconLibraryPanel({
     handleIconClick,
     clearSearch,
     searchInputRef,
-  } = useIconLibrary(selectedCategory, onIconSelect);
+  } = useIconLibrary(selectedCategory, onIconSelect, customIcons);
+
+  const isSearching = searchQuery.length > 0;
 
   return (
-    <div className="h-full flex flex-col bg-workspace-pattern border-r border-border relative group/panel">
+    <div className="h-full flex flex-col bg-workspace-pattern border-r border-border relative group/panel overflow-hidden">
       <div className="absolute inset-0 bg-background/80 pointer-events-none" />
+      
       <div className="relative z-10 flex flex-col h-full">
         <IconLibraryHeader
           searchQuery={searchQuery}
@@ -31,7 +36,10 @@ export function IconLibraryPanel({
           clearSearch={clearSearch}
           searchInputRef={searchInputRef}
           selectedCategory={selectedCategory}
-          onCategoryChange={onCategoryChange}
+          onCategoryChange={(cat) => {
+            clearSearch();
+            onCategoryChange(cat);
+          }}
         />
 
         <div
@@ -43,6 +51,7 @@ export function IconLibraryPanel({
             icons={filteredIcons}
             selectedIconId={selectedIconId ?? null}
             onIconClick={handleIconClick}
+            isSearching={isSearching}
           />
           <EmptyState isVisible={filteredIcons.length === 0} onClearSearch={clearSearch} />
         </div>
