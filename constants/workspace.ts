@@ -1,23 +1,41 @@
-import { Rocket, Heart, Star, Smile, Coffee } from "lucide-react";
 import { CustomizationState, IconData } from "@/lib/types";
 
 export const MAX_TRAY_ITEMS = 5;
 
 export const DEFAULT_STATE: CustomizationState = {
-  colors: ["#000000"], // Solid black
+  colors: ["#000000"],
   numColors: 1,
   scale: 1,
   blur: 0,
-  blurEnabled: false,
+  motion: {
+    enabled: false,
+    animationType: "draw",
+    duration: 2,
+    delay: 0.12,
+    easingId: "ease-in-out",
+    customCubic: "cubic-bezier(0.34, 1.56, 0.64, 1)",
+    loop: true,
+    replayNonce: 0,
+    pathTrimStart: 0,
+    pathTrimEnd: 100,
+    pathSequential: false,
+    pathStaggerDelay: 0.12,
+    pathReverse: false,
+    isPaused: false,
+    scrubProgress: null,
+    presetId: null,
+    interactionMode: "animate" as const,
+    trigger: "auto" as const,
+    autoReverse: false,
+  },
   translateX: 0,
   translateY: 0,
   padding: 4,
   cornerRadius: 12,
-  cornerRadiusEnabled: true,
+  backgroundColor: "transparent",
   flipH: false,
   flipV: false,
   rotation: 0,
-  flipRotateEnabled: false,
   width: 128,
   height: 128,
   lockAspect: true,
@@ -41,20 +59,23 @@ export const DEFAULT_STATE: CustomizationState = {
   },
   gradient: {
     type: "linear",
-    angle: 90,
+    angle: 135,
     stops: [
-      { color: "#000000", position: 0 },
-      { color: "#333333", position: 100 },
+      { color: "#6366f1", position: 0 },
+      { color: "#a855f7", position: 50 },
+      { color: "#ec4899", position: 100 },
     ],
+    target: "stroke" as const,
+    spreadMethod: "pad" as const,
+    cx: 50,
+    cy: 50,
+    r: 50,
   },
   customIcons: [],
   iconType: "normal",
+  strokeStyle: "round",
 };
 
 export const DEFAULT_TRAY_ICONS: IconData[] = [
-  { id: "rocket", name: "Rocket", icon: Rocket, category: "action", tags: ["rocket", "start"] },
-  { id: "heart", name: "Heart", icon: Heart, category: "shapes", tags: ["heart", "love"] },
-  { id: "star", name: "Star", icon: Star, category: "shapes", tags: ["star", "rating"] },
-  { id: "smile", name: "Smile", icon: Smile, category: "emojis", tags: ["smile", "happy"] },
-  { id: "coffee", name: "Coffee", icon: Coffee, category: "food", tags: ["coffee", "drink"] },
+  { id: "actions-plus", name: "Plus", url: "/regular/actions/plus.svg", category: "action", tags: ["actions", "add"] },
 ];
