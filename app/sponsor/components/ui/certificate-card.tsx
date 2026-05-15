@@ -1,55 +1,67 @@
 "use client";
-import { HouseDuck } from "../illustrations/house-duck";
-import { Stamp } from "../illustrations/stamp";
+
+import NumberFlow from "@number-flow/react";
+import * as m from "motion/react-m";
+
+import Mascot from "@/components/landing/svg/mascot";
+import { Button } from "@/components/ui/button";
 
 interface CertificateCardProps {
   amount: number;
+  flush?: boolean;
 }
 
-export function CertificateCard({ amount }: CertificateCardProps) {
+export function CertificateCard({ amount, flush = false }: CertificateCardProps) {
   return (
-    <div className="relative mt-2 w-full rounded-[32px] bg-black shadow-2xl">
-      {/* Cutouts */}
-      <div className="absolute top-[90px] left-0 z-10 h-10 w-10 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#181818]"></div>
-      <div className="absolute top-[90px] right-0 z-10 h-10 w-10 translate-x-1/2 -translate-y-1/2 rounded-full bg-[#181818]"></div>
-
-      {/* Top Section */}
-      <div className="flex h-[90px] items-center justify-between px-10">
-        <h2 className="text-[28px] font-normal tracking-wide">
-          Chill Guy Certificate
-        </h2>
-        <span className="text-[17px] text-zinc-300">Supporter</span>
-      </div>
-
-      {/* Divider */}
-      <div className="relative h-px w-full">
-        <div className="absolute inset-0 mx-8 border-t border-dashed border-zinc-800"></div>
-      </div>
-
-      {/* Bottom Section */}
-      <div className="relative flex gap-10 overflow-hidden rounded-b-[32px] px-10 py-10">
-        {/* Image */}
-        <div className="relative h-[200px] w-[200px] shrink-0 overflow-hidden rounded-2xl border border-zinc-800/50 bg-black">
-          <HouseDuck />
+    <div
+      className={
+        flush
+          ? "relative w-full overflow-hidden bg-card text-card-foreground"
+          : "relative mt-2 w-full overflow-hidden rounded-3xl border border-border bg-card text-card-foreground shadow-sm transition-all duration-300 hover:shadow-lg"
+      }
+    >
+      {/* Body */}
+      <div className="relative flex flex-col gap-5 overflow-hidden px-6 py-6 sm:flex-row sm:items-center sm:gap-10 sm:px-10 sm:py-10">
+        {/* Mascot panel */}
+        <div className="relative flex h-[160px] w-full shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-border bg-white sm:h-[200px] sm:w-[200px]">
+          <div className="relative flex h-28 w-28 items-center justify-center sm:h-32 sm:w-32 [&>svg]:h-full [&>svg]:w-full">
+            <Mascot />
+          </div>
         </div>
 
         {/* Content */}
         <div className="z-10 flex flex-col justify-center">
-          <h3 className="text-[32px] font-normal tracking-wide">
-            ${amount} Donation
-          </h3>
-          <p className="mt-4 max-w-[280px] font-mono text-[12px] leading-relaxed text-zinc-400">
-            The icons will always be free and open-source, regardless of
-            donations
+          <m.h3
+            layout
+            transition={{ type: "spring", stiffness: 380, damping: 32 }}
+            className="flex w-fit items-baseline gap-1.5 text-[22px] leading-none font-medium tracking-tight sm:text-[28px]"
+          >
+            <NumberFlow
+              value={amount}
+              prefix="$"
+              className="text-blue-700"
+              transformTiming={{ duration: 500, easing: "cubic-bezier(0.23, 1, 0.32, 1)" }}
+            />
+            <m.span layout>contribution</m.span>
+          </m.h3>
+          <p className="mt-3 max-w-[320px] text-[13px] leading-relaxed text-muted-foreground sm:mt-4">
+            RuneIcons stays free and open-source, always. Your sponsorship helps me ship new
+            icons, refine every stroke, and keep the library evolving.
           </p>
-          <button className="mt-8 w-fit cursor-pointer rounded-md bg-[#F0562E] px-6 py-2 text-[15px] font-medium text-white transition-colors hover:bg-[#d94d29]">
-            Sponsor
-          </button>
-        </div>
-
-        {/* Stamp */}
-        <div className="pointer-events-none absolute -right-4 -bottom-4 h-[220px] w-[220px] rotate-[-15deg] opacity-90">
-          <Stamp />
+          <m.div
+            layout
+            transition={{ type: "spring", stiffness: 380, damping: 32 }}
+            className="mt-5 w-full sm:mt-6 sm:w-fit"
+          >
+            <Button className="w-full cursor-pointer gap-1 bg-blue-700 px-6 text-[14px] font-medium text-white hover:bg-blue-700/90 sm:w-auto">
+              <span>Sponsor</span>
+              <NumberFlow
+                value={amount}
+                prefix="$"
+                transformTiming={{ duration: 500, easing: "cubic-bezier(0.23, 1, 0.32, 1)" }}
+              />
+            </Button>
+          </m.div>
         </div>
       </div>
     </div>

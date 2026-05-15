@@ -1,6 +1,16 @@
 "use client";
 
-const amounts = [5, 10, 25, 50, 100, 200, 500];
+import { useState } from "react";
+
+import { AnimatePresence } from "motion/react";
+import * as m from "motion/react-m";
+
+const PRESETS = [5, 20, 100];
+const MIN_AMOUNT = 1;
+const MAX_AMOUNT = 10000;
+
+const HIGHLIGHT_CLASS =
+  "absolute inset-0 rounded-xl bg-zinc-100 shadow-[0.222px_0.222px_0.314px_-0.5px_rgba(0,0,0,0.2),0.605px_0.605px_0.856px_-1px_rgba(0,0,0,0.18),1.329px_1.329px_1.88px_-1.5px_rgba(0,0,0,0.25),2.95px_2.95px_4.172px_-2px_rgba(0,0,0,0.1),2.5px_2.5px_3px_-2.5px_rgba(0,0,0,0.15),-0.5px_-0.5px_0px_rgba(0,0,0,0.1),inset_0.5px_0.5px_1px_#FFFFFF,inset_-0.5px_-0.5px_1px_rgba(0,0,0,0.15)] dark:bg-zinc-800 dark:shadow-[0.222px_0.222px_0.314px_-0.5px_rgba(0,0,0,0.35),0.605px_0.605px_0.856px_-1px_rgba(0,0,0,0.3),1.329px_1.329px_1.88px_-1.5px_rgba(0,0,0,0.35),2.95px_2.95px_4.172px_-2px_rgba(0,0,0,0.28),2.5px_2.5px_3px_-2.5px_rgba(0,0,0,0.35),inset_0.5px_0.5px_1px_rgba(255,255,255,0.08),inset_-0.5px_-0.5px_1px_rgba(0,0,0,0.4)]";
 
 interface AmountSelectorProps {
   selectedAmount: number;
@@ -11,29 +21,136 @@ export function AmountSelector({
   selectedAmount,
   onAmountChange,
 }: AmountSelectorProps) {
+  const [customMode, setCustomMode] = useState(false);
+  const [customValue, setCustomValue] = useState("");
+
+  const handlePreset = (amount: number) => {
+    setCustomMode(false);
+    onAmountChange(amount);
+  };
+
+  const handleCustom = () => {
+    setCustomMode(true);
+    const num = parseInt(customValue, 10);
+    if (num > 0) onAmountChange(num);
+  };
+
+  const handleCustomInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const stripped = e.target.value.replace(/[^0-9]/g, "");
+
+    if (stripped === "") {
+      setCustomValue("");
+      onAmountChange(0);
+      return;
+    }
+
+    let num = parseInt(stripped, 10);
+    if (num > MAX_AMOUNT) num = MAX_AMOUNT;
+
+    setCustomValue(String(num));
+    onAmountChange(num);
+  };
+
+  const handleCustomBlur = () => {
+    const num = parseInt(customValue, 10);
+    if (!num || num < MIN_AMOUNT) {
+      setCustomValue(String(MIN_AMOUNT));
+      onAmountChange(MIN_AMOUNT);
+    }
+  };
+
   return (
-    <div className="mb-8 grid w-full grid-cols-2 gap-3 sm:flex sm:gap-0 sm:rounded-xl sm:bg-black">
-      {amounts.map((amount, i) => {
-        const isActive = amount === selectedAmount;
-        const isLast = i === amounts.length - 1;
-        return (
-          <div
-            key={amount}
-            onClick={() => onAmountChange(amount)}
-            className={`relative cursor-pointer py-4 text-center text-xl transition-colors ${isLast ? "col-span-2 sm:col-span-1" : ""} sm:flex-1 ${
-              isActive
-                ? "z-10 rounded-xl bg-[#F0562E] text-white ring-2 ring-[#F0562E] ring-offset-2 ring-offset-[#181818]"
-                : "rounded-xl bg-black text-white hover:bg-zinc-900 sm:rounded-none sm:bg-transparent"
-            } ${i === 0 && !isActive ? "sm:rounded-l-xl" : ""} ${isLast && !isActive ? "sm:rounded-r-xl" : ""} `}
+    <div>
+      <div className="rounded-xl bg-white dark:bg-zinc-900">
+        <div className="flex w-full gap-1 rounded-xl bg-black/10 p-1 shadow-[0px_1px_0px_rgba(255,255,255,0.25),inset_0px_1px_2px_rgba(0,0,0,0.15)] dark:bg-white/10 dark:shadow-[0px_1px_0px_rgba(0,0,0,0.25),inset_0px_1px_2px_rgba(255,255,255,0.08)]">
+          {PRESETS.map((amount) => {
+            const isActive = !customMode && amount === selectedAmount;
+            return (
+              <button
+                key={amount}
+                type="button"
+                onMouseEnter={() => handlePreset(amount)}
+                onFocus={() => handlePreset(amount)}
+                onClick={() => handlePreset(amount)}
+                className="relative flex flex-1 cursor-pointer items-center justify-center py-3 text-[13px] font-medium"
+              >
+                {isActive && (
+                  <m.div
+                    layoutId="amount-highlight"
+                    className={HIGHLIGHT_CLASS}
+                    initial={{ scale: 1 }}
+                    animate={{ scale: 1.3 }}
+                    transition={{ type: "spring", stiffness: 500, damping: 40 }}
+                  />
+                )}
+                <span
+                  className={`relative z-10 ${
+                    isActive ? "text-black dark:text-white" : "text-muted-foreground"
+                  }`}
+                >
+                  ${amount}
+                </span>
+              </button>
+            );
+          })}
+          <button
+            type="button"
+            onMouseEnter={handleCustom}
+            onFocus={handleCustom}
+            onClick={handleCustom}
+            className="relative flex flex-1 cursor-pointer items-center justify-center py-3 text-[13px] font-medium"
           >
-            {/* Right border for inactive items, except the last one, and except if the NEXT item is active */}
-            {!isActive && !isLast && amounts[i + 1] !== selectedAmount && (
-              <div className="absolute top-0 right-0 bottom-0 hidden w-px bg-zinc-800 sm:block" />
+            {customMode && (
+              <m.div
+                layoutId="amount-highlight"
+                className={HIGHLIGHT_CLASS}
+                initial={{ scale: 1 }}
+                animate={{ scale: 1.3 }}
+                transition={{ type: "spring", stiffness: 500, damping: 40 }}
+              />
             )}
-            ${amount}
-          </div>
-        );
-      })}
+            <span
+              className={`relative z-10 ${
+                customMode ? "text-black dark:text-white" : "text-muted-foreground"
+              }`}
+            >
+              Custom
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <AnimatePresence initial={false}>
+        {customMode && (
+          <m.div
+            key="custom-input"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <div className="pt-3">
+              <div className="flex items-center rounded-xl border border-border bg-white shadow-sm transition-shadow focus-within:shadow-md focus-within:ring-2 focus-within:ring-blue-700/30 dark:bg-zinc-900">
+                <span className="pl-4 text-lg font-medium text-muted-foreground">$</span>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  value={customValue}
+                  onChange={handleCustomInput}
+                  onBlur={handleCustomBlur}
+                  placeholder={`Between $${MIN_AMOUNT} and $${MAX_AMOUNT.toLocaleString()}`}
+                  autoFocus
+                  className="flex-1 bg-transparent px-2 py-3 text-lg font-medium text-foreground outline-none placeholder:text-muted-foreground/60"
+                  aria-label="Custom contribution amount"
+                  aria-valuemin={MIN_AMOUNT}
+                  aria-valuemax={MAX_AMOUNT}
+                />
+              </div>
+            </div>
+          </m.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
