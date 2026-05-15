@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 import { Atom, AudioLines, Bug, Cat, Flower2, Hop, Minus, Plus } from "lucide-react";
 import * as m from "motion/react-m";
+import * as SliderPrimitive from "@radix-ui/react-slider";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -13,7 +14,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Slider } from "@/components/ui/slider";
 
 const ICONS = [
   { icon: Cat, name: "Cat" },
@@ -117,14 +117,19 @@ const IconCarousel = () => {
           <span className="text-[10px] font-semibold tracking-tight whitespace-nowrap text-muted-foreground uppercase">
             Size
           </span>
-          <Slider
+          <SliderPrimitive.Root
             value={[iconSize]}
-            onValueChange={([v]: any) => setIconSize(v)}
+            onValueChange={([v]) => setIconSize(v)}
             min={10}
             max={24}
             step={1}
-            className="w-14 cursor-pointer"
-          />
+            className="relative flex h-4 w-14 cursor-pointer touch-none items-center select-none"
+          >
+            <SliderPrimitive.Track className="relative h-1 w-full grow overflow-hidden rounded-full bg-muted">
+              <SliderPrimitive.Range className="absolute h-full bg-foreground" />
+            </SliderPrimitive.Track>
+            <SliderPrimitive.Thumb className="block h-3 w-3 rounded-full border border-border bg-background shadow-sm transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none" />
+          </SliderPrimitive.Root>
           <span className="w-4 text-right font-mono text-[10px] font-medium text-muted-foreground">
             {iconSize}
           </span>

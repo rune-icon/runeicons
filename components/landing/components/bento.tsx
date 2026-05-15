@@ -3,8 +3,8 @@ import React from "react";
 import BentoCenterSvg from "../svg/bento-center-svg";
 import BentoSvg from "../svg/bento-svg";
 import RocketInteractive from "../svg/rocket-interactive";
-import { DevCarousal } from "./dev-carousal";
 import IconCarousel from "./icon-carousel";
+import { IconVarietyShowcase } from "./icon-variety-showcase";
 
 interface BentoCardProps {
   title: string;
@@ -37,7 +37,7 @@ const BentoCard = ({
         {children}
       </div>
       {(title || description) && (
-        <div className="relative z-10 mt-auto shrink-0 p-4 pt-0 md:px-8 md:pb-8">
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 p-4 md:px-8 md:pb-6">
           <h3 className="md:text-md mb-1 text-sm font-semibold">{title}</h3>
           <p className="md:text-md text-sm text-muted-foreground">{description}</p>
         </div>
@@ -52,11 +52,11 @@ const Bento = () => {
       <div className="mx-auto grid min-h-[50vh] w-full grid-cols-1 gap-2 max-sm:h-full md:gap-4 lg:h-[90vh] lg:grid-cols-12">
         <div className="grid min-h-0 grid-cols-1 gap-2 md:gap-4 lg:col-span-4 lg:grid-rows-[6fr_4fr]">
           <BentoCard
-            title="Met the Mind Behind the Magic"
-            description="Finally met the creator whose work inspired me. From screens to real life surreal"
+            title="Five styles, one library"
+            description="From clean outlines to glossy 3D — every icon comes in five distinct flavors."
             className="flex h-full items-center justify-center"
           >
-            <DevCarousal />
+            <IconVarietyShowcase />
           </BentoCard>
           <BentoCard
             title="Interactive SVG Editing"
@@ -67,17 +67,25 @@ const Bento = () => {
           </BentoCard>
         </div>
 
-        <BentoCard title="" description="" className="h-full min-h-0 max-sm:p-5 lg:col-span-3">
+        <BentoCard
+          title="Modular by design"
+          description="Composable shapes that snap into any layout without breaking your grid."
+          className="h-full min-h-0 max-sm:p-5 lg:col-span-3"
+        >
           <BentoCenterSvg />
         </BentoCard>
 
         <div className="grid min-h-0 grid-cols-1 gap-2 md:gap-4 lg:col-span-5 lg:grid-rows-[4fr_6fr]">
-          <BentoCard title="" description="" className="h-full">
+          <BentoCard
+            title="Tweak every detail"
+            description="Stroke, size, color, animation — dial each icon in until it fits your brand."
+            className="h-full"
+          >
             <IconCarousel />
           </BentoCard>
           <BentoCard
-            title=""
-            description=""
+            title="Crafted line by line"
+            description="Hand-tuned strokes and perfect curves that scale to any size without losing detail."
             className="h-full max-lg:aspect-square"
             fullBackgroundGraphic
           >

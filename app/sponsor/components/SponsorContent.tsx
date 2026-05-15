@@ -2,6 +2,7 @@
 import { useState } from "react";
 
 import { CreemCheckout } from "@creem_io/nextjs";
+import { Infinity as InfinityIcon } from "lucide-react";
 import * as m from "motion/react-m";
 
 import { getProductIdForAmount } from "@/lib/creem";
@@ -16,74 +17,74 @@ export default function SponsorContent() {
   const productId = getProductIdForAmount(selectedAmount) || "";
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <Navbar />
-      <main className="flex flex-1 flex-col items-center px-4 py-10 sm:py-20">
+    <div className="relative grid min-h-screen w-full grid-cols-[1fr_auto_1fr] grid-rows-[auto_1px_1fr] overflow-hidden bg-[#F5F5F5] font-(family-name:--font-inter-tight) dark:bg-background">
+      {/* Row 1: Navbar */}
+      <div className="relative col-start-2 row-start-1 flex w-[95vw] max-w-[1440px] flex-col overflow-hidden md:w-[90vw] 2xl:w-[85vw]">
+        <Navbar />
+      </div>
+
+      <div className="pointer-events-none col-span-full col-start-1 row-start-2 border-b-2 border-dashed" />
+
+      {/* Row 2: Hero + Sponsor Box (single section) */}
+      <div className="col-start-2 row-start-3 flex w-[95vw] max-w-[1440px] flex-col items-center px-3 pt-16 pb-14 sm:px-6 sm:pt-20 sm:pb-16 md:w-[90vw] 2xl:w-[85vw]">
         <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="flex w-full max-w-3xl flex-col items-center"
+          className="mb-12 flex w-full max-w-3xl flex-col items-center"
         >
-          <h1 className="mb-6 text-center text-[32px] font-normal tracking-wide sm:mb-8 sm:text-[40px]">
-            Support the project
+          <span className="mb-5 inline-flex items-center gap-1.5 rounded-full border border-border bg-white px-3 py-1 text-[11px] font-medium tracking-wide text-foreground uppercase shadow-sm dark:bg-card">
+            <InfinityIcon className="size-3.5" strokeWidth={2.25} />
+            Open source forever
+          </span>
+
+          <h1 className="mb-5 text-center text-[36px] leading-[1.1] font-medium tracking-tight sm:text-[52px]">
+            Support <span className="text-blue-700">RuneIcons</span>
           </h1>
 
-          <p className="mb-8 max-w-[600px] text-center font-mono text-[13px] leading-[1.8] text-[#a1a1aa]">
-            this is a place for those who want to go beyond a simple thank you.
-            <br className="hidden sm:block" />
-            I&apos;m grateful for any kind of support, whether it&apos;s just a
-            DM with
-            <br className="hidden sm:block" />
-            kind words or something more. your donation is by no means required
-            <br className="hidden sm:block" />
-            - this page is made just for those who asked for it. I am incredibly
-            <br className="hidden sm:block" />
-            grateful for any support you choose to provide
-          </p>
-
-          <p className="mb-6 text-center font-mono text-[13px] text-[#a1a1aa]">
-            Choose amount you want to support the project with:
-          </p>
-
-          <AmountSelector
-            selectedAmount={selectedAmount}
-            onAmountChange={setSelectedAmount}
-          />
-
-          <div className="hidden w-full sm:block">
-            {productId ? (
-              <CreemCheckout productId={productId} successUrl="/sponsor">
-                <CertificateCard amount={selectedAmount} />
-              </CreemCheckout>
-            ) : (
-              <CertificateCard amount={selectedAmount} />
-            )}
-          </div>
-
-          {productId ? (
-            <CreemCheckout productId={productId} successUrl="/sponsor">
-              <button className="w-full rounded-xl bg-[#F0562E] py-4 text-[17px] font-medium text-white transition-colors hover:bg-[#d94d29] sm:hidden">
-                Sponsor
-              </button>
-            </CreemCheckout>
-          ) : (
-            <button
-              disabled
-              className="w-full cursor-not-allowed rounded-xl bg-zinc-800 py-4 text-[17px] font-medium text-zinc-500 sm:hidden"
-            >
-              Sponsor (Coming Soon)
-            </button>
-          )}
-
-          <p className="mt-12 font-mono text-[11px] text-[#71717a] sm:mt-16">
-            analytics by{" "}
-            <span className="cursor-pointer underline decoration-[#71717a] underline-offset-2 transition-colors hover:text-white">
-              OpenPanel
-            </span>
+          <p className="max-w-[480px] text-center text-[13px] leading-relaxed text-muted-foreground">
+            RuneIcons will always be free and open-source. If the library has saved you time,
+            or if you just want to see it keep growing, your support helps me design new icons,
+            ship new styles, and keep everything sharp.
           </p>
         </m.div>
-      </main>
+
+        <m.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+          className="flex w-full max-w-3xl flex-col items-center"
+        >
+          <div className="w-full overflow-hidden rounded-3xl border border-border bg-card text-card-foreground shadow-sm transition-shadow duration-300 hover:shadow-lg">
+            {/* Top: amount selector */}
+            <div className="px-6 pt-6 pb-5 sm:px-8 sm:pt-8 sm:pb-6">
+              <AmountSelector
+                selectedAmount={selectedAmount}
+                onAmountChange={setSelectedAmount}
+              />
+            </div>
+
+            {/* Divider */}
+            <div className="relative h-px w-full">
+              <div className="absolute inset-0 mx-6 border-t border-dashed border-border sm:mx-8" />
+            </div>
+
+            {/* Bottom: certificate (flush, no outer border) */}
+            <div className="w-full">
+              {productId ? (
+                <CreemCheckout productId={productId} successUrl="/sponsor">
+                  <CertificateCard amount={selectedAmount} flush />
+                </CreemCheckout>
+              ) : (
+                <CertificateCard amount={selectedAmount} flush />
+              )}
+            </div>
+          </div>
+        </m.div>
+      </div>
+
+      {/* Decorative side borders */}
+      <div className="pointer-events-none z-50 col-start-2 row-span-full row-start-1 border-x-2 border-dashed" />
     </div>
   );
 }
