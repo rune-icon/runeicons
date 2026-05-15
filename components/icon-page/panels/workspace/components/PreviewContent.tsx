@@ -37,15 +37,15 @@ export const PreviewContent = memo(
       const motionDelay = Math.max(0, state.motion?.delay ?? 0);
       const iterationCount = state.motion?.loop ?? true ? "infinite" : "1";
 
-      const [svgContent, setSvgContent] = useState<string | null>(null);
+      const [svgData, setSvgData] = useState<{ content: string; viewBox: string } | null>(null);
 
       useEffect(() => {
         if (selectedIcon?.url) {
           fetchSvgInnerContentRaw(selectedIcon.url)
-            .then(setSvgContent)
-            .catch(() => setSvgContent(null));
+            .then(setSvgData)
+            .catch(() => setSvgData(null));
         } else {
-          setSvgContent(null);
+          setSvgData(null);
         }
       }, [selectedIcon?.url]);
 
@@ -53,10 +53,13 @@ export const PreviewContent = memo(
       const renderAsDesigned =
         state.iconType === "duotone" ||
         state.iconType === "fill" ||
+        state.iconType === "glass" ||
         state.iconType === "pixelated";
 
       const colorizedSvgContent = useMemo(() => {
-        if (!svgContent) return null;
+        if (!svgData) return null;
+
+        const { content: svgContent } = svgData;
 
         if (renderAsDesigned) {
           if (isDrawAnim) {
@@ -107,7 +110,7 @@ export const PreviewContent = memo(
         }
 
         return result;
-      }, [svgContent, state.colors, state.iconGradient, state.gradient.target, state.iconType, state.strokeStyle, isDrawAnim, renderAsDesigned]);
+      }, [svgData, state.colors, state.iconGradient, state.gradient.target, state.iconType, state.strokeStyle, isDrawAnim, renderAsDesigned]);
       useEffect(() => {
         const container = lucideWrapRef.current;
         if (!container || !isDrawAnim) return;
@@ -293,7 +296,7 @@ export const PreviewContent = memo(
                   opacity: 0.9,
                 }),
             }}
-            className="relative flex items-center justify-center p-0"
+            className="relative flex items-center justify-center"
             role="img"
             aria-label={
               selectedIcon
@@ -305,69 +308,7 @@ export const PreviewContent = memo(
             {animationCss ? <style>{animationCss}</style> : null}
 
             <AnimatePresence mode="popLayout">
-              {SelectedIconComponent ? (
-                <motion.div
-                  key={`${selectedIcon?.id}-${state.iconType}-${state.motion?.replayNonce ?? 0}`}
-                  initial={{ scale: 0, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  exit={{ scale: 0, opacity: 0 }}
-                  transition={{
-                    type: "spring",
-                    stiffness: 400,
-                    damping: 30,
-                  }}
-                  className={cn(
-                    "flex h-full w-full items-center justify-center",
-                    state.iconType === "isometric" &&
-                      "[transform:rotateX(45deg)_rotateZ(-45deg)] transform",
-                    state.iconType === "pixelated" &&
-                      "[filter:url(#pixelate)] [image-rendering:pixelated]",
-                    state.iconType === "glass" &&
-                      "rounded-xl border border-white/20 bg-white/10 p-4 backdrop-blur-md",
-                    state.iconType === "dither" && "[filter:url(#dither-filter)]",
-                  )}
-                >
-                  <div
-                    ref={lucideWrapRef}
-                    className={cn(
-                      "h-full w-full canvas-icon-container",
-                      animationType === "bounce" && "canvas-icon-anim-bounce",
-                      animationType === "shake" && "canvas-icon-anim-shake",
-                      animationType === "jump" && "canvas-icon-anim-jump",
-                    )}
-                  >
-                    <SelectedIconComponent
-                      className={cn(
-                        "h-full w-full",
-                      )}
-                      strokeWidth={strokeAttrs.strokeWidth}
-                      strokeLinecap={strokeAttrs.strokeLinecap}
-                      strokeLinejoin={strokeAttrs.strokeLinejoin}
-                      stroke={applyGradToStroke ? "url(#icon-gradient)" : state.colors[0] || "currentColor"}
-                      fill={
-                        state.iconType === "fill"
-                          ? (applyGradToFill ? "url(#icon-gradient)" : state.colors[0] || "currentColor")
-                          : state.iconType === "duotone"
-                            ? (applyGradToFill ? "url(#icon-gradient)" : `${state.colors[0] || "currentColor"}33`)
-                            : "none"
-                      }
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        filter: [
-                             state.shadow.inner ? "url(#inner-shadow)" : null,
-                             state.blur > 0 ? "url(#inner-blur)" : null,
-                             state.noise.enabled ? "url(#noise-filter)" : null,
-                             state.texture.enabled && state.texture.selected !== "none" ? "url(#texture-filter)" : null,
-                           ]
-                             .filter(Boolean)
-                             .join(" ") || undefined,
-                      }}
-                      aria-hidden="true"
-                    />
-                  </div>
-                </motion.div>
-              ) : selectedIcon?.url ? (
+              {selectedIcon ? (
                 <motion.div
                   key={`${selectedIcon.id}-${state.iconType}-${state.motion?.replayNonce ?? 0}`}
                   initial={{ scale: 0, opacity: 0 }}
@@ -384,8 +325,6 @@ export const PreviewContent = memo(
                       "[transform:rotateX(45deg)_rotateZ(-45deg)] transform",
                     state.iconType === "pixelated" &&
                       "[filter:url(#pixelate)] [image-rendering:pixelated]",
-                    state.iconType === "glass" &&
-                      "rounded-xl border border-white/20 bg-white/10 p-4 backdrop-blur-md",
                     state.iconType === "dither" && "[filter:url(#dither-filter)]",
                   )}
                 >
@@ -398,28 +337,9 @@ export const PreviewContent = memo(
                       animationType === "jump" && "canvas-icon-anim-jump",
                     )}
                   >
-                    {renderAsDesigned ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={selectedIcon.url}
-                        alt=""
-                        aria-hidden="true"
-                        draggable={false}
-                        className={cn(
-                          "h-full w-full object-contain select-none",
-                          (state.iconType === "normal" ||
-                            state.iconType === "pixelated" ||
-                            state.iconType === "duotone" ||
-                            state.iconType === "fill") &&
-                            "dark:invert",
-                        )}
-                        style={{
-                          transform: `rotate(${state.rotation}deg) ${state.flipH ? "scaleX(-1)" : ""} ${state.flipV ? "scaleY(-1)" : ""}`.trim(),
-                        }}
-                      />
-                    ) : colorizedSvgContent ? (
+                    {colorizedSvgContent ? (
                       <svg
-                        viewBox="0 0 24 24"
+                        viewBox={svgData?.viewBox || "0 0 24 24"}
                         strokeWidth={strokeAttrs.strokeWidth}
                         strokeLinecap={strokeAttrs.strokeLinecap}
                         strokeLinejoin={strokeAttrs.strokeLinejoin}
@@ -443,6 +363,7 @@ export const PreviewContent = memo(
                           "h-full w-full",
                         )}
                         style={{
+                          transform: `rotate(${state.rotation}deg) ${state.flipH ? "scaleX(-1)" : ""} ${state.flipV ? "scaleY(-1)" : ""}`.trim(),
                           filter:
                             [
                               state.shadow.inner ? "url(#inner-shadow)" : null,
@@ -456,14 +377,49 @@ export const PreviewContent = memo(
                         dangerouslySetInnerHTML={{ __html: colorizedSvgContent }}
                         aria-hidden="true"
                       />
+                    ) : SelectedIconComponent ? (
+                      (() => {
+                        const LucideIcon = SelectedIconComponent as any;
+                        return (
+                          <LucideIcon
+                            size="100%"
+                            strokeWidth={strokeAttrs.strokeWidth}
+                            strokeLinecap={strokeAttrs.strokeLinecap}
+                            strokeLinejoin={strokeAttrs.strokeLinejoin}
+                            stroke={applyGradToStroke ? "url(#icon-gradient)" : state.colors[0] || "currentColor"}
+                            fill={
+                              state.iconType === "fill"
+                                ? (applyGradToFill ? "url(#icon-gradient)" : state.colors[0] || "currentColor")
+                                : state.iconType === "duotone"
+                                  ? (applyGradToFill ? "url(#icon-gradient)" : `${state.colors[0] || "currentColor"}33`)
+                                  : "none"
+                            }
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              transform: `rotate(${state.rotation}deg) ${state.flipH ? "scaleX(-1)" : ""} ${state.flipV ? "scaleY(-1)" : ""}`.trim(),
+                              filter:
+                                [
+                                  state.shadow.inner ? "url(#inner-shadow)" : null,
+                                  state.blur > 0 ? "url(#inner-blur)" : null,
+                                  state.noise.enabled ? "url(#noise-filter)" : null,
+                                  state.texture.enabled && state.texture.selected !== "none" ? "url(#texture-filter)" : null,
+                                ]
+                                  .filter(Boolean)
+                                  .join(" ") || undefined,
+                            }}
+                            aria-hidden="true"
+                          />
+                        );
+                      })()
                     ) : (
                       <div
                         className={cn(
                           "h-full w-full flex items-center justify-center",
                         )}
                         style={{
-                          WebkitMaskImage: `url(${(selectedIcon as any).url})`,
-                          maskImage: `url(${(selectedIcon as any).url})`,
+                          WebkitMaskImage: selectedIcon?.url ? `url(${selectedIcon.url})` : "none",
+                          maskImage: selectedIcon?.url ? `url(${selectedIcon.url})` : "none",
                           WebkitMaskRepeat: "no-repeat",
                           maskRepeat: "no-repeat",
                           WebkitMaskPosition: "center",
@@ -473,6 +429,7 @@ export const PreviewContent = memo(
                           background: state.iconGradient
                             ? gradientCss
                             : state.colors[0] || "currentColor",
+                          transform: `rotate(${state.rotation}deg) ${state.flipH ? "scaleX(-1)" : ""} ${state.flipV ? "scaleY(-1)" : ""}`.trim(),
                           filter:
                             [
                               state.shadow.inner ? "url(#inner-shadow)" : null,

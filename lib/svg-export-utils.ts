@@ -8,23 +8,7 @@ import {
 import { buildConicSegments } from "@/lib/gradient-utils";
 import { STROKE_STYLE_MAP } from "./stroke-style";
 
-function buildIconTransform(state: CustomizationState, iconSize: number, iconCenter: number): string {
-  const normalizedTranslateX = (state.translateX / state.width) * iconSize;
-  const normalizedTranslateY = (state.translateY / state.height) * iconSize;
-  const transforms = [
-    `translate(${iconCenter}, ${iconCenter})`,
-    `rotate(${state.rotation})`,
-    `translate(-${iconCenter}, -${iconCenter})`,
-    `translate(${normalizedTranslateX}, ${normalizedTranslateY})`,
-  ];
-  if (state.flipH) {
-    transforms.push(`scale(-1, 1) translate(-${iconSize}, 0)`);
-  }
-  if (state.flipV) {
-    transforms.push(`scale(1, -1) translate(0,-${iconSize})`);
-  }
-  return transforms.join(" ");
-}
+
 
 export async function generateStandaloneSvg(selectedIcon: IconData, state: CustomizationState): Promise<string> {
   const IconComponent = selectedIcon.icon;
@@ -43,18 +27,25 @@ export async function generateStandaloneSvg(selectedIcon: IconData, state: Custo
         : "none";
   
   let innerContent = "";
+  let iconViewBoxSize = 24;
+  let currentViewBox = "0 0 24 24";
 
   if (iconUrl) {
     try {
-      const rawPaths = await fetchSvgInnerContentRaw(iconUrl);
+      const { content, viewBox } = await fetchSvgInnerContentRaw(iconUrl);
+      currentViewBox = viewBox;
+      
+      const vbParts = (viewBox || "0 0 24 24").split(/\s+/).map(Number);
+      if (vbParts.length === 4) {
+        iconViewBoxSize = Math.max(vbParts[2], vbParts[3]);
+      }
 
       const effectiveFillColor = fillColor === "none" ? strokeColor : fillColor;
-      const colorized = rawPaths
+      const colorized = content
         .replace(/\bstroke="(?!none)[^"]*"/g, `stroke="${strokeColor}"`)
         .replace(/\bfill="(?!none)[^"]*"/g, `fill="${effectiveFillColor}"`);
       innerContent = colorized;
     } catch {
-
       innerContent = `
         <defs>
           <mask id="custom-icon-mask">
@@ -84,16 +75,34 @@ export async function generateStandaloneSvg(selectedIcon: IconData, state: Custo
     innerContent = iconMarkup.replace(/^<svg[^>]*>/, "").replace(/<\/svg>$/, "");
   }
 
-  const iconViewBoxSize = 24;
-  const iconCenter = iconViewBoxSize / 2;
-  const transform = buildIconTransform(state, iconViewBoxSize, iconCenter);
-  const paddingVB = (state.padding / state.width) * iconViewBoxSize;
-  const iconScaleFactor = (iconViewBoxSize - 2 * paddingVB) / iconViewBoxSize;
   const animationType = resolveAnimationType(state.motion?.animationType);
   const easing = resolveEasingValue(state.motion?.easingId, state.motion?.customCubic);
   const duration = Math.max(0.2, state.motion?.duration ?? 2);
   const delay = Math.max(0, state.motion?.delay ?? 0);
   const iterationCount = state.motion?.loop ?? true ? "infinite" : "1";
+
+  const vbParts = currentViewBox.split(/\s+/).map(Number);
+  const vbx = vbParts[0] || 0;
+  const vby = vbParts[1] || 0;
+  const vbw = vbParts[2] || iconViewBoxSize;
+  const vbh = vbParts[3] || iconViewBoxSize;
+
+  const iconCenter = { x: vbx + vbw / 2, y: vby + vbh / 2 };
+
+  const normalizedTranslateX = (state.translateX / state.width) * vbw;
+  const normalizedTranslateY = (state.translateY / state.height) * vbh;
+  const transforms = [
+    `translate(${iconCenter.x}, ${iconCenter.y})`,
+    `rotate(${state.rotation})`,
+    `translate(-${iconCenter.x}, -${iconCenter.y})`,
+    `translate(${normalizedTranslateX}, ${normalizedTranslateY})`,
+  ];
+  if (state.flipH) transforms.push(`scale(-1, 1) translate(-${vbw + 2 * vbx}, 0)`);
+  if (state.flipV) transforms.push(`scale(1, -1) translate(0, -${vbh + 2 * vby})`);
+  const finalTransform = transforms.join(" ");
+
+  const paddingVB = (state.padding / state.width) * vbw;
+  const iconScaleFactor = (vbw - 2 * paddingVB) / vbw;
 
   let defs = "";
 
@@ -106,24 +115,22 @@ export async function generateStandaloneSvg(selectedIcon: IconData, state: Custo
 
     if (state.gradient.type === "linear") {
       const rad = (state.gradient.angle * Math.PI) / 180;
-      const cx = iconViewBoxSize / 2;
-      const x1 = (cx - cx * Math.sin(rad)).toFixed(3);
-      const y1 = (cx + cx * Math.cos(rad)).toFixed(3);
-      const x2 = (cx + cx * Math.sin(rad)).toFixed(3);
-      const y2 = (cx - cx * Math.cos(rad)).toFixed(3);
+      const x1 = (iconCenter.x - (vbw/2) * Math.sin(rad)).toFixed(3);
+      const y1 = (iconCenter.y + (vbh/2) * Math.cos(rad)).toFixed(3);
+      const x2 = (iconCenter.x + (vbw/2) * Math.sin(rad)).toFixed(3);
+      const y2 = (iconCenter.y - (vbh/2) * Math.cos(rad)).toFixed(3);
       defs += `<linearGradient id="icon-gradient" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" gradientUnits="userSpaceOnUse" spreadMethod="${spreadMethod}">${stops}</linearGradient>`;
     } else if (state.gradient.type === "radial") {
-      const cx = ((state.gradient.cx ?? 50) / 100) * iconViewBoxSize;
-      const cy = ((state.gradient.cy ?? 50) / 100) * iconViewBoxSize;
-      const r  = ((state.gradient.r  ?? 50) / 100) * iconViewBoxSize;
+      const cx = vbx + ((state.gradient.cx ?? 50) / 100) * vbw;
+      const cy = vby + ((state.gradient.cy ?? 50) / 100) * vbh;
+      const r  = ((state.gradient.r  ?? 50) / 100) * vbw;
       defs += `<radialGradient id="icon-gradient" cx="${cx.toFixed(3)}" cy="${cy.toFixed(3)}" r="${r.toFixed(3)}" gradientUnits="userSpaceOnUse" spreadMethod="${spreadMethod}">${stops}</radialGradient>`;
     } else {
-
-      const cx = ((state.gradient.cx ?? 50) / 100) * iconViewBoxSize;
-      const cy = ((state.gradient.cy ?? 50) / 100) * iconViewBoxSize;
+      const cx = vbx + ((state.gradient.cx ?? 50) / 100) * vbw;
+      const cy = vby + ((state.gradient.cy ?? 50) / 100) * vbh;
       const segs = buildConicSegments(state.gradient.stops, state.gradient.angle, cx, cy, 17);
       const polys = segs.map(s => `<polygon points="${s.points}" fill="${s.color}"/>`).join("");
-      defs += `<pattern id="icon-gradient" width="${iconViewBoxSize}" height="${iconViewBoxSize}" patternUnits="userSpaceOnUse">${polys}</pattern>`;
+      defs += `<pattern id="icon-gradient" width="${vbw}" height="${vbh}" patternUnits="userSpaceOnUse">${polys}</pattern>`;
     }
   }
 
@@ -138,16 +145,16 @@ export async function generateStandaloneSvg(selectedIcon: IconData, state: Custo
   }
 
   if (state.shadow.enabled && !state.shadow.inner) {
-    const blurVB = (state.shadow.blur / state.width) * iconViewBoxSize;
-    const dxVB = (state.shadow.offsetX / state.width) * iconViewBoxSize;
-    const dyVB = (state.shadow.offsetY / state.height) * iconViewBoxSize;
+    const blurVB = (state.shadow.blur / state.width) * vbw;
+    const dxVB = (state.shadow.offsetX / state.width) * vbw;
+    const dyVB = (state.shadow.offsetY / state.height) * vbh;
     defs += `<filter id="drop-shadow" x="-50%" y="-50%" width="200%" height="200%">
       <feDropShadow dx="${dxVB.toFixed(3)}" dy="${dyVB.toFixed(3)}" stdDeviation="${blurVB.toFixed(3)}" flood-color="black" flood-opacity="${state.shadow.opacity / 100}"/>
     </filter>`;
   }
 
   if (state.blur > 0) {
-    const blurStd = ((state.blur / state.width) * iconViewBoxSize).toFixed(3);
+    const blurStd = ((state.blur / state.width) * vbw).toFixed(3);
     defs += `<filter id="icon-blur" x="-50%" y="-50%" width="200%" height="200%">
       <feGaussianBlur in="SourceGraphic" stdDeviation="${blurStd}" result="blur"/>
       <feComposite operator="in" in="blur" in2="SourceAlpha"/>
@@ -233,14 +240,15 @@ export async function generateStandaloneSvg(selectedIcon: IconData, state: Custo
     ${SVG_KEYFRAMES[animationType] ?? ""}
   ` : "";
 
-  const rx = ((state.cornerRadius / state.width) * iconViewBoxSize).toFixed(3);
+  const rx = ((state.cornerRadius / state.width) * vbw).toFixed(3);
+  
   const finalSvg = `<?xml version="1.0" encoding="UTF-8"?>
 <!-- Made with RuneIcon — https://runeicon.com -->
-<svg xmlns="http://www.w3.org/2000/svg" width="${state.width}" height="${state.height}" viewBox="0 0 ${iconViewBoxSize} ${iconViewBoxSize}" preserveAspectRatio="xMidYMid meet" fill="none">${defs ? `\n  <defs>${defs}</defs>` : ""}${animationCss ? `\n  <style>${animationCss}</style>` : ""}
-  <rect width="${iconViewBoxSize}" height="${iconViewBoxSize}" rx="${rx}" ry="${rx}" fill="transparent"/>
-  <g transform="translate(${paddingVB}, ${paddingVB}) scale(${iconScaleFactor})"${
+<svg xmlns="http://www.w3.org/2000/svg" width="${state.width}" height="${state.height}" viewBox="${currentViewBox}" preserveAspectRatio="xMidYMid meet" fill="none">${defs ? `\n  <defs>${defs}</defs>` : ""}${animationCss ? `\n  <style>${animationCss}</style>` : ""}
+  <rect x="${vbx}" y="${vby}" width="${vbw}" height="${vbh}" rx="${rx}" ry="${rx}" fill="transparent"/>
+  <g transform="translate(${vbx + paddingVB}, ${vby + paddingVB}) scale(${iconScaleFactor})"${
     state.shadow.enabled && !state.shadow.inner ? ' filter="url(#drop-shadow)"' : ''}>
-    <g transform="${transform}${state.iconType === "isometric" ? " rotateX(45) rotateZ(-45)" : ""}" class="icon-anim-group icon-anim-path" stroke="${strokeColor}" fill="${fillColor}" stroke-width="${STROKE_STYLE_MAP[state.strokeStyle ?? "round"].strokeWidth}" stroke-linecap="${STROKE_STYLE_MAP[state.strokeStyle ?? "round"].strokeLinecap}" stroke-linejoin="${STROKE_STYLE_MAP[state.strokeStyle ?? "round"].strokeLinejoin}"${
+    <g transform="${finalTransform}${state.iconType === "isometric" ? " rotateX(45) rotateZ(-45)" : ""}" class="icon-anim-group icon-anim-path" stroke="${strokeColor}" fill="${fillColor}" stroke-width="${STROKE_STYLE_MAP[state.strokeStyle ?? "round"].strokeWidth}" stroke-linecap="${STROKE_STYLE_MAP[state.strokeStyle ?? "round"].strokeLinecap}" stroke-linejoin="${STROKE_STYLE_MAP[state.strokeStyle ?? "round"].strokeLinejoin}"${
     state.shadow.enabled && state.shadow.inner ? ' filter="url(#inner-shadow)"' :
     state.blur > 0 ? ' filter="url(#icon-blur)"' :
     state.iconType === "pixelated" ? ' filter="url(#pixelate)"' :
@@ -343,33 +351,62 @@ function buildAnimationCss(state: CustomizationState): string {
   `.trim();
 }
 
-async function fetchSvgInnerContent(url: string): Promise<string> {
+async function fetchSvgInnerContent(url: string): Promise<{ content: string; viewBox: string }> {
   try {
     const res = await fetch(url);
-    if (!res.ok) return `<image href="${url}" width="24" height="24" />`;
+    if (!res.ok) return { content: `<image href="${url}" width="24" height="24" />`, viewBox: "0 0 24 24" };
     const text = await res.text();
-    const match = text.match(/<svg[^>]*>([\s\S]*?)<\/svg>/i);
-    if (!match) return `<image href="${url}" width="24" height="24" />`;
-    return svgAttrToJsx(
-      match[1]
-        .trim()
+    const svgMatch = text.match(/<svg([^>]*)>([\s\S]*?)<\/svg>/i);
+    if (!svgMatch) return { content: `<image href="${url}" width="24" height="24" />`, viewBox: "0 0 24 24" };
+    
+    const attrs = svgMatch[1];
+    const rawContent = svgMatch[2].trim();
+    
+    const viewBoxMatch = attrs.match(/viewBox=["']([^"']+)["']/i);
+    let viewBox = viewBoxMatch ? viewBoxMatch[1] : "";
+    if (!viewBox) {
+      const wMatch = attrs.match(/width=["']([^"']+)["']/i);
+      const hMatch = attrs.match(/height=["']([^"']+)["']/i);
+      viewBox = (wMatch && hMatch) ? `0 0 ${wMatch[1]} ${hMatch[1]}` : "0 0 24 24";
+    }
 
+    const content = svgAttrToJsx(
+      rawContent
         .replace(/stroke="(?!none|currentColor)[^"]*"/g, 'stroke="currentColor"')
-
         .replace(/fill="(?!none|currentColor)[^"]*"/g, 'fill="currentColor"')
     );
+    
+    return { content, viewBox };
   } catch {
-    return `<image href="${url}" width="24" height="24" />`;
+    return { content: `<image href="${url}" width="24" height="24" />`, viewBox: "0 0 24 24" };
   }
 }
 
-export async function fetchSvgInnerContentRaw(url: string): Promise<string> {
+export async function fetchSvgInnerContentRaw(url: string): Promise<{ content: string; viewBox: string }> {
   const res = await fetch(url);
   if (!res.ok) throw new Error(`SVG fetch failed: ${res.status}`);
   const text = await res.text();
-  const match = text.match(/<svg[^>]*>([\s\S]*?)<\/svg>/i);
-  if (!match) throw new Error("Could not parse SVG inner content");
-  return match[1].trim();
+  
+  const svgMatch = text.match(/<svg([^>]*)>([\s\S]*?)<\/svg>/i);
+  if (!svgMatch) throw new Error("Could not parse SVG content");
+  
+  const attrs = svgMatch[1];
+  const content = svgMatch[2].trim();
+  
+  const viewBoxMatch = attrs.match(/viewBox=["']([^"']+)["']/i);
+  let viewBox = viewBoxMatch ? viewBoxMatch[1] : "";
+  
+  if (!viewBox) {
+    const widthMatch = attrs.match(/width=["']([^"']+)["']/i);
+    const heightMatch = attrs.match(/height=["']([^"']+)["']/i);
+    if (widthMatch && heightMatch) {
+      viewBox = `0 0 ${widthMatch[1]} ${heightMatch[1]}`;
+    } else {
+      viewBox = "0 0 24 24";
+    }
+  }
+  
+  return { content, viewBox };
 }
 
 export async function generatePng(
@@ -454,8 +491,11 @@ async function buildComponentCode(
   const gradientDefs = buildGradientDefs(state);
 
   let innerContent = "";
+  let viewBox = "0 0 24 24";
   if (selectedIcon.url) {
-    innerContent = await fetchSvgInnerContent(selectedIcon.url);
+    const res = await fetchSvgInnerContent(selectedIcon.url);
+    innerContent = res.content;
+    viewBox = res.viewBox;
   } else if (selectedIcon.icon) {
     const markup = renderToStaticMarkup(
       React.createElement(selectedIcon.icon, { size: 24, strokeWidth: 1.5 })
@@ -487,7 +527,7 @@ export function ${componentName}({ size = ${defaultSize}${colorProp}, className 
         xmlns="http://www.w3.org/2000/svg"
         width={size}
         height={size}
-        viewBox="0 0 24 24"
+        viewBox="${viewBox}"
         ${fillAttr}
         ${strokeAttr}
         strokeWidth={${STROKE_STYLE_MAP[state.strokeStyle ?? "round"].strokeWidth}}
@@ -519,12 +559,14 @@ export async function generateGsapComponent(
   const color = state.colors[0] || "#000000";
 
   let innerContent = "";
+  let viewBox = "0 0 24 24";
   if (selectedIcon.url) {
     try {
-      const raw = await fetchSvgInnerContentRaw(selectedIcon.url);
-      innerContent = raw
+      const res = await fetchSvgInnerContentRaw(selectedIcon.url);
+      innerContent = res.content
         .replace(/\bstroke="(?!none)[^"]*"/g, `stroke="${color}"`)
         .replace(/\bfill="(?!none)[^"]*"/g, `fill="none"`);
+      viewBox = res.viewBox;
     } catch {
       innerContent = "";
     }
@@ -541,7 +583,7 @@ import React from 'react';
 
 export function ${componentName}({ size = 24, color = '${color}' }) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24"
+    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="${viewBox}"
       fill="none" stroke={color} strokeWidth={${STROKE_STYLE_MAP[state.strokeStyle ?? "round"].strokeWidth}} strokeLinecap="${STROKE_STYLE_MAP[state.strokeStyle ?? "round"].strokeLinecap}" strokeLinejoin="${STROKE_STYLE_MAP[state.strokeStyle ?? "round"].strokeLinejoin}">
       ${innerContent}
     </svg>
@@ -562,13 +604,15 @@ export async function generateFramerComponent(
   const easing = resolveEasingValue(state.motion?.easingId, state.motion?.customCubic);
 
   let innerContent = "";
+  let viewBox = "0 0 24 24";
   if (selectedIcon.url) {
     try {
-      const raw = await fetchSvgInnerContentRaw(selectedIcon.url);
+      const res = await fetchSvgInnerContentRaw(selectedIcon.url);
       const color = state.colors[0] || "currentColor";
-      innerContent = raw
+      innerContent = res.content
         .replace(/\bstroke="(?!none)[^"]*"/g, `stroke="${color}"`)
         .replace(/\bfill="(?!none)[^"]*"/g, `fill="none"`);
+      viewBox = res.viewBox;
     } catch {
       innerContent = "";
     }
@@ -625,7 +669,7 @@ export function ${componentName}({
       xmlns="http://www.w3.org/2000/svg"
       width="24"
       height="24"
-      viewBox="0 0 24 24"
+      viewBox="${viewBox}"
       fill="none"
       stroke={color}
       strokeWidth={${STROKE_STYLE_MAP[state.strokeStyle ?? "round"].strokeWidth}}
