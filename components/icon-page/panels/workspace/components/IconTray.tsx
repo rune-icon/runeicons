@@ -49,9 +49,12 @@ export function IconTray({
         <AnimatePresence mode="popLayout" initial={false}>
           {trayIcons.map((trayIcon) => {
             const slotType = trayIcon.iconType ?? "normal";
-            const invertInDark =
-              trayIcon.category !== "custom" &&
-              (slotType === "normal" || slotType === "pixelated");
+            const isDesigned =
+              slotType === "duotone" ||
+              slotType === "fill" ||
+              slotType === "pixelated" ||
+              slotType === "glass";
+            const invertInDark = isDesigned && slotType !== "glass";
             const isSelected = trayIcon.id === selectedIconId;
 
             return (
@@ -87,7 +90,10 @@ export function IconTray({
                 >
                   {trayIcon.icon ? (
                     <trayIcon.icon
-                      className="h-full w-full"
+                      className={cn(
+                        "h-full w-full",
+                        invertInDark && "dark:invert",
+                      )}
                       strokeWidth={2}
                       style={{
                         stroke: state.iconGradient
@@ -97,7 +103,7 @@ export function IconTray({
                         transform: `rotate(${state.rotation}deg) ${state.flipH ? "scaleX(-1)" : ""} ${state.flipV ? "scaleY(-1)" : ""}`.trim(),
                       }}
                     />
-                  ) : (
+                  ) : isDesigned ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
                       src={trayIcon.url}
@@ -109,6 +115,28 @@ export function IconTray({
                         invertInDark && "dark:invert",
                       )}
                       style={{
+                        filter: state.shadow.inner ? "url(#inner-shadow)" : "none",
+                        transform: `rotate(${state.rotation}deg) ${state.flipH ? "scaleX(-1)" : ""} ${state.flipV ? "scaleY(-1)" : ""}`.trim(),
+                      }}
+                    />
+                  ) : (
+                    <div
+                      className={cn(
+                        "h-full w-full",
+                        invertInDark && "dark:invert",
+                      )}
+                      style={{
+                        maskImage: trayIcon.url ? `url(${trayIcon.url})` : "none",
+                        WebkitMaskImage: trayIcon.url ? `url(${trayIcon.url})` : "none",
+                        maskSize: "contain",
+                        WebkitMaskSize: "contain",
+                        maskRepeat: "no-repeat",
+                        WebkitMaskRepeat: "no-repeat",
+                        maskPosition: "center",
+                        WebkitMaskPosition: "center",
+                        background: state.iconGradient
+                          ? `url(#icon-gradient)`
+                          : state.colors[0] || "currentColor",
                         filter: state.shadow.inner ? "url(#inner-shadow)" : "none",
                         transform: `rotate(${state.rotation}deg) ${state.flipH ? "scaleX(-1)" : ""} ${state.flipV ? "scaleY(-1)" : ""}`.trim(),
                       }}

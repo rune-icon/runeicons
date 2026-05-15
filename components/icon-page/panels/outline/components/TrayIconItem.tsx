@@ -54,6 +54,24 @@ export function TrayIconItem({
                 : "text-muted-foreground group-hover:text-foreground",
             )}
           />
+        ) : icon.url ? (
+          <div
+            className={cn(
+              "h-4 w-4 shrink-0 rounded-sm bg-muted-foreground transition-colors duration-200",
+              isSelected ? "bg-primary" : "group-hover:bg-foreground",
+              icon.iconType !== "glass" && "dark:invert",
+            )}
+            style={{
+              maskImage: `url(${icon.url})`,
+              WebkitMaskImage: `url(${icon.url})`,
+              maskSize: "contain",
+              WebkitMaskSize: "contain",
+              maskRepeat: "no-repeat",
+              WebkitMaskRepeat: "no-repeat",
+              maskPosition: "center",
+              WebkitMaskPosition: "center",
+            }}
+          />
         ) : (
           <div
             className={cn(

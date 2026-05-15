@@ -345,14 +345,14 @@ export const PreviewContent = memo(
                         strokeLinejoin={strokeAttrs.strokeLinejoin}
                         stroke={
                           renderAsDesigned
-                            ? "none"
+                            ? undefined
                             : applyGradToStroke
                               ? "url(#icon-gradient)"
                               : state.colors[0] || "currentColor"
                         }
                         fill={
                           renderAsDesigned
-                            ? "none"
+                            ? undefined
                             : state.iconType === "fill"
                               ? (applyGradToFill ? "url(#icon-gradient)" : state.colors[0] || "currentColor")
                               : state.iconType === "duotone"
@@ -361,6 +361,7 @@ export const PreviewContent = memo(
                         }
                         className={cn(
                           "h-full w-full",
+                          renderAsDesigned && state.iconType !== "glass" && "dark:invert",
                         )}
                         style={{
                           transform: `rotate(${state.rotation}deg) ${state.flipH ? "scaleX(-1)" : ""} ${state.flipV ? "scaleY(-1)" : ""}`.trim(),
@@ -382,6 +383,7 @@ export const PreviewContent = memo(
                         const LucideIcon = SelectedIconComponent as any;
                         return (
                           <LucideIcon
+                            className={cn(renderAsDesigned && state.iconType !== "glass" && "dark:invert")}
                             size="100%"
                             strokeWidth={strokeAttrs.strokeWidth}
                             strokeLinecap={strokeAttrs.strokeLinecap}
@@ -416,6 +418,7 @@ export const PreviewContent = memo(
                       <div
                         className={cn(
                           "h-full w-full flex items-center justify-center",
+                          renderAsDesigned && state.iconType !== "glass" && "dark:invert",
                         )}
                         style={{
                           WebkitMaskImage: selectedIcon?.url ? `url(${selectedIcon.url})` : "none",
