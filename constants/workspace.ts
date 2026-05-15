@@ -1,4 +1,5 @@
 import { CustomizationState, IconData } from "@/lib/types";
+import { getIconDataById } from "@/lib/icons";
 
 export const MAX_TRAY_ITEMS = 5;
 
@@ -76,6 +77,7 @@ export const DEFAULT_STATE: CustomizationState = {
   strokeStyle: "round",
 };
 
-export const DEFAULT_TRAY_ICONS: IconData[] = [
-  { id: "actions-plus", name: "Plus", url: "/regular/actions/plus.svg", category: "action", tags: ["actions", "add"] },
-];
+const DEFAULT_PLUS = getIconDataById("indicators-plus", "normal");
+export const DEFAULT_TRAY_ICONS: IconData[] = DEFAULT_PLUS
+  ? [{ ...DEFAULT_PLUS, iconType: "normal" }]
+  : [];

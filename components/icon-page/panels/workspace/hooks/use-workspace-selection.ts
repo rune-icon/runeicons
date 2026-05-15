@@ -3,9 +3,61 @@
 import { useState, useCallback, useEffect } from "react";
 import { IconCategory, IconData, CustomizationState } from "@/lib/types";
 import { DEFAULT_TRAY_ICONS } from "@/constants/workspace";
-import { REAL_ICONS } from "../../icon-library/icons-data";
+import { getIconDataById, type IconType } from "@/lib/icons";
 
-export function useWorkspaceSelection(customIcons: CustomizationState["customIcons"] = []) {
+function customIconToData(
+  ci: { id: string; name: string; url: string },
+  iconType: IconType,
+): IconData {
+  return {
+    id: ci.id,
+    name: ci.name,
+    url: ci.url,
+    category: "custom",
+    tags: ["custom", "upload"],
+    iconType,
+  };
+}
+
+type StoredSlot = { id: string; iconType?: IconType };
+
+function parseTrayStorage(raw: string | null): StoredSlot[] | null {
+  if (!raw) return null;
+  try {
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return null;
+    return parsed
+      .map((entry): StoredSlot | null => {
+        if (typeof entry === "string") return { id: entry };
+        if (entry && typeof entry === "object" && typeof entry.id === "string") {
+          return { id: entry.id, iconType: entry.iconType };
+        }
+        return null;
+      })
+      .filter((s): s is StoredSlot => s !== null);
+  } catch {
+    return null;
+  }
+}
+
+function parseSelectedStorage(raw: string | null): StoredSlot | null {
+  if (!raw) return null;
+  try {
+    const parsed = JSON.parse(raw);
+    if (parsed && typeof parsed === "object" && typeof parsed.id === "string") {
+      return { id: parsed.id, iconType: parsed.iconType };
+    }
+  } catch {
+    if (typeof raw === "string" && raw.length > 0) return { id: raw };
+  }
+  if (typeof raw === "string" && raw.length > 0) return { id: raw };
+  return null;
+}
+
+export function useWorkspaceSelection(
+  customIcons: CustomizationState["customIcons"] = [],
+  iconType: IconType,
+) {
   const [activeCategory, setActiveCategory] = useState<IconCategory>("all");
   const [selectedIcon, setSelectedIcon] = useState<IconData | null>(null);
   const [trayIcons, setTrayIcons] = useState<IconData[]>(DEFAULT_TRAY_ICONS);
@@ -15,31 +67,28 @@ export function useWorkspaceSelection(customIcons: CustomizationState["customIco
     if (typeof window === "undefined" || hasLoaded) return;
 
     try {
-      const savedIconId = localStorage.getItem("rune_selected_icon_id");
-      const savedTrayIds = localStorage.getItem("rune_tray_icon_ids");
+      const savedSelected = parseSelectedStorage(
+        localStorage.getItem("rune_selected_icon_id"),
+      );
+      const savedTray = parseTrayStorage(
+        localStorage.getItem("rune_tray_icon_ids"),
+      );
 
-      const allIcons = [
-        ...REAL_ICONS,
-        ...customIcons.map((ci) => ({
-          id: ci.id,
-          name: ci.name,
-          icon: null as any,
-          url: ci.url,
-          category: "custom" as const,
-          tags: ["custom", "upload"],
-        })),
-      ];
+      const lookup = (slot: StoredSlot): IconData | null => {
+        const slotType = slot.iconType ?? iconType;
+        const custom = customIcons.find((ci) => ci.id === slot.id);
+        if (custom) return customIconToData(custom, slotType);
+        const data = getIconDataById(slot.id, slotType);
+        return data ? { ...data, iconType: slotType } : null;
+      };
 
-      if (savedIconId) {
-        const icon = allIcons.find((i: any) => i.id === savedIconId);
+      if (savedSelected) {
+        const icon = lookup(savedSelected);
         if (icon) setSelectedIcon(icon);
       }
 
-      if (savedTrayIds) {
-        const ids = JSON.parse(savedTrayIds) as string[];
-        const icons = ids
-          .map((id) => allIcons.find((i: any) => i.id === id))
-          .filter(Boolean) as IconData[];
+      if (savedTray && savedTray.length > 0) {
+        const icons = savedTray.map(lookup).filter(Boolean) as IconData[];
         if (icons.length > 0) setTrayIcons(icons);
       }
     } catch (error) {
@@ -47,32 +96,47 @@ export function useWorkspaceSelection(customIcons: CustomizationState["customIco
     } finally {
       setHasLoaded(true);
     }
-  }, [hasLoaded, customIcons]);
+  }, [hasLoaded, customIcons, iconType]);
 
   useEffect(() => {
     if (!hasLoaded) return;
 
     try {
       if (selectedIcon) {
-        localStorage.setItem("rune_selected_icon_id", selectedIcon.id);
+        localStorage.setItem(
+          "rune_selected_icon_id",
+          JSON.stringify({
+            id: selectedIcon.id,
+            iconType: selectedIcon.iconType,
+          }),
+        );
       }
       localStorage.setItem(
         "rune_tray_icon_ids",
-        JSON.stringify(trayIcons.map((i: IconData) => i.id))
+        JSON.stringify(
+          trayIcons.map((i) => ({ id: i.id, iconType: i.iconType })),
+        ),
       );
     } catch (error) {
       console.error("Failed to save selection to storage:", error);
     }
   }, [selectedIcon, trayIcons, hasLoaded]);
 
-  const handleIconSelect = useCallback((icon: IconData) => {
-    setSelectedIcon(icon);
-    setTrayIcons((prev) => {
-      if (prev.find((i) => i.id === icon.id)) return prev;
-      if (prev.length >= 8) return [icon, ...prev.slice(0, 7)];
-      return [icon, ...prev];
-    });
-  }, []);
+  const handleIconSelect = useCallback(
+    (icon: IconData) => {
+      const stamped: IconData = {
+        ...icon,
+        iconType: icon.iconType ?? iconType,
+      };
+      setSelectedIcon(stamped);
+      setTrayIcons((prev) => {
+        if (prev.find((i) => i.id === stamped.id)) return prev;
+        if (prev.length >= 8) return [stamped, ...prev.slice(0, 7)];
+        return [stamped, ...prev];
+      });
+    },
+    [iconType],
+  );
 
   const handleRemoveFromTray = (iconId: string) => {
     setTrayIcons((prev) => prev.filter((i) => i.id !== iconId));

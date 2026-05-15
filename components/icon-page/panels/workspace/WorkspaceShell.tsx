@@ -9,8 +9,10 @@ import { WorkspacePanel } from "./WorkspacePanel";
 import { useWorkspaceSelection } from "./hooks/use-workspace-selection";
 import { KeyboardShortcutsModal } from "@/components/icon-page/panels/outline/components/keyboard-shortcuts-modal";
 import { generateStandaloneSvg } from "@/lib/svg-export-utils";
+import { resolveLibraryIconType } from "@/lib/icons";
+import { IconData } from "@/lib/types";
 import { toast } from "sonner";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 export function WorkspaceShell() {
   const {
@@ -31,7 +33,17 @@ export function WorkspaceShell() {
     handleIconSelect,
     handleRemoveFromTray,
     handleRemoveById,
-  } = useWorkspaceSelection(state.customIcons);
+  } = useWorkspaceSelection(state.customIcons, resolveLibraryIconType(state.iconType));
+
+  const handleIconSelectWithTypeSync = useCallback(
+    (icon: IconData) => {
+      if (icon.iconType && icon.iconType !== state.iconType) {
+        handleChange({ iconType: icon.iconType });
+      }
+      handleIconSelect(icon);
+    },
+    [handleChange, handleIconSelect, state.iconType],
+  );
 
   const [showGrid, setShowGrid] = useState(true);
 
@@ -72,9 +84,9 @@ export function WorkspaceShell() {
     onToggleGrid: () => setShowGrid((prev) => !prev),
     onNextCategory: () => {
       const categories: any[] = [
-        "all", "action", "brand", "accessibility", "commerce", "communication",
-        "dev", "layout", "location", "media", "navigation", "feedback",
-        "system", "time", "users", "weather", "custom",
+        "all", "action", "accessibility", "commerce", "communication",
+        "dev", "feedback", "files", "hardware", "layout", "media",
+        "metrics", "misc", "navigation", "time", "users", "weather", "custom",
       ];
       const currentIndex = categories.indexOf(activeCategory);
       const nextIndex = (currentIndex + 1) % categories.length;
@@ -82,9 +94,9 @@ export function WorkspaceShell() {
     },
     onPrevCategory: () => {
       const categories: any[] = [
-        "all", "action", "brand", "accessibility", "commerce", "communication",
-        "dev", "layout", "location", "media", "navigation", "feedback",
-        "system", "time", "users", "weather", "custom",
+        "all", "action", "accessibility", "commerce", "communication",
+        "dev", "feedback", "files", "hardware", "layout", "media",
+        "metrics", "misc", "navigation", "time", "users", "weather", "custom",
       ];
       const currentIndex = categories.indexOf(activeCategory);
       const prevIndex = (currentIndex - 1 + categories.length) % categories.length;
@@ -104,7 +116,7 @@ export function WorkspaceShell() {
     },
     onSelectTraySlot: (index) => {
       if (trayIcons[index]) {
-        handleIconSelect(trayIcons[index]);
+        handleIconSelectWithTypeSync(trayIcons[index]);
         toast.success(`Selected ${trayIcons[index].name}`);
       }
     },
@@ -124,11 +136,12 @@ export function WorkspaceShell() {
 
       <aside className="w-[320px] shrink-0" aria-label="Icon library">
         <IconLibraryPanel
-          onIconSelect={handleIconSelect}
+          onIconSelect={handleIconSelectWithTypeSync}
           selectedIconId={selectedIcon?.id ?? null}
           selectedCategory={activeCategory}
           onCategoryChange={setActiveCategory}
           customIcons={state.customIcons}
+          iconType={resolveLibraryIconType(state.iconType)}
         />
       </aside>
 
@@ -136,7 +149,7 @@ export function WorkspaceShell() {
         state={state}
         trayIcons={trayIcons}
         selectedIcon={selectedIcon}
-        onSelectIcon={handleIconSelect}
+        onSelectIcon={handleIconSelectWithTypeSync}
         onRemoveFromTray={handleRemoveFromTray}
         onReset={handleReset}
         onUndo={handleUndo}
@@ -157,7 +170,7 @@ export function WorkspaceShell() {
           <PropertiesPanel
             state={state}
             selectedIcon={selectedIcon}
-            onIconSelect={handleIconSelect}
+            onIconSelect={handleIconSelectWithTypeSync}
             onDeleteIcon={handleRemoveById}
             onChange={handleChange}
             onReset={handleReset}

@@ -1,4 +1,5 @@
 import type { LucideIcon } from "lucide-react";
+import type { IconType } from "./icons";
 import type { EASING_PRESETS } from "./editor/animation-engine";
 
 export interface PathAnimationOverride {
@@ -98,6 +99,7 @@ export interface IconData {
   url?: string;
   category: IconCategory;
   tags: string[];
+  iconType?: IconType;
 }
 
 export type IconCategory =
@@ -121,6 +123,7 @@ export type IconCategory =
   | "layout"
   | "location"
   | "media"
+  | "metrics"
   | "misc"
   | "navigation"
   | "feedback"

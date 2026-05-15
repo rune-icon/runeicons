@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -r \"from.*public\" /Users/apple/Desktop/runeicons --include=\"*.ts\" --include=\"*.tsx\" ! -path \"*/node_modules/*\")",
+      "Bash(grep -r \"public/normal.*index\" /Users/apple/Desktop/runeicons --include=\"*.ts\" --include=\"*.tsx\" ! -path \"*/node_modules/*\")",
+      "Bash(grep -rn \"use-workspace-state\\\\|CustomizationState\" /Users/apple/Desktop/runeicons/hooks --include=\"*.ts\" ! -path \"*/node_modules/*\")",
+      "Bash(grep -rn \"url.*replace\\\\|replace.*url\\\\|iconType.*svg\" /Users/apple/Desktop/runeicons/components --include=\"*.tsx\" --include=\"*.ts\" ! -path \"*/node_modules/*\")",
+      "Bash(grep -rn \"fetchSvgInnerContentRaw\" /Users/apple/Desktop/runeicons --include=\"*.tsx\" --include=\"*.ts\" ! -path \"*/node_modules/*\")"
+    ]
+  }
+}

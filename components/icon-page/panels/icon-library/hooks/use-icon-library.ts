@@ -1,9 +1,10 @@
 import { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import { IconCategory, IconData } from "@/lib/types";
-import { REAL_ICONS } from "../icons-data";
+import { getIconsForType, type IconType } from "@/lib/icons";
 
 export function useIconLibrary(
   selectedCategory: IconCategory,
+  iconType: IconType,
   onIconSelect?: (icon: IconData) => void,
   customIcons: Array<{ id: string; name: string; url: string }> = []
 ) {
@@ -23,7 +24,7 @@ export function useIconLibrary(
   }, []);
 
   const allIcons = useMemo(() => [
-    ...REAL_ICONS,
+    ...getIconsForType(iconType),
     ...customIcons.map((ci) => ({
       id: ci.id,
       name: ci.name,
@@ -32,7 +33,7 @@ export function useIconLibrary(
       category: "custom" as const,
       tags: ["custom", "upload"],
     })),
-  ], [customIcons]);
+  ], [iconType, customIcons]);
 
   const filteredIcons = useMemo(() => {
     let icons = allIcons;

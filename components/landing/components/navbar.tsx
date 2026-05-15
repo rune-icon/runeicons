@@ -75,12 +75,18 @@ const Navbar = () => {
               <LightLogo />
             </span>
             <div className="mb-0.5 flex gap-4 text-sm max-sm:hidden">
-              <span className="cursor-pointer text-muted-foreground transition-all duration-150 hover:text-accent-foreground">
+              <Link
+                href="/about"
+                className="cursor-pointer text-muted-foreground transition-all duration-150 hover:text-accent-foreground"
+              >
                 About dev
-              </span>
-              <span className="cursor-pointer text-muted-foreground transition-all duration-150 hover:text-accent-foreground">
+              </Link>
+              <Link
+                href="/sponsor"
+                className="cursor-pointer text-muted-foreground transition-all duration-150 hover:text-accent-foreground"
+              >
                 Sponsor
-              </span>
+              </Link>
             </div>
           </div>
           <div className="flex items-center gap-2">

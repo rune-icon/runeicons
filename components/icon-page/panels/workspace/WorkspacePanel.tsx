@@ -1,5 +1,7 @@
 "use client";
 
+import * as m from "motion/react-m";
+
 import { CustomizationState, IconData } from "@/lib/types";
 import { PreviewArea } from "./components/PreviewArea";
 import { SvgDefinitions } from "./components/SvgDefinitions";
@@ -52,7 +54,12 @@ export function WorkspacePanel({
           showGrid={showGrid}
         />
 
-        <div className="absolute bottom-9.5 left-1/2 -translate-x-1/2 z-40">
+        <m.div
+          initial={{ opacity: 0, scale: 0.9, y: 8 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ type: "spring", stiffness: 400, damping: 28 }}
+          className="absolute bottom-9.5 left-1/2 -translate-x-1/2 z-40 will-change-transform"
+        >
           <WorkspaceActionBar
             onDownload={() => {}}
             onReset={onReset}
@@ -67,7 +74,7 @@ export function WorkspacePanel({
             showGrid={showGrid}
             onGridToggle={onGridToggle}
           />
-        </div>
+        </m.div>
       </main>
     </>
   );

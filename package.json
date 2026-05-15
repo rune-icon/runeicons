@@ -7,7 +7,8 @@
     "dev": "next dev",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "start": "next start"
+    "start": "next start",
+    "icons:manifest": "bun scripts/build-icon-manifest.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.3.0",

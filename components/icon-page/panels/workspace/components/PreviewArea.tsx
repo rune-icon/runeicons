@@ -32,6 +32,7 @@ export function PreviewArea({
       trayNode={
         <IconTray
           trayIcons={trayIcons}
+          selectedIconId={selectedIcon?.id ?? null}
           onSelectIcon={onSelectIcon}
           onRemoveFromTray={onRemoveFromTray}
           state={state}
