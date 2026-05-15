@@ -5,6 +5,7 @@ import { useEffect, useRef } from "react";
 import { motion } from "motion/react";
 
 import { IconData } from "@/lib/types";
+import type { IconType } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 
 interface IconGridProps {
@@ -12,9 +13,15 @@ interface IconGridProps {
   selectedIconId: string | null;
   onIconClick: (icon: IconData) => void;
   isSearching?: boolean;
+  iconType: IconType;
 }
 
-export function IconGrid({ icons, selectedIconId, onIconClick, isSearching }: IconGridProps) {
+export function IconGrid({ icons, selectedIconId, onIconClick, isSearching, iconType }: IconGridProps) {
+  const invertInDark =
+    iconType === "normal" ||
+    iconType === "pixelated" ||
+    iconType === "duotone" ||
+    iconType === "fill";
   const containerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const container = containerRef.current;
@@ -118,26 +125,16 @@ export function IconGrid({ icons, selectedIconId, onIconClick, isSearching }: Ic
                     aria-hidden="true"
                   />
                 ) : (
-                  <div
-                    className={cn(
-                      "h-5 w-5 transition-colors duration-200",
-                      isSelected
-                        ? "bg-primary"
-                        : isSearching
-                          ? "bg-foreground"
-                          : "bg-muted-foreground group-hover:bg-foreground",
-                    )}
-                    style={{
-                      WebkitMaskImage: `url(${icon.url})`,
-                      maskImage: `url(${icon.url})`,
-                      WebkitMaskRepeat: "no-repeat",
-                      maskRepeat: "no-repeat",
-                      WebkitMaskPosition: "center",
-                      maskPosition: "center",
-                      WebkitMaskSize: "contain",
-                      maskSize: "contain",
-                    }}
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={icon.url}
+                    alt=""
                     aria-hidden="true"
+                    draggable={false}
+                    className={cn(
+                      "h-5 w-5 select-none",
+                      invertInDark && "dark:invert",
+                    )}
                   />
                 )}
               </motion.div>

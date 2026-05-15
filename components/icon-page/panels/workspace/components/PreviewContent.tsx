@@ -50,8 +50,24 @@ export const PreviewContent = memo(
       }, [selectedIcon?.url]);
 
       const isDrawAnim = motionEnabled && (animationType === "draw" || animationType === "stroke");
+      const renderAsDesigned =
+        state.iconType === "duotone" ||
+        state.iconType === "fill" ||
+        state.iconType === "pixelated";
+
       const colorizedSvgContent = useMemo(() => {
         if (!svgContent) return null;
+
+        if (renderAsDesigned) {
+          if (isDrawAnim) {
+            return svgContent.replace(
+              /<(path|circle|rect|ellipse|line|polyline|polygon)(\s)/g,
+              `<$1 pathLength="1" class="canvas-icon-draw-path"$2`,
+            );
+          }
+          return svgContent;
+        }
+
         const color = state.colors[0] || "currentColor";
         const isFill = state.iconType === "fill";
         const isDuotone = state.iconType === "duotone";
@@ -91,7 +107,7 @@ export const PreviewContent = memo(
         }
 
         return result;
-      }, [svgContent, state.colors, state.iconGradient, state.gradient.target, state.iconType, state.strokeStyle, isDrawAnim]);
+      }, [svgContent, state.colors, state.iconGradient, state.gradient.target, state.iconType, state.strokeStyle, isDrawAnim, renderAsDesigned]);
       useEffect(() => {
         const container = lucideWrapRef.current;
         if (!container || !isDrawAnim) return;
@@ -382,19 +398,46 @@ export const PreviewContent = memo(
                       animationType === "jump" && "canvas-icon-anim-jump",
                     )}
                   >
-                    {colorizedSvgContent ? (
+                    {renderAsDesigned ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={selectedIcon.url}
+                        alt=""
+                        aria-hidden="true"
+                        draggable={false}
+                        className={cn(
+                          "h-full w-full object-contain select-none",
+                          (state.iconType === "normal" ||
+                            state.iconType === "pixelated" ||
+                            state.iconType === "duotone" ||
+                            state.iconType === "fill") &&
+                            "dark:invert",
+                        )}
+                        style={{
+                          transform: `rotate(${state.rotation}deg) ${state.flipH ? "scaleX(-1)" : ""} ${state.flipV ? "scaleY(-1)" : ""}`.trim(),
+                        }}
+                      />
+                    ) : colorizedSvgContent ? (
                       <svg
                         viewBox="0 0 24 24"
                         strokeWidth={strokeAttrs.strokeWidth}
                         strokeLinecap={strokeAttrs.strokeLinecap}
                         strokeLinejoin={strokeAttrs.strokeLinejoin}
-                        stroke={applyGradToStroke ? "url(#icon-gradient)" : state.colors[0] || "currentColor"}
+                        stroke={
+                          renderAsDesigned
+                            ? "none"
+                            : applyGradToStroke
+                              ? "url(#icon-gradient)"
+                              : state.colors[0] || "currentColor"
+                        }
                         fill={
-                          state.iconType === "fill"
-                            ? (applyGradToFill ? "url(#icon-gradient)" : state.colors[0] || "currentColor")
-                            : state.iconType === "duotone"
-                              ? (applyGradToFill ? "url(#icon-gradient)" : `${state.colors[0] || "currentColor"}33`)
-                              : "none"
+                          renderAsDesigned
+                            ? "none"
+                            : state.iconType === "fill"
+                              ? (applyGradToFill ? "url(#icon-gradient)" : state.colors[0] || "currentColor")
+                              : state.iconType === "duotone"
+                                ? (applyGradToFill ? "url(#icon-gradient)" : `${state.colors[0] || "currentColor"}33`)
+                                : "none"
                         }
                         className={cn(
                           "h-full w-full",
