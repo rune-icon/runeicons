@@ -22,9 +22,10 @@ export interface ToolRailProps {
   activeType?: IconType;
   onTypeChange?: (type: IconType) => void;
   onHelpClick?: () => void;
+  supportedTypes?: readonly IconType[];
 }
 
-export function ToolRail({ activeType = "normal", onTypeChange, onHelpClick }: ToolRailProps) {
+export function ToolRail({ activeType = "normal", onTypeChange, onHelpClick, supportedTypes }: ToolRailProps) {
   const [showFeedback, setShowFeedback] = useState(false);
 
   return (
@@ -32,7 +33,7 @@ export function ToolRail({ activeType = "normal", onTypeChange, onHelpClick }: T
       <div className="bg-pattern-vertical-dashes pointer-events-none absolute inset-0 opacity-100" />
 
       <div className="relative z-10 flex h-full flex-col">
-        <IconTypeList activeType={activeType} onTypeChange={onTypeChange} compact />
+        <IconTypeList activeType={activeType} onTypeChange={onTypeChange} compact supportedTypes={supportedTypes} />
         <div className="mt-auto flex justify-center pt-4 relative">
           <AnimatePresence>
             {showFeedback && (

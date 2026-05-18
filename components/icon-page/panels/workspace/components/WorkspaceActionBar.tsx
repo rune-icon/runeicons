@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef, useState, type ReactNode } from "react";
 
 import {
   Braces,
@@ -61,6 +61,23 @@ export interface WorkspaceActionBarProps {
   state?: CustomizationState;
   onChange?: (updates: Partial<CustomizationState>) => void;
   className?: string;
+  /**
+   * Optional override for SVG generation. When provided, the main download
+   * button and any "Copy SVG" / "Download as SVG" dropdown items use this
+   * instead of `generateStandaloneSvg(selectedIcon, state)`. Used by the
+   * editor, whose document shape isn't a LucideIcon-based IconData.
+   */
+  onGetSvgContent?: () => Promise<string>;
+  /**
+   * Hide dropdown items that require a full IconData (PNG export, JSX/TSX
+   * component exports, Copy as React, GSAP/Framer animated exports).
+   */
+  hideAdvancedExports?: boolean;
+  /**
+   * Extra dropdown items appended to the export menu — e.g. editor's
+   * "Save as Snapshot" entry.
+   */
+  additionalDropdownItems?: ReactNode;
 }
 
 export function WorkspaceActionBar({
@@ -77,6 +94,9 @@ export function WorkspaceActionBar({
   state,
   onChange,
   className,
+  onGetSvgContent,
+  hideAdvancedExports = false,
+  additionalDropdownItems,
 }: WorkspaceActionBarProps) {
   const [isPending, setIsPending] = useState(false);
   const isAnimated = state?.motion?.enabled === true;
@@ -93,6 +113,7 @@ export function WorkspaceActionBar({
   useTuning();
   const [isResetArmed, setIsResetArmed] = useState(false);
   const [timeLeft, setTimeLeft] = useState(5);
+  const [resetTooltipOpen, setResetTooltipOpen] = useState(false);
   const resetTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const countdownIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -150,6 +171,15 @@ export function WorkspaceActionBar({
   };
 
   const getSvgContent = async (): Promise<string> => {
+    if (onGetSvgContent) {
+      try {
+        return await onGetSvgContent();
+      } catch (error) {
+        console.error("Custom SVG generator failed:", error);
+        toast.error("Export failed.");
+        return "";
+      }
+    }
     if (!selectedIcon || !state) return "";
     try {
       return await generateStandaloneSvg(selectedIcon, state);
@@ -255,7 +285,10 @@ export function WorkspaceActionBar({
           </Tooltip>
  
           <div className="relative">
-            <Tooltip open={isResetArmed ? false : undefined}>
+            <Tooltip
+              open={!isResetArmed && resetTooltipOpen}
+              onOpenChange={setResetTooltipOpen}
+            >
               <TooltipTrigger asChild>
                 <button
                   onClick={handleResetClick}
@@ -349,7 +382,7 @@ export function WorkspaceActionBar({
         <div className="flex items-center rounded-[10px] bg-[#1d1d1f] p-[3px] shadow-[inset_0_1px_1px_rgba(0,0,0,0.4),0_0_0_1px_rgba(0,0,0,0.5)]">
           <button
             disabled={isPending}
-            onClick={isAnimated ? async () => {
+            onClick={isAnimated && !hideAdvancedExports ? async () => {
               if (!selectedIcon || !state) return;
               await withPending(async () => {
                 try {
@@ -366,7 +399,7 @@ export function WorkspaceActionBar({
             <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-black/5 to-transparent transition-transform duration-500 ease-out group-hover:translate-x-full" />
             <Download className="h-3.5 w-3.5" />
             <span className="text-[10px] font-bold tracking-tight">
-              {isPending ? "Exporting..." : isAnimated ? "Export JSX" : "Export SVG"}
+              {isPending ? "Exporting..." : isAnimated && !hideAdvancedExports ? "Export JSX" : "Export SVG"}
             </span>
           </button>
 
@@ -382,48 +415,52 @@ export function WorkspaceActionBar({
             >
               {isAnimated ? (
                 <>
-                  <DropdownMenuItem
-                    disabled={isPending}
-                    className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-[11px] font-medium transition-colors focus:bg-white/10 focus:text-white"
-                    onClick={async () => {
-                      if (!selectedIcon || !state) return;
-                      await withPending(async () => {
-                        try {
-                          const code = await generateJsxComponent(selectedIcon, state);
-                          await copyToClipboard(code, "JSX Component");
-                        } catch {
-                          toast.error("Failed to generate JSX component");
-                        }
-                      });
-                    }}
-                  >
-                    <FileCode className="h-4 w-4 text-white/40" />
-                    <div className="flex flex-1 items-center justify-between">
-                      <span>Copy JSX Component</span>
-                      <span className="font-mono text-[9px] opacity-40">JSX</span>
-                    </div>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    disabled={isPending}
-                    className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-[11px] font-medium transition-colors focus:bg-white/10 focus:text-white"
-                    onClick={async () => {
-                      if (!selectedIcon || !state) return;
-                      await withPending(async () => {
-                        try {
-                          const code = await generateTsxComponent(selectedIcon, state);
-                          await copyToClipboard(code, "TSX Component");
-                        } catch {
-                          toast.error("Failed to generate TSX component");
-                        }
-                      });
-                    }}
-                  >
-                    <FileCode className="h-4 w-4 text-white/40" />
-                    <div className="flex flex-1 items-center justify-between">
-                      <span>Copy TSX Component</span>
-                      <span className="font-mono text-[9px] opacity-40">TSX</span>
-                    </div>
-                  </DropdownMenuItem>
+                  {!hideAdvancedExports && (
+                    <>
+                      <DropdownMenuItem
+                        disabled={isPending}
+                        className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-[11px] font-medium transition-colors focus:bg-white/10 focus:text-white"
+                        onClick={async () => {
+                          if (!selectedIcon || !state) return;
+                          await withPending(async () => {
+                            try {
+                              const code = await generateJsxComponent(selectedIcon, state);
+                              await copyToClipboard(code, "JSX Component");
+                            } catch {
+                              toast.error("Failed to generate JSX component");
+                            }
+                          });
+                        }}
+                      >
+                        <FileCode className="h-4 w-4 text-white/40" />
+                        <div className="flex flex-1 items-center justify-between">
+                          <span>Copy JSX Component</span>
+                          <span className="font-mono text-[9px] opacity-40">JSX</span>
+                        </div>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        disabled={isPending}
+                        className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-[11px] font-medium transition-colors focus:bg-white/10 focus:text-white"
+                        onClick={async () => {
+                          if (!selectedIcon || !state) return;
+                          await withPending(async () => {
+                            try {
+                              const code = await generateTsxComponent(selectedIcon, state);
+                              await copyToClipboard(code, "TSX Component");
+                            } catch {
+                              toast.error("Failed to generate TSX component");
+                            }
+                          });
+                        }}
+                      >
+                        <FileCode className="h-4 w-4 text-white/40" />
+                        <div className="flex flex-1 items-center justify-between">
+                          <span>Copy TSX Component</span>
+                          <span className="font-mono text-[9px] opacity-40">TSX</span>
+                        </div>
+                      </DropdownMenuItem>
+                    </>
+                  )}
                   <DropdownMenuItem
                     disabled={isPending}
                     className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-[11px] font-medium transition-colors focus:bg-white/10 focus:text-white"
@@ -439,44 +476,48 @@ export function WorkspaceActionBar({
                     </div>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator className="bg-white/5" />
-                  <DropdownMenuItem
-                    disabled={isPending}
-                    className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-[11px] font-medium transition-colors focus:bg-white/10 focus:text-white"
-                    onClick={async () => {
-                      if (!selectedIcon || !state) return;
-                      await withPending(async () => {
-                        try {
-                          const code = await generateJsxComponent(selectedIcon, state);
-                          downloadFile(code, getComponentFilename("jsx"), "text/javascript");
-                          toast.success("JSX component downloaded");
-                        } catch {
-                          toast.error("Failed to generate JSX component");
-                        }
-                      });
-                    }}
-                  >
-                    <FileCode className="h-4 w-4 text-white/40" />
-                    <span>Download as JSX</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    disabled={isPending}
-                    className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-[11px] font-medium transition-colors focus:bg-white/10 focus:text-white"
-                    onClick={async () => {
-                      if (!selectedIcon || !state) return;
-                      await withPending(async () => {
-                        try {
-                          const code = await generateTsxComponent(selectedIcon, state);
-                          downloadFile(code, getComponentFilename("tsx"), "text/typescript");
-                          toast.success("TSX component downloaded");
-                        } catch {
-                          toast.error("Failed to generate TSX component");
-                        }
-                      });
-                    }}
-                  >
-                    <FileCode className="h-4 w-4 text-white/40" />
-                    <span>Download as TSX</span>
-                  </DropdownMenuItem>
+                  {!hideAdvancedExports && (
+                    <>
+                      <DropdownMenuItem
+                        disabled={isPending}
+                        className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-[11px] font-medium transition-colors focus:bg-white/10 focus:text-white"
+                        onClick={async () => {
+                          if (!selectedIcon || !state) return;
+                          await withPending(async () => {
+                            try {
+                              const code = await generateJsxComponent(selectedIcon, state);
+                              downloadFile(code, getComponentFilename("jsx"), "text/javascript");
+                              toast.success("JSX component downloaded");
+                            } catch {
+                              toast.error("Failed to generate JSX component");
+                            }
+                          });
+                        }}
+                      >
+                        <FileCode className="h-4 w-4 text-white/40" />
+                        <span>Download as JSX</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        disabled={isPending}
+                        className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-[11px] font-medium transition-colors focus:bg-white/10 focus:text-white"
+                        onClick={async () => {
+                          if (!selectedIcon || !state) return;
+                          await withPending(async () => {
+                            try {
+                              const code = await generateTsxComponent(selectedIcon, state);
+                              downloadFile(code, getComponentFilename("tsx"), "text/typescript");
+                              toast.success("TSX component downloaded");
+                            } catch {
+                              toast.error("Failed to generate TSX component");
+                            }
+                          });
+                        }}
+                      >
+                        <FileCode className="h-4 w-4 text-white/40" />
+                        <span>Download as TSX</span>
+                      </DropdownMenuItem>
+                    </>
+                  )}
                   <DropdownMenuItem
                     disabled={isPending}
                     className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-[11px] font-medium transition-colors focus:bg-white/10 focus:text-white"
@@ -485,51 +526,61 @@ export function WorkspaceActionBar({
                     <FileCode className="h-4 w-4 text-white/40" />
                     <span>Download as SVG (animated)</span>
                   </DropdownMenuItem>
-                  <DropdownMenuSeparator className="my-0.5 bg-white/5" />
-                  <DropdownMenuItem
-                    disabled={isPending}
-                    className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-[11px] font-medium transition-colors focus:bg-white/10 focus:text-white"
-                    onClick={async () => {
-                      if (!selectedIcon || !state) return;
-                      await withPending(async () => {
-                        try {
-                          const code = await generateGsapComponent(selectedIcon, state);
-                          downloadFile(code, getComponentFilename("jsx"), "text/javascript");
-                          toast.success("GSAP component downloaded");
-                        } catch {
-                          toast.error("Failed to generate GSAP component");
-                        }
-                      });
-                    }}
-                  >
-                    <Zap className="h-4 w-4 text-amber-400/60" />
-                    <div className="flex flex-1 items-center justify-between">
-                      <span>Download as GSAP</span>
-                      <span className="font-mono text-[9px] opacity-40">JSX</span>
-                    </div>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    disabled={isPending}
-                    className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-[11px] font-medium transition-colors focus:bg-white/10 focus:text-white"
-                    onClick={async () => {
-                      if (!selectedIcon || !state) return;
-                      await withPending(async () => {
-                        try {
-                          const code = await generateFramerComponent(selectedIcon, state);
-                          downloadFile(code, getComponentFilename("jsx"), "text/javascript");
-                          toast.success("Framer Motion component downloaded");
-                        } catch {
-                          toast.error("Failed to generate Framer Motion component");
-                        }
-                      });
-                    }}
-                  >
-                    <Sparkles className="h-4 w-4 text-purple-400/60" />
-                    <div className="flex flex-1 items-center justify-between">
-                      <span>Download as Framer Motion</span>
-                      <span className="font-mono text-[9px] opacity-40">JSX</span>
-                    </div>
-                  </DropdownMenuItem>
+                  {!hideAdvancedExports && (
+                    <>
+                      <DropdownMenuSeparator className="my-0.5 bg-white/5" />
+                      <DropdownMenuItem
+                        disabled={isPending}
+                        className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-[11px] font-medium transition-colors focus:bg-white/10 focus:text-white"
+                        onClick={async () => {
+                          if (!selectedIcon || !state) return;
+                          await withPending(async () => {
+                            try {
+                              const code = await generateGsapComponent(selectedIcon, state);
+                              downloadFile(code, getComponentFilename("jsx"), "text/javascript");
+                              toast.success("GSAP component downloaded");
+                            } catch {
+                              toast.error("Failed to generate GSAP component");
+                            }
+                          });
+                        }}
+                      >
+                        <Zap className="h-4 w-4 text-amber-400/60" />
+                        <div className="flex flex-1 items-center justify-between">
+                          <span>Download as GSAP</span>
+                          <span className="font-mono text-[9px] opacity-40">JSX</span>
+                        </div>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        disabled={isPending}
+                        className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-[11px] font-medium transition-colors focus:bg-white/10 focus:text-white"
+                        onClick={async () => {
+                          if (!selectedIcon || !state) return;
+                          await withPending(async () => {
+                            try {
+                              const code = await generateFramerComponent(selectedIcon, state);
+                              downloadFile(code, getComponentFilename("jsx"), "text/javascript");
+                              toast.success("Framer Motion component downloaded");
+                            } catch {
+                              toast.error("Failed to generate Framer Motion component");
+                            }
+                          });
+                        }}
+                      >
+                        <Sparkles className="h-4 w-4 text-purple-400/60" />
+                        <div className="flex flex-1 items-center justify-between">
+                          <span>Download as Framer Motion</span>
+                          <span className="font-mono text-[9px] opacity-40">JSX</span>
+                        </div>
+                      </DropdownMenuItem>
+                    </>
+                  )}
+                  {additionalDropdownItems && (
+                    <>
+                      <DropdownMenuSeparator className="my-0.5 bg-white/5" />
+                      {additionalDropdownItems}
+                    </>
+                  )}
                 </>
               ) : (
                 <>
@@ -551,20 +602,22 @@ export function WorkspaceActionBar({
                       <span className="font-mono text-[9px] opacity-40">SVG</span>
                     </div>
                   </DropdownMenuItem>
-                  <DropdownMenuItem
-                    disabled={isPending}
-                    className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-[11px] font-medium transition-colors focus:bg-white/10 focus:text-white"
-                    onClick={() => {
-                      if (selectedIcon && state) {
-                        generateReactSnippet(selectedIcon, state).then(code =>
-                          copyToClipboard(code, "React Component")
-                        );
-                      }
-                    }}
-                  >
-                    <Braces className="h-4 w-4 text-white/40" />
-                    <span>Copy as React</span>
-                  </DropdownMenuItem>
+                  {!hideAdvancedExports && (
+                    <DropdownMenuItem
+                      disabled={isPending}
+                      className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-[11px] font-medium transition-colors focus:bg-white/10 focus:text-white"
+                      onClick={() => {
+                        if (selectedIcon && state) {
+                          generateReactSnippet(selectedIcon, state).then(code =>
+                            copyToClipboard(code, "React Component")
+                          );
+                        }
+                      }}
+                    >
+                      <Braces className="h-4 w-4 text-white/40" />
+                      <span>Copy as React</span>
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuSeparator className="my-0.5 bg-white/5" />
                   <DropdownMenuItem
                     disabled={isPending}
@@ -574,52 +627,62 @@ export function WorkspaceActionBar({
                     <Download className="h-4 w-4 text-white/40" />
                     <span>Download as SVG</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem
-                    disabled={isPending}
-                    className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-[11px] font-medium transition-colors focus:bg-white/10 focus:text-white"
-                    onClick={async () => {
-                      if (!selectedIcon || !state) return;
-                      await withPending(async () => {
-                        try {
-                          const code = await generateJsxComponent(selectedIcon, state);
-                          downloadFile(code, getComponentFilename("jsx"), "text/javascript");
-                          toast.success("JSX component downloaded");
-                        } catch {
-                          toast.error("Failed to generate JSX component");
-                        }
-                      });
-                    }}
-                  >
-                    <FileCode className="h-4 w-4 text-white/40" />
-                    <span>Download as JSX</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    disabled={isPending}
-                    className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-[11px] font-medium transition-colors focus:bg-white/10 focus:text-white"
-                    onClick={async () => {
-                      if (!selectedIcon || !state) return;
-                      await withPending(async () => {
-                        try {
-                          const code = await generateTsxComponent(selectedIcon, state);
-                          downloadFile(code, getComponentFilename("tsx"), "text/typescript");
-                          toast.success("TSX component downloaded");
-                        } catch {
-                          toast.error("Failed to generate TSX component");
-                        }
-                      });
-                    }}
-                  >
-                    <FileCode className="h-4 w-4 text-white/40" />
-                    <span>Download as TSX</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    disabled={isPending}
-                    className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-[11px] font-medium transition-colors focus:bg-white/10 focus:text-white"
-                    onClick={downloadPng}
-                  >
-                    <Image className="h-4 w-4 text-white/40" />
-                    <span>Download as PNG</span>
-                  </DropdownMenuItem>
+                  {!hideAdvancedExports && (
+                    <>
+                      <DropdownMenuItem
+                        disabled={isPending}
+                        className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-[11px] font-medium transition-colors focus:bg-white/10 focus:text-white"
+                        onClick={async () => {
+                          if (!selectedIcon || !state) return;
+                          await withPending(async () => {
+                            try {
+                              const code = await generateJsxComponent(selectedIcon, state);
+                              downloadFile(code, getComponentFilename("jsx"), "text/javascript");
+                              toast.success("JSX component downloaded");
+                            } catch {
+                              toast.error("Failed to generate JSX component");
+                            }
+                          });
+                        }}
+                      >
+                        <FileCode className="h-4 w-4 text-white/40" />
+                        <span>Download as JSX</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        disabled={isPending}
+                        className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-[11px] font-medium transition-colors focus:bg-white/10 focus:text-white"
+                        onClick={async () => {
+                          if (!selectedIcon || !state) return;
+                          await withPending(async () => {
+                            try {
+                              const code = await generateTsxComponent(selectedIcon, state);
+                              downloadFile(code, getComponentFilename("tsx"), "text/typescript");
+                              toast.success("TSX component downloaded");
+                            } catch {
+                              toast.error("Failed to generate TSX component");
+                            }
+                          });
+                        }}
+                      >
+                        <FileCode className="h-4 w-4 text-white/40" />
+                        <span>Download as TSX</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        disabled={isPending}
+                        className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-[11px] font-medium transition-colors focus:bg-white/10 focus:text-white"
+                        onClick={downloadPng}
+                      >
+                        <Image className="h-4 w-4 text-white/40" />
+                        <span>Download as PNG</span>
+                      </DropdownMenuItem>
+                    </>
+                  )}
+                  {additionalDropdownItems && (
+                    <>
+                      <DropdownMenuSeparator className="my-0.5 bg-white/5" />
+                      {additionalDropdownItems}
+                    </>
+                  )}
                 </>
               )}
             </DropdownMenuContent>

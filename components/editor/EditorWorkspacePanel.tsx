@@ -1,16 +1,17 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { toast } from "sonner";
+import { Save } from "lucide-react";
 import { SvgDefinitions } from "@/components/icon-page/panels/workspace/components/SvgDefinitions";
 import { WorkspaceGround } from "@/components/icon-page/panels/workspace/components/WorkspaceGround";
-import type { CustomizationState } from "@/lib/types";
+import { WorkspaceActionBar } from "@/components/icon-page/panels/workspace/components/WorkspaceActionBar";
+import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import type { CustomizationState, IconData } from "@/lib/types";
 import type {
   EditorAssetSummary,
   EditorDocument,
 } from "@/lib/editor/types";
 import { createEditorSvgMarkup, cloneDocument } from "@/lib/editor/svg";
-import { EditorActionBar } from "@/components/editor/EditorActionBar";
 import { EditorPathCanvas } from "@/components/editor/EditorPathCanvas";
 import { EditorDrawCanvas } from "@/components/editor/EditorDrawCanvas";
 import { EditorMiniPreview } from "@/components/editor/EditorMiniPreview";
@@ -55,7 +56,6 @@ export function EditorWorkspacePanel({
   selectedPath,
   onSelectPath,
   onCommitPathDraft,
-  isModified,
   onResetAsset,
   onUndo,
   onRedo,
@@ -68,6 +68,7 @@ export function EditorWorkspacePanel({
   onGlobalStateChange,
 }: EditorWorkspacePanelProps) {
   const [editorMode, setEditorMode] = useState<EditorMode>("edit");
+  const [showGrid, setShowGrid] = useState(true);
   const [previewPathDraft, setPreviewPathDraft] = useState<{
     assetId: string;
     pathId: string;
@@ -110,27 +111,22 @@ export function EditorWorkspacePanel({
 
   const exportDocument = previewDocument ?? editorDocument;
 
-  const downloadSvg = () => {
-    if (!exportDocument) return;
+  // Minimal IconData shim so we can plug WorkspaceActionBar (from /icons) directly
+  // into the editor. The bar only needs `name` (for download filename) and `id`;
+  // SVG generation is overridden via `onGetSvgContent` below.
+  const iconShim = useMemo<IconData | null>(() => {
+    if (!exportDocument) return null;
+    return {
+      id: exportDocument.assetId,
+      name: exportDocument.name ?? "runeicons-editor",
+      category: "all",
+      tags: [],
+    };
+  }, [exportDocument]);
 
-    const markup = createEditorSvgMarkup(exportDocument, state);
-    const blob = new Blob([markup], { type: "image/svg+xml" });
-    const url = URL.createObjectURL(blob);
-    const link = window.document.createElement("a");
-    link.href = url;
-    link.download = `${exportDocument.name ?? "runeicons-editor"}.svg`;
-    window.document.body.appendChild(link);
-    link.click();
-    window.document.body.removeChild(link);
-    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
-    toast.success("SVG downloaded successfully");
-  };
-
-  const copySvg = async () => {
-    if (!exportDocument) return;
-
-    const markup = createEditorSvgMarkup(exportDocument, state);
-    await navigator.clipboard.writeText(markup);
+  const getEditorSvgContent = async (): Promise<string> => {
+    if (!exportDocument) return "";
+    return createEditorSvgMarkup(exportDocument, state);
   };
 
   const editorCanvas =
@@ -170,55 +166,100 @@ export function EditorWorkspacePanel({
     <>
       <SvgDefinitions state={state} />
       <main className="flex-1 flex flex-col relative overflow-hidden" aria-label="Editor workspace">
-        <div className="flex-1 flex flex-col items-center justify-center min-h-0 px-4">
-          {/* Toggle: centered above the canvas */}
-          <div className="flex justify-center mb-2">
-            <EditorModeToggle
-              mode={editorMode}
-              onModeChange={setEditorMode}
-            />
-          </div>
-
-          {/* Canvas container: holds grid background + editor + preview overlay */}
-          <div className="relative w-full max-w-[600px] aspect-square overflow-hidden rounded-xl">
+        {/* Geometric grid background — fills the full main, blends behind everything.
+            Toggled by the Grid button in the toolbar. */}
+        {showGrid ? (
+          <div className="absolute inset-0 z-0">
             <WorkspaceGround />
-            <div className="absolute inset-0 z-10">
-              {editorCanvas}
-            </div>
-            <EditorMiniPreview
-              document={previewDocument}
-              state={state}
-              onPathClick={onSelectPath}
-            />
           </div>
+        ) : null}
 
-          {/* Icon tray: below the canvas */}
-          <div className="mt-2 mb-16">
-            <EditorIconTray
-              assets={trayAssets}
-              selectedAssetId={selectedAssetId}
-              onAssetSelect={(asset) => onSelectAssetById(asset.id)}
-              onRemoveAsset={onRemoveAssetFromTray}
-            />
+        {/* Overlay SVG with the SAME viewBox/aspect/transform as WorkspaceGround,
+            so foreignObject cells align pixel-perfect with the geometric grid cells. */}
+        <div className="absolute inset-0 z-20 pointer-events-none flex items-center justify-center">
+          <div className="w-full h-full flex items-center justify-center -translate-y-10">
+            <svg
+              width="1100"
+              height="800"
+              viewBox="0 0 1100 800"
+              preserveAspectRatio="xMidYMid meet"
+              className="max-w-full max-h-full w-auto h-auto"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              {/* Mini-preview — exactly the top-left cell (x=50..150, y=50..150) */}
+              <foreignObject x={50} y={50} width={100} height={100}>
+                <div className="w-full h-full pointer-events-auto">
+                  <EditorMiniPreview
+                    document={previewDocument}
+                    state={state}
+                    onPathClick={onSelectPath}
+                  />
+                </div>
+              </foreignObject>
+
+              {/* Icon tray — spans cells 2..7 (x=250..850, y=650..750), 6 cells wide,
+                  perfectly centered on grid center (x=550). grid-cols-6 inside → 1 icon = 1 cell. */}
+              <foreignObject x={250} y={650} width={600} height={100}>
+                <div className="w-full h-full pointer-events-auto">
+                  <EditorIconTray
+                    assets={trayAssets}
+                    selectedAssetId={selectedAssetId}
+                    onAssetSelect={(asset) => onSelectAssetById(asset.id)}
+                    onRemoveAsset={onRemoveAssetFromTray}
+                  />
+                </div>
+              </foreignObject>
+            </svg>
           </div>
         </div>
 
-        {/* Floating action bar — bottom center */}
+        {/* Toggle — floats over the grid (transparent surroundings) */}
+        <div className="absolute top-2 left-1/2 -translate-x-1/2 z-30">
+          <EditorModeToggle
+            mode={editorMode}
+            onModeChange={setEditorMode}
+          />
+        </div>
+
+        {/* Canvas — sized to fit between the mini-preview (top cell) and tray (bottom cells).
+            The grid is shifted up by 40px (translate-y-10) inside WorkspaceGround, so we
+            mirror that translate here for true grid-center alignment. ~60% of workspace
+            height keeps the canvas inside SVG y=150..650 (the middle of the geometric grid). */}
+        <div className="relative z-10 flex-1 flex items-center justify-center min-h-0 px-4">
+          <div className="relative h-[60%] aspect-square max-w-full overflow-hidden rounded-xl -translate-y-10">
+            <div className="absolute inset-0 z-10">
+              {editorCanvas}
+            </div>
+          </div>
+        </div>
+
+        {/* Floating action bar — shared /icons component (WorkspaceActionBar).
+            SVG generation routed through `onGetSvgContent` since the editor uses a
+            different document shape than IconData. Advanced exports hidden;
+            "Save as Snapshot" injected via `additionalDropdownItems`. */}
         <div className="absolute bottom-9.5 left-1/2 -translate-x-1/2 z-10">
-          <EditorActionBar
+          <WorkspaceActionBar
             state={state}
-            onDimensionChange={(size) =>
-              onGlobalStateChange({ width: size, height: size })
-            }
+            onChange={onGlobalStateChange}
             onUndo={onUndo}
             onRedo={onRedo}
             canUndo={canUndo}
             canRedo={canRedo}
-            isModified={isModified}
             onReset={onResetAsset}
-            onCopySvg={copySvg}
-            onDownloadSvg={downloadSvg}
-            onOpenSaveDialog={() => onSaveDialogOpenChange(true)}
+            showGrid={showGrid}
+            onGridToggle={() => setShowGrid((prev) => !prev)}
+            selectedIcon={iconShim}
+            onGetSvgContent={getEditorSvgContent}
+            hideAdvancedExports
+            additionalDropdownItems={
+              <DropdownMenuItem
+                className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-[11px] font-medium transition-colors focus:bg-white/10 focus:text-white"
+                onClick={() => onSaveDialogOpenChange(true)}
+              >
+                <Save className="h-4 w-4 text-white/40" />
+                <span>Save as Snapshot</span>
+              </DropdownMenuItem>
+            }
           />
         </div>
       </main>

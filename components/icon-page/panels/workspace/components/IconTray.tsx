@@ -31,21 +31,28 @@ export function IconTray({
   onRemoveFromTray,
   state,
 }: IconTrayProps) {
-  const emptyCount = Math.max(0, MAX_SLOTS - trayIcons.length);
+  // Pad slots remaining after the filled icons + the single "Plus" placeholder.
+  // Together they fill all MAX_SLOTS columns of the grid so every icon lands in
+  // exactly one geometric cell.
+  const padSlots = Math.max(0, MAX_SLOTS - trayIcons.length - 1);
 
   return (
+    // Position to cover cells 1..8 of the bottom row of the geometric grid.
+    // The inner container in CanvasFrame is `aspect-[11/8]`, mirroring the grid
+    // SVG's 1100×800 viewBox, so we use percentages off that:
+    //   y=650..750 → top 81.25%, height 12.5%
+    //   x=150..950 → left 13.636%, width 72.727%
+    // Result: 8 columns × 1 row of grid cells, perfectly centered on x=550.
     <div
-      className="absolute left-1/2 flex -translate-x-1/2 items-center justify-center"
+      className="absolute"
       style={{
         top: "81.25%",
-        width: "100%",
-        height: "64px",
+        left: "13.636%",
+        width: "72.727%",
+        height: "12.5%",
       }}
     >
-      <div
-        className="flex h-full items-center justify-center"
-        style={{ gap: "40px" }}
-      >
+      <div className="grid grid-cols-8 w-full h-full">
         <AnimatePresence mode="popLayout" initial={false}>
           {trayIcons.map((trayIcon) => {
             const slotType = trayIcon.iconType ?? "normal";
@@ -73,7 +80,7 @@ export function IconTray({
                   y: TRAY_ITEM.exitY,
                 }}
                 transition={TRAY_ITEM.spring}
-                className="relative group will-change-transform"
+                className="relative group flex items-center justify-center will-change-transform"
               >
                 <button
                   type="button"
@@ -158,13 +165,17 @@ export function IconTray({
             );
           })}
         </AnimatePresence>
-        {Array.from({ length: emptyCount }).map((_, i) => (
-          <div
-            key={`empty-${i}`}
-            className="w-11 h-11 rounded-lg border border-dashed border-border/30 flex items-center justify-center text-muted-foreground/20"
-          >
-            <Plus className="w-4 h-4" />
+
+        {trayIcons.length < MAX_SLOTS ? (
+          <div className="flex items-center justify-center">
+            <div className="w-11 h-11 rounded-lg border border-dashed border-border/30 flex items-center justify-center text-muted-foreground/20">
+              <Plus className="w-4 h-4" />
+            </div>
           </div>
+        ) : null}
+
+        {Array.from({ length: padSlots }).map((_, i) => (
+          <div key={`pad-${i}`} />
         ))}
       </div>
     </div>

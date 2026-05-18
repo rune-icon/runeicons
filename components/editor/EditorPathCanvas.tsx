@@ -285,14 +285,13 @@ export function EditorPathCanvas({
   }
 
   return (
-    <div className="relative h-full w-full bg-background">
+    <div className="relative h-full w-full">
       {error ? (
         <div className="h-full flex items-center justify-center p-6 text-sm text-destructive">
           {error}
         </div>
       ) : (
-        <div className="absolute inset-0 bg-background">
-          <div className="absolute inset-0 bg-[radial-gradient(#d4d4d4_1px,transparent_1px)] [background-size:18px_18px] dark:bg-[radial-gradient(#404040_1px,transparent_1px)]" />
+        <div className="absolute inset-0">
           <svg
             ref={editorRef}
             viewBox={paddedViewBox}

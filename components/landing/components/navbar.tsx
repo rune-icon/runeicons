@@ -12,10 +12,12 @@ import * as m from "motion/react-m";
 import LightLogo from "@/components/landing/svg/light";
 import { Button } from "@/components/ui/button";
 import { LightDarkMode } from "@/components/ui/light-dark-mode";
+import { useGitHubStars } from "@/components/icon-page/panels/header/hooks/use-github-stars";
 
 const Navbar = () => {
   const [hidden, setHidden] = useState(false);
   const { scrollY } = useScroll();
+  const githubStars = useGitHubStars();
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     const previous = scrollY.getPrevious() ?? 0;
@@ -103,7 +105,7 @@ const Navbar = () => {
           </ul> */}
             <div className="flex items-center gap-2">
               <Link
-                href="https://github.com/AitijhyaModak/rune-icons"
+                href="https://github.com/rune-icon/runeicons"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -112,7 +114,7 @@ const Navbar = () => {
                   className="group relative gap-1 overflow-hidden text-xs"
                   aria-label="GitHub"
                 >
-                  <GithubIcon className="size-4" /> 1.1K
+                  <GithubIcon className="size-4" /> {githubStars}
                 </Button>
               </Link>
               <Link href="https://x.com/RuneIcon" target="_blank" rel="noopener noreferrer">

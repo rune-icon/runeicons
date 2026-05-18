@@ -50,14 +50,20 @@ interface IconTypeListProps {
   activeType: IconType;
   onTypeChange?: (type: IconType) => void;
   compact?: boolean;
+  supportedTypes?: readonly IconType[];
 }
 
 export function IconTypeList({
   activeType,
   onTypeChange,
   compact = false,
+  supportedTypes,
 }: IconTypeListProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const visibleTypes = supportedTypes
+    ? iconTypes.filter((type) => supportedTypes.includes(type.id))
+    : iconTypes;
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     const buttons = Array.from(containerRef.current?.querySelectorAll("button") || []);
@@ -90,7 +96,7 @@ export function IconTypeList({
         role="radiogroup"
         aria-label="Icon style type"
       >
-        {iconTypes.map((type) => {
+        {visibleTypes.map((type) => {
           const Icon = type.icon;
           const isActive = activeType === type.id;
 

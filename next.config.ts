@@ -12,7 +12,6 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       { hostname: "i.pinimg.com" },
-      { hostname: "i.pravatar.cc" },
     ],
   },
 };

@@ -80,7 +80,6 @@ const IconVarietyShowcase = () => {
 
   const orderRef = useRef(order);
   const displayProgressRef = useRef(displayProgress);
-  const ghostTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     orderRef.current = order;
@@ -90,12 +89,12 @@ const IconVarietyShowcase = () => {
   }, [displayProgress]);
 
   useEffect(() => {
-    const timers: ReturnType<typeof setTimeout>[] = [];
+    let phaseTimer: ReturnType<typeof setTimeout> | null = null;
 
     if (phase === "settling") {
-      timers.push(setTimeout(() => setPhase("filling"), SETTLE_MS));
+      phaseTimer = setTimeout(() => setPhase("filling"), SETTLE_MS);
     } else if (phase === "filling") {
-      timers.push(setTimeout(() => setPhase("exiting"), FILL_MS + HOLD_MS));
+      phaseTimer = setTimeout(() => setPhase("exiting"), FILL_MS + HOLD_MS);
     } else if (phase === "exiting") {
       const top = orderRef.current[0];
       const newBackIdx =
@@ -113,16 +112,21 @@ const IconVarietyShowcase = () => {
       );
 
       setPhase("settling");
-
-      if (ghostTimerRef.current) clearTimeout(ghostTimerRef.current);
-      ghostTimerRef.current = setTimeout(
-        () => setGhost(null),
-        GHOST_LIFETIME_MS,
-      );
     }
 
-    return () => timers.forEach(clearTimeout);
+    return () => {
+      if (phaseTimer) clearTimeout(phaseTimer);
+    };
   }, [phase]);
+
+  // Fade the ghost out after GHOST_LIFETIME_MS. Lifted out of the phase effect
+  // so the cleanup is symmetric — each new ghost gets its own timer, and on
+  // unmount the pending timer is released.
+  useEffect(() => {
+    if (!ghost) return;
+    const timer = setTimeout(() => setGhost(null), GHOST_LIFETIME_MS);
+    return () => clearTimeout(timer);
+  }, [ghost]);
 
   useEffect(() => {
     if (appearCard?.phase !== "end") return;

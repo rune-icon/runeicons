@@ -1,7 +1,7 @@
 import { CustomizationState, IconData } from "@/lib/types";
 import { getIconDataById } from "@/lib/icons";
 
-export const MAX_TRAY_ITEMS = 5;
+export const MAX_TRAY_ITEMS = 6;
 
 export const DEFAULT_STATE: CustomizationState = {
   colors: ["#000000"],

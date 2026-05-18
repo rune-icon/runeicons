@@ -20,6 +20,7 @@ export function PanelHeader({ onExport, onImport, onReset }: PanelHeaderProps) {
   useTuning();
   const [isResetArmed, setIsResetArmed] = useState(false);
   const [countdown, setCountdown] = useState(5);
+  const [resetTooltipOpen, setResetTooltipOpen] = useState(false);
   const resetTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const countdownIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -98,7 +99,10 @@ export function PanelHeader({ onExport, onImport, onReset }: PanelHeaderProps) {
           <div className="mx-1 h-3.5 w-[1px] bg-border/40" />
 
           <div className="relative">
-            <Tooltip open={isResetArmed ? false : undefined}>
+            <Tooltip
+              open={!isResetArmed && resetTooltipOpen}
+              onOpenChange={setResetTooltipOpen}
+            >
               <TooltipTrigger asChild>
                 <Button
                   variant="ghost"
