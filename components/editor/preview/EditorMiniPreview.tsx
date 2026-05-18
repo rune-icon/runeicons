@@ -3,7 +3,7 @@
 import { memo } from "react";
 import type { CustomizationState } from "@/lib/types";
 import type { EditorDocument } from "@/lib/editor/types";
-import { EditorSvgPreview } from "@/components/editor/EditorSvgPreview";
+import { EditorSvgPreview } from "@/components/editor/preview/EditorSvgPreview";
 
 interface EditorMiniPreviewProps {
   document: EditorDocument | null;
@@ -19,7 +19,7 @@ export const EditorMiniPreview = memo(function EditorMiniPreview({
   if (!document) return null;
 
   return (
-    <div className="absolute top-2 left-2 z-20 w-[96px] h-[96px] bg-background border border-border rounded-xl shadow-md flex items-center justify-center p-2.5 pointer-events-auto">
+    <div className="w-full h-full bg-background border border-border rounded-xl shadow-md flex items-center justify-center p-[12%] pointer-events-auto">
       <EditorSvgPreview
         document={document}
         state={state}

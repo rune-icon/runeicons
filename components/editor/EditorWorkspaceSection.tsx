@@ -4,7 +4,7 @@ import { useCallback, useEffect, type MutableRefObject } from "react";
 import type { EditorAssetSummary } from "@/lib/editor/types";
 import type { CustomizationState } from "@/lib/types";
 import { useEditorDocument } from "@/components/editor/hooks/useEditorDocument";
-import { EditorWorkspacePanel } from "@/components/editor/EditorWorkspacePanel";
+import { EditorWorkspacePanel } from "@/components/editor/panel/EditorWorkspacePanel";
 import { selectAssetInStore } from "@/stores/editor-selection";
 
 interface EditorWorkspaceSectionProps {
@@ -12,6 +12,7 @@ interface EditorWorkspaceSectionProps {
   state: CustomizationState;
   onGlobalStateChange: (updates: Partial<CustomizationState>) => void;
   resetDocumentRef: MutableRefObject<() => void>;
+  onPathCountChange?: (count: number) => void;
 }
 
 export function EditorWorkspaceSection({
@@ -19,12 +20,18 @@ export function EditorWorkspaceSection({
   state,
   onGlobalStateChange,
   resetDocumentRef,
+  onPathCountChange,
 }: EditorWorkspaceSectionProps) {
   const doc = useEditorDocument(assets);
 
   useEffect(() => {
     resetDocumentRef.current = doc.resetCurrentAsset;
   });
+
+  const pathCount = doc.document?.paths.length ?? 0;
+  useEffect(() => {
+    onPathCountChange?.(pathCount);
+  }, [pathCount, onPathCountChange]);
 
   const handleSelectAssetById = useCallback(
     (assetId: string) => {

@@ -105,9 +105,12 @@ const Carousel_006 = ({
   useEffect(() => {
     if (!api) return;
 
-    api.on("select", () => {
-      setCurrent(api.selectedScrollSnap());
-    });
+    const handleSelect = () => setCurrent(api.selectedScrollSnap());
+    api.on("select", handleSelect);
+
+    return () => {
+      api.off("select", handleSelect);
+    };
   }, [api]);
 
   return (

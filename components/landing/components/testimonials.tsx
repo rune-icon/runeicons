@@ -1,7 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
-
-import Image from "next/image";
+import { useEffect, useMemo, useState } from "react";
 
 import { Hand } from "lucide-react";
 
@@ -9,7 +7,32 @@ interface Testimonial {
   quote: string;
   name: string;
   handle: string;
-  avatar: string;
+}
+
+function getInitials(name: string): string {
+  return name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() ?? "")
+    .join("");
+}
+
+const AVATAR_PALETTE = [
+  "bg-amber-500/15 text-amber-700 dark:text-amber-300",
+  "bg-rose-500/15 text-rose-700 dark:text-rose-300",
+  "bg-sky-500/15 text-sky-700 dark:text-sky-300",
+  "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300",
+  "bg-violet-500/15 text-violet-700 dark:text-violet-300",
+  "bg-orange-500/15 text-orange-700 dark:text-orange-300",
+];
+
+function hashString(input: string): number {
+  let hash = 0;
+  for (let i = 0; i < input.length; i += 1) {
+    hash = (hash * 31 + input.charCodeAt(i)) | 0;
+  }
+  return Math.abs(hash);
 }
 
 const testimonials: Testimonial[] = [
@@ -18,76 +41,65 @@ const testimonials: Testimonial[] = [
       "Rune Icons completely transformed our design workflow. The consistency across every single icon is unmatched. We replaced three different icon packs with just Rune and haven't looked back since.",
     name: "Sarah Chen",
     handle: "@sarahchendev",
-    avatar: "https://i.pravatar.cc/150?u=sarahchen",
   },
   {
     quote:
       "The attention to detail in Rune Icons is incredible. Every icon feels like it was hand-crafted for our product.\n\nThe customization options are a huge bonus too.",
     name: "Alex Rivera",
     handle: "@alexrivera_ui",
-    avatar: "https://i.pravatar.cc/150?u=alexrivera",
   },
   {
     quote:
       "Switched our entire component library to Rune Icons. The SVG optimization is top-notch and bundle size dropped significantly. ❤️ to the Rune team.",
     name: "Priya Sharma",
     handle: "@priyabuilds",
-    avatar: "https://i.pravatar.cc/150?u=priyasharma",
   },
   {
     quote:
       "Rune Icons is the gold standard for icon libraries. Pixel-perfect at every size, tree-shakeable, and the naming convention just makes sense.",
     name: "Marcus Johnson",
     handle: "@marcusj_dev",
-    avatar: "https://i.pravatar.cc/150?u=marcusjohnson",
   },
   {
     quote:
       "Every time I think I need a custom icon, I search Rune first — and it's always there. The coverage is insane.",
     name: "Emma Liu",
     handle: "@emmaliu_design",
-    avatar: "https://i.pravatar.cc/150?u=emmaliu",
   },
   {
     quote:
       "Rune Icons is gonna become the default icon set for every modern web app. Mark my words.",
     name: "Daniel Kowalski",
     handle: "@dkowalski",
-    avatar: "https://i.pravatar.cc/150?u=danielkowalski",
   },
   {
     quote:
       "The DX of Rune Icons is unreal. Copy, paste, ship. No config needed, no weird imports. It just works.",
     name: "Lina Park",
     handle: "@linapark_dev",
-    avatar: "https://i.pravatar.cc/150?u=linapark",
   },
   {
     quote:
       "Rune Icons elevated our product's entire visual identity. Can't imagine building without it now.",
     name: "James Carter",
     handle: "@jamescarter",
-    avatar: "https://i.pravatar.cc/150?u=jamescarter",
   },
   {
     quote: "1000+ icons and every single one is beautiful. Rune Icons is... wow. Just wow 🤩🤩�",
     name: "Nina Petrova",
     handle: "@ninapetrova",
-    avatar: "https://i.pravatar.cc/150?u=ninapetrova",
   },
   {
     quote:
       "Rune Icons has been a game changer for our design system. Consistency across 50+ screens, finally.",
     name: "Tom Walsh",
     handle: "@tomwalsh_ui",
-    avatar: "https://i.pravatar.cc/150?u=tomwalsh",
   },
   {
     quote:
       "The best icon library I've ever used. Period. Clean, scalable, and ridiculously well-organized.",
     name: "Aisha Okafor",
     handle: "@aishaokafor",
-    avatar: "https://i.pravatar.cc/150?u=aishaokafor",
   },
 ];
 
@@ -97,6 +109,12 @@ const column2 = [testimonials[1], testimonials[4], testimonials[7]];
 const column3 = [testimonials[2], testimonials[5], testimonials[8]];
 
 const TestimonialCard = ({ testimonial }: { testimonial: Testimonial }) => {
+  const initials = useMemo(() => getInitials(testimonial.name), [testimonial.name]);
+  const avatarClass = useMemo(
+    () => AVATAR_PALETTE[hashString(testimonial.handle) % AVATAR_PALETTE.length],
+    [testimonial.handle],
+  );
+
   return (
     <div className="group relative cursor-pointer rounded-xl">
       {/* Rainbow gradient border - visible on hover */}
@@ -107,13 +125,13 @@ const TestimonialCard = ({ testimonial }: { testimonial: Testimonial }) => {
           {testimonial.quote}
         </p>
         <div className="mt-auto flex items-center gap-3">
-          <Image
-            src={testimonial.avatar}
-            alt={testimonial.name}
-            width={40}
-            height={40}
-            className="h-10 w-10 rounded-full object-cover"
-          />
+          <div
+            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold ${avatarClass}`}
+            aria-label={testimonial.name}
+            role="img"
+          >
+            {initials}
+          </div>
           <div className="flex flex-col">
             <span className="text-sm leading-tight font-medium text-card-foreground">
               {testimonial.name}

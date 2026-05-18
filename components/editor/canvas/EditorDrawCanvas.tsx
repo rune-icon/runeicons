@@ -4,7 +4,7 @@ import { useMemo, useRef, useState } from "react";
 import type { EditorDocument } from "@/lib/editor/types";
 import type { CustomizationState } from "@/lib/types";
 import { resolveEditorPathPaint } from "@/lib/editor/svg";
-import { simplifyPoints, pointsToSmoothPath, type DrawPoint } from "./draw-utils";
+import { simplifyPoints, pointsToSmoothPath, type DrawPoint } from "@/components/editor/utils/draw-utils";
 
 interface EditorDrawCanvasProps {
   document: EditorDocument | null;
@@ -101,9 +101,8 @@ export function EditorDrawCanvas({
   }, [drawingPoints]);
 
   return (
-    <div className="relative h-full w-full bg-background">
-      <div className="absolute inset-0 bg-background">
-        <div className="absolute inset-0 bg-[radial-gradient(#d4d4d4_1px,transparent_1px)] [background-size:18px_18px] dark:bg-[radial-gradient(#404040_1px,transparent_1px)]" />
+    <div className="relative h-full w-full">
+      <div className="absolute inset-0">
         <svg
           ref={svgRef}
           viewBox={paddedViewBox}
