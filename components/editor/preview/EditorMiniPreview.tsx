@@ -3,7 +3,7 @@
 import { memo } from "react";
 import type { CustomizationState } from "@/lib/types";
 import type { EditorDocument } from "@/lib/editor/types";
-import { EditorSvgPreview } from "@/components/editor/EditorSvgPreview";
+import { EditorSvgPreview } from "@/components/editor/preview/EditorSvgPreview";
 
 interface EditorMiniPreviewProps {
   document: EditorDocument | null;

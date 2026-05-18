@@ -8,8 +8,8 @@ import {
   parseSvgPath,
   pointsToSvgPath,
   type ControlPoint,
-} from "@/components/editor/svg-path-utils";
-import { ensureEditorPathEditable } from "../../lib/editor/path-data";
+} from "@/components/editor/utils/svg-path-utils";
+import { ensureEditorPathEditable } from "@/lib/editor/path-data";
 import { resolveEditorPathPaint } from "@/lib/editor/svg";
 
 interface EditorPathCanvasProps {

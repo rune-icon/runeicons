@@ -12,12 +12,12 @@ import type {
   EditorDocument,
 } from "@/lib/editor/types";
 import { createEditorSvgMarkup, cloneDocument } from "@/lib/editor/svg";
-import { EditorPathCanvas } from "@/components/editor/EditorPathCanvas";
-import { EditorDrawCanvas } from "@/components/editor/EditorDrawCanvas";
-import { EditorMiniPreview } from "@/components/editor/EditorMiniPreview";
-import { EditorModeToggle } from "@/components/editor/EditorModeToggle";
-import { EditorIconTray } from "@/components/editor/EditorIconTray";
-import { EditorSaveDialog } from "@/components/editor/EditorSaveDialog";
+import { EditorPathCanvas } from "@/components/editor/canvas/EditorPathCanvas";
+import { EditorDrawCanvas } from "@/components/editor/canvas/EditorDrawCanvas";
+import { EditorMiniPreview } from "@/components/editor/preview/EditorMiniPreview";
+import { EditorModeToggle } from "@/components/editor/controls/EditorModeToggle";
+import { EditorIconTray } from "@/components/editor/controls/EditorIconTray";
+import { EditorSaveDialog } from "@/components/editor/dialogs/EditorSaveDialog";
 
 interface EditorWorkspacePanelProps {
   state: CustomizationState;

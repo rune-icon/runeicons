@@ -6,7 +6,7 @@ import { AnimatePresence } from "motion/react";
 import { Plus, X } from "lucide-react";
 import type { EditorAssetSummary } from "@/lib/editor/types";
 import { cn } from "@/lib/utils";
-import { EditorSvgPreview } from "@/components/editor/EditorSvgPreview";
+import { EditorSvgPreview } from "@/components/editor/preview/EditorSvgPreview";
 
 const TRAY_ITEM = {
   initialScale: 0.9,

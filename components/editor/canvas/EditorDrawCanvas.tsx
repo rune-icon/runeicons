@@ -4,7 +4,7 @@ import { useMemo, useRef, useState } from "react";
 import type { EditorDocument } from "@/lib/editor/types";
 import type { CustomizationState } from "@/lib/types";
 import { resolveEditorPathPaint } from "@/lib/editor/svg";
-import { simplifyPoints, pointsToSmoothPath, type DrawPoint } from "./draw-utils";
+import { simplifyPoints, pointsToSmoothPath, type DrawPoint } from "@/components/editor/utils/draw-utils";
 
 interface EditorDrawCanvasProps {
   document: EditorDocument | null;
